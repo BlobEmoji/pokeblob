@@ -1,0 +1,28 @@
+{
+  "name": "pokeblob",
+  "version": "0.0.1",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\"",
+    "start": "node index.js",
+    "prepublish": "node util/setup.js"
+  },
+  "engines": {
+    "node": ">=8"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BlobEmoji/pokeblob-js.git"
+  },
+  "author": "OGNovuh",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "discord.js": "github:hydrabolt/discord.js",
+    "enmap": "^0.4.2",
+    "enmap-level": "^1.0.0",
+    "inquirer": "^4.0.0",
+    "klaw": "^2.1.1",
+    "moment": "^2.19.2",
+    "moment-duration-format": "^1.3.0"
+  }
+}
