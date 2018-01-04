@@ -52,6 +52,8 @@ jobs:
           name: install eslint
           command: |
             npm install eslint --save-dev
+            echo "running eslint NOW"
+            ./node_modules/.bin/eslint -v
             ./node_modules/.bin/eslint .
           no_output_timeout: 45s
 
