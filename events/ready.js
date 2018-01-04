@@ -1,3 +1,5 @@
+const bot = require('../package.json');
+
 module.exports = class {
   constructor(client) {
     this.client = client;
@@ -27,6 +29,6 @@ module.exports = class {
     } 
   
     // Log that we're ready to serve, so we know the bot accepts commands.
-    this.client.logger.log(`${this.client.user.tag}, ready to serve ${this.client.users.size} users in ${this.client.guilds.size} servers.`, 'ready');
+    this.client.log('Log', `${this.client.user.tag}, ready to serve ${this.client.users.size} users in ${this.client.guilds.size} servers on version ${bot.version}.`, 'Ready!');
   }
 };

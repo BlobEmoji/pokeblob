@@ -32,10 +32,12 @@ class PokeBlob extends Discord.Client {
     // essentially saves a collection to disk. This is great for per-server configs,
     // and makes things extremely easy for this purpose.
     this.settings = new Enmap({ provider: new EnmapLevel({ name: 'settings' }) });
-    this.points = new Enmap({ provider: new EnmapLevel({ name: 'points' }) });
+    this.energy = new Enmap({ provider: new EnmapLevel({ name: 'energy' }) });
+    this.inventory = new Enmap({ provider: new EnmapLevel({ name: 'inventory' }) });
+    this.stats = new Enmap({ provider: new EnmapLevel({ name: 'stats' }) });
+    this.store = new Enmap({ provider: new EnmapLevel({ name: 'store' }) });
 
     //requiring the Logger class for easy console logging
-    this.logger = require('./util/Logger');
   }
 
   /*
@@ -63,6 +65,11 @@ class PokeBlob extends Discord.Client {
     return permlvl;
   }
 
+  log(type, msg, title) {
+    if (!title) title = 'Log';
+    console.log(`[${type}] [${title}] ${msg}`);
+  }
+
   permCheck(message, perms) {
     if (message.channel.type !== 'text') return;
     return message.channel.permissionsFor(message.guild.me).missing(perms);
@@ -79,8 +86,8 @@ class PokeBlob extends Discord.Client {
   loadCommand(commandPath, commandName) {
     try {
       const props = new (require(`${commandPath}${path.sep}${commandName}`))(client);
-      client.logger.log(`Loading Command: ${props.help.name}. 👌`, 'log');
       props.conf.location = commandPath;
+      client.log('Log', `Loading Command: ${props.help.name}. 👌`);
       if (props.init) {
         props.init(client);
       }
@@ -102,11 +109,11 @@ class PokeBlob extends Discord.Client {
       command = client.commands.get(client.aliases.get(commandName));
     }
     if (!command) return `The command \`${commandName}\` doesn"t seem to exist, nor is it an alias. Try again!`;
-
+  
     if (command.shutdown) {
       await command.shutdown(client);
     }
-    delete require.cache[require.resolve(`${commandPath}${path.sep}${commandName}.js`)];
+    delete require.cache[require.resolve(`${commandPath}/${commandName}.js`)];
     return false;
   }
 
@@ -164,19 +171,17 @@ const init = async () => {
   // Here we load **commands** into memory, as a collection, so they're accessible
   // here and everywhere else.
   klaw('./commands').on('data', (item) => {
-    const cmdFile = path.parse(item.path);
-    if (!cmdFile.ext || cmdFile.ext !== '.js') return;
-    const response = client.loadCommand(cmdFile.dir, `${cmdFile.name}${cmdFile.ext}`);
-    if (response) client.logger.error(response);
+    const file = path.parse(item.path);
+    if (!file.ext || file.ext !== '.js') return;
+    const response = client.loadCommand(file.dir, `${file.name}${file.ext}`);
+    if (response) console.log(response);
   });
 
-  // Then we load events, which will include our message and ready event.
   const evtFiles = await readdir('./events/');
-  client.logger.log(`Loading a total of ${evtFiles.length} events.`, 'log');
+  client.log('Log', `Loading a total of ${evtFiles.length} events.`);
   evtFiles.forEach(file => {
     const eventName = file.split('.')[0];
     const event = new (require(`./events/${file}`))(client);
-    // This line is awesome by the way. Just sayin'.
     client.on(eventName, (...args) => event.run(...args));
     delete require.cache[require.resolve(`./events/${file}`)];
   });
@@ -194,8 +199,3 @@ const init = async () => {
 };
 
 init();
-
-client.on('disconnect', () => client.logger.warn('Bot is disconnecting...'))
-  .on('reconnect', () => client.logger.log('Bot reconnecting...', 'log'))
-  .on('error', e => client.logger.error(e))
-  .on('warn', info => client.logger.warn(info));
