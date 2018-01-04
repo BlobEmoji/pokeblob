@@ -3,17 +3,16 @@ const Enmap = require('enmap');
 const EnmapLevel = require('enmap-level');
 const fs = require('fs');
 
-let baseConfig = fs.readFileSync('./util/setup_base.txt', 'utf8');
+let baseConfig = fs.readFileSync('./util/setup_base.js', 'utf8');
 
 const defaultSettings = `{
   "prefix": "-",
   "modLogChannel": "mod-log",
-  "modRole": "Moderator",
-  "adminRole": "Administrator",
+  "traineeRole": "395299609196494861",
+  "councilRole": "294928463536586754",
+  "policeRole": "295476842935353345",
   "systemNotice": "true",
-  "welcomeChannel": "welcome",
-  "welcomeMessage": "Say hello to {{user}}, everyone! We all need a warm welcome sometimes :D",
-  "welcomeEnabled": "false"
+  "blobCoin": "398579309276823562"
 }`;
 
 const settings = new Enmap({provider: new EnmapLevel({name: 'settings'})});
@@ -48,7 +47,7 @@ let prompts = [
     await settings.setAsync('default', defaultSettings);
   }
 
-  baseConfig = baseConfig.replace('{{token}}', `"${answers.token}"`);
+  baseConfig = baseConfig.replace('{{token}}', `${answers.token}`);
   
   fs.writeFileSync('./config.js', baseConfig);
   console.log('REMEMBER TO NEVER SHARE YOUR TOKEN WITH ANYONE!');

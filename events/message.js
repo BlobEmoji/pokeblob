@@ -1,4 +1,3 @@
-const monitor = require('../monitors/points.js');
 // The MESSAGE event runs anytime a message is received
 // Note that due to the binding of client to every event, every event
 // goes `client, other, args` when this function is run.
@@ -22,9 +21,6 @@ module.exports = class {
     // For ease of use in commands and functions, we'll attach the settings
     // to the message object, so `message.settings` is accessible.
     message.settings = settings;
-
-    // Run the monitor
-    monitor.run(this.client, message, level);
 
     // Also good practice to ignore any message that does not start with our prefix,
     // which is set in the configuration file.
