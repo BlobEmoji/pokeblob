@@ -33,7 +33,7 @@ let prompts = [
 ];
 
 (async function() {
-  console.log("Setting Up GuideBot Configuration...");
+  console.log("Setting Up PokeBlob Configuration...");
   await settings.defer;
   if (!settings.has("default")) {
     prompts = prompts.slice(1);

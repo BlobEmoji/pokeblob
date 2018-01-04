@@ -14,7 +14,7 @@ const klaw = require("klaw");
 const path = require("path");
 
 
-class GuideBot extends Discord.Client {
+class PokeBlob extends Discord.Client {
   constructor(options) {
     super(options);
 
@@ -144,7 +144,7 @@ class GuideBot extends Discord.Client {
 // This is your client. Some people call it `bot`, some people call it `self`,
 // some might call it `cootchie`. Either way, when you see `client.something`,
 // or `bot.something`, this is what we're refering to. Your client.
-const client = new GuideBot();
+const client = new PokeBlob();
 console.log(client.config.permLevels.map(p => `${p.level} : ${p.name}`));
 
 // Let's start by getting some useful functions that we'll use throughout
