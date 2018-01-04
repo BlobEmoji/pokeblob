@@ -1,0 +1,62 @@
+# Javascript Node CircleCI 2.0 configuration file
+#
+# Check https://circleci.com/docs/2.0/language-javascript/ for more details
+#
+version: 2
+jobs:
+  "install and run":
+    docker:
+      - image: circleci/node:9.2.1-stretch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: install bot
+          command: echo -e "testmode\r\n" | npm install
+          no_output_timeout: 45s
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
+        
+      # run tests!
+      - run:
+          name: faux start bot
+          command: npm start
+          no_output_timeout: 20s
+
+  "eslint":
+    docker:
+      - image: circleci/node:9.2.1-stretch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-eslint-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: install eslint
+          command: |
+            npm install eslint --save-dev
+            ./node_modules/.bin/eslint .
+          no_output_timeout: 45s
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-eslint-{{ checksum "package.json" }}
+

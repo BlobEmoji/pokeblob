@@ -193,7 +193,8 @@ const init = async () => {
   }
 
   // Here we login the client.
-  client.login(client.config.token);
+  if (client.config.token !== 'testmode')
+    client.login(client.config.token);
 
   // End top-level async/await function.
 };
