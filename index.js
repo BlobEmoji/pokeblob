@@ -1,17 +1,17 @@
 // This will check if the node version you are running is the required
 // Node version, if it isn't it will throw the following error to inform
 // you.
-if (process.version.slice(1).split(".")[0] < 8) throw new Error("Node 8.0.0 or higher is required. Update Node on your system.");
+if (process.version.slice(1).split('.')[0] < 8) throw new Error('Node 8.0.0 or higher is required. Update Node on your system.');
 
 // Load up the discord.js library
-const Discord = require("discord.js");
+const Discord = require('discord.js');
 // We also load the rest of the things we need in this file:
-const { promisify } = require("util");
-const readdir = promisify(require("fs").readdir);
-const Enmap = require("enmap");
-const EnmapLevel = require("enmap-level");
-const klaw = require("klaw");
-const path = require("path");
+const { promisify } = require('util');
+const readdir = promisify(require('fs').readdir);
+const Enmap = require('enmap');
+const EnmapLevel = require('enmap-level');
+const klaw = require('klaw');
+const path = require('path');
 
 
 class PokeBlob extends Discord.Client {
@@ -19,7 +19,7 @@ class PokeBlob extends Discord.Client {
     super(options);
 
     // Here we load the config.js file that contains our token and our prefix values.
-    this.config = require("./config.js");
+    this.config = require('./config.js');
     // client.config.token contains the bot's token
     // client.config.prefix contains the message prefix
 
@@ -31,11 +31,11 @@ class PokeBlob extends Discord.Client {
     // Now we integrate the use of Evie's awesome Enhanced Map module, which
     // essentially saves a collection to disk. This is great for per-server configs,
     // and makes things extremely easy for this purpose.
-    this.settings = new Enmap({ provider: new EnmapLevel({ name: "settings" }) });
-    this.points = new Enmap({ provider: new EnmapLevel({ name: "points" }) });
+    this.settings = new Enmap({ provider: new EnmapLevel({ name: 'settings' }) });
+    this.points = new Enmap({ provider: new EnmapLevel({ name: 'points' }) });
 
     //requiring the Logger class for easy console logging
-    this.logger = require("./util/Logger");
+    this.logger = require('./util/Logger');
   }
 
   /*
@@ -63,6 +63,11 @@ class PokeBlob extends Discord.Client {
     return permlvl;
   }
 
+  permCheck(message, perms) {
+    if (message.channel.type !== 'text') return;
+    return message.channel.permissionsFor(message.guild.me).missing(perms);
+  }
+
   /* 
   COMMAND LOAD AND UNLOAD
   
@@ -74,7 +79,7 @@ class PokeBlob extends Discord.Client {
   loadCommand(commandPath, commandName) {
     try {
       const props = new (require(`${commandPath}${path.sep}${commandName}`))(client);
-      client.logger.log(`Loading Command: ${props.help.name}. 👌`, "log");
+      client.logger.log(`Loading Command: ${props.help.name}. 👌`, 'log');
       props.conf.location = commandPath;
       if (props.init) {
         props.init(client);
@@ -114,9 +119,9 @@ class PokeBlob extends Discord.Client {
   // getSettings merges the client defaults with the guild settings. guild settings in
   // enmap should only have *unique* overrides that are different from defaults.
   getSettings(id) {
-    const defaults = client.settings.get("default");
+    const defaults = client.settings.get('default');
     let guild = client.settings.get(id);
-    if (typeof guild != "object") guild = {};
+    if (typeof guild != 'object') guild = {};
     const returnObject = {};
     Object.keys(defaults).forEach((key) => {
       returnObject[key] = guild[key] ? guild[key] : defaults[key];
@@ -127,9 +132,9 @@ class PokeBlob extends Discord.Client {
   // writeSettings overrides, or adds, any configuration item that is different
   // than the defaults. This ensures less storage wasted and to detect overrides.
   writeSettings(id, newSettings) {
-    const defaults = client.settings.get("default");
+    const defaults = client.settings.get('default');
     let settings = client.settings.get(id);
-    if (typeof settings != "object") settings = {};
+    if (typeof settings != 'object') settings = {};
     for (const key in newSettings) {
       if (defaults[key] !== newSettings[key]) {
         settings[key] = newSettings[key];
@@ -149,7 +154,7 @@ console.log(client.config.permLevels.map(p => `${p.level} : ${p.name}`));
 
 // Let's start by getting some useful functions that we'll use throughout
 // the bot, like logs and elevation features.
-require("./modules/functions.js")(client);
+require('./modules/functions.js')(client);
 
 // We're doing real fancy node 8 async/await stuff here, and to do that
 // we need to wrap stuff in an anonymous function. It's annoying but it works.
@@ -158,18 +163,18 @@ const init = async () => {
 
   // Here we load **commands** into memory, as a collection, so they're accessible
   // here and everywhere else.
-  klaw("./commands").on("data", (item) => {
+  klaw('./commands').on('data', (item) => {
     const cmdFile = path.parse(item.path);
-    if (!cmdFile.ext || cmdFile.ext !== ".js") return;
+    if (!cmdFile.ext || cmdFile.ext !== '.js') return;
     const response = client.loadCommand(cmdFile.dir, `${cmdFile.name}${cmdFile.ext}`);
     if (response) client.logger.error(response);
   });
 
   // Then we load events, which will include our message and ready event.
-  const evtFiles = await readdir("./events/");
-  client.logger.log(`Loading a total of ${evtFiles.length} events.`, "log");
+  const evtFiles = await readdir('./events/');
+  client.logger.log(`Loading a total of ${evtFiles.length} events.`, 'log');
   evtFiles.forEach(file => {
-    const eventName = file.split(".")[0];
+    const eventName = file.split('.')[0];
     const event = new (require(`./events/${file}`))(client);
     // This line is awesome by the way. Just sayin'.
     client.on(eventName, (...args) => event.run(...args));
@@ -190,7 +195,7 @@ const init = async () => {
 
 init();
 
-client.on("disconnect", () => client.logger.warn("Bot is disconnecting..."))
-  .on("reconnect", () => client.logger.log("Bot reconnecting...", "log"))
-  .on("error", e => client.logger.error(e))
-  .on("warn", info => client.logger.warn(info));
+client.on('disconnect', () => client.logger.warn('Bot is disconnecting...'))
+  .on('reconnect', () => client.logger.log('Bot reconnecting...', 'log'))
+  .on('error', e => client.logger.error(e))
+  .on('warn', info => client.logger.warn(info));

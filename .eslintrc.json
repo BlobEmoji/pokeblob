@@ -18,11 +18,11 @@
     ],
     "linebreak-style": [
       "error",
-      "windows"
+      "unix"
     ],
     "quotes": [
       "warn",
-      "double"
+      "single"
     ],
     "semi": [
       "warn",

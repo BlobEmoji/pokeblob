@@ -6,22 +6,22 @@
 
 // However it's, like, super ultra useful for troubleshooting and doing stuff
 // you don't want to put in a command.
-const Command = require("../base/Command.js");
+const Command = require('../base/Command.js');
 
 class Eval extends Command {
   constructor(client) {
     super(client, {
-      name: "eval",
-      description: "Evaluates arbitrary Javascript.",
-      category:"System",
-      usage: "eval <expression>",
-      aliases: ["ev"],
-      permLevel: "Bot Owner"
+      name: 'eval',
+      description: 'Evaluates arbitrary Javascript.',
+      category:'System',
+      usage: 'eval <expression>',
+      aliases: ['ev'],
+      permLevel: 'Bot Owner'
     });
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
-    const code = args.join(" ");
+    const code = args.join(' ');
     try {
       const evaled = eval(code);
       const clean = await this.client.clean(this.client, evaled);

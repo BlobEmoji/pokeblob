@@ -1,23 +1,16 @@
-// This event executes when a new member joins a server. Let's welcome them!
-
 module.exports = class {
   constructor(client) {
     this.client = client;
   }
 
   async run(member) {
-    
-  // Load the guild's settings
-    const settings = this.client.getSettings(member.guild.id);
-  
-    // If welcome is off, don't proceed (don't welcome the user)
-    if (settings.welcomeEnabled !== "true") return;
+    if (!member || !member.id || !member.guild) return;
+    const guild = member.guild;
+    this.client.points.set(`${guild.id}-${member.id}`, { points: 200, level:1, user: member.id, guild: guild.id, daily: 1504120109 });
 
-    // Replace the placeholders in the welcome message with actual data
-    const welcomeMessage = settings.welcomeMessage.replace("{{user}}", member.user.tag);
-
-    // Send the welcome message to the welcome channel
-    // There's a place for more configs here.
-    member.guild.channels.find("name", settings.welcomeChannel).send(welcomeMessage).catch(console.error);
+    const settings = this.client.settings.get(member.guild.id);
+    if (settings.welcomeEnabled !== 'true') return;
+    const welcomeMessage = settings.welcomeMessage.replace('{{user}}', member.user.tag);
+    member.guild.channels.find('name', settings.welcomeChannel).send(welcomeMessage).catch(console.error);
   }
 };

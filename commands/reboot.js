@@ -1,19 +1,19 @@
-const Command = require("../base/Command.js");
+const Command = require('../base/Command.js');
 
 class Reboot extends Command {
   constructor(client) {
     super(client, {
-      name: "reboot",
-      description: "If running under PM2, bot will restart.",
-      category: "System",
-      usage: "reboot",
+      name: 'reboot',
+      description: 'If running under PM2, bot will restart.',
+      category: 'System',
+      usage: 'reboot',
       aliases: []
     });
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
     try {
-      await message.reply("Bot is shutting down.");
+      await message.reply('Bot is shutting down.');
       this.client.commands.forEach(async cmd => {
         await this.client.unloadCommand(cmd);
       });
