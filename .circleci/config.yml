@@ -4,9 +4,9 @@
 #
 version: 2
 jobs:
-  "install and run":
+  "build and run 8.9.1":
     docker:
-      - image: circleci/node:9.2.1-stretch
+      - image: circleci/node:8.9.1-stretch
 
     working_directory: ~/repo
 
@@ -15,6 +15,37 @@ jobs:
 
       - restore_cache:
           keys:
+          - v1-dependencies-8-{{ checksum "package.json" }}
+          - v1-dependencies-
+
+      - run:
+          name: install bot
+          command: echo -e "testmode\r\n" | npm install
+          no_output_timeout: 45s
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-8-{{ checksum "package.json" }}
+        
+      # run tests!
+      - run:
+          name: faux start bot
+          command: npm start
+          no_output_timeout: 20s
+  
+  "build and run 9.3.0":
+    docker:
+      - image: circleci/node:9.3.0-stretch
+
+    working_directory: ~/repo
+
+    steps:
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-9-{{ checksum "package.json" }}
           - v1-dependencies-{{ checksum "package.json" }}
           - v1-dependencies-
 
@@ -26,7 +57,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-{{ checksum "package.json" }}
+          key: v1-dependencies-9-{{ checksum "package.json" }}
         
       # run tests!
       - run:
@@ -66,5 +97,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - "install and run"
+      - "build and run 8.9.1"
+      - "build and run 9.3.0"
       - "eslint"
