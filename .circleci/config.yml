@@ -16,7 +16,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-8-{{ checksum "package.json" }}
-          - v1-dependencies-8-
 
       - run:
           name: install bot
@@ -46,8 +45,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-9-{{ checksum "package.json" }}
-          - v1-dependencies-9-{{ checksum "package.json" }}
-          - v1-dependencies-9-
 
       - run:
           name: install bot
@@ -77,7 +74,6 @@ jobs:
       - restore_cache:
           keys:
           - v1-dependencies-eslint-{{ checksum "package.json" }}
-          - v1-dependencies-eslint-
 
       - run:
           name: install eslint
