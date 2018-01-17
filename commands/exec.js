@@ -1,4 +1,4 @@
-const Command = require('..//base/Command.js');
+const Command = require('../base/Command.js');
 const exec = require('child_process').exec;
 
 class Exec extends Command {

@@ -13,6 +13,10 @@ module.exports = class {
     // NOTE: client.wait is added by ./modules/functions.js!
     await this.client.wait(1000);
 
+    if (this.client.users.has('1')) {
+      this.client.users.delete('1');
+    }
+
     // This loop ensures that client.appInfo always contains up to date data
     // about the app's status. This includes whether the bot is public or not,
     // its description, owner, etc. Used for the dashboard amongs other things.

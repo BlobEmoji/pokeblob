@@ -7,7 +7,8 @@ class Reboot extends Command {
       description: 'If running under PM2, bot will restart.',
       category: 'System',
       usage: 'reboot',
-      aliases: []
+      aliases: [],
+      permLevel: 'Police'
     });
   }
 
@@ -17,7 +18,7 @@ class Reboot extends Command {
       this.client.commands.forEach(async cmd => {
         await this.client.unloadCommand(cmd);
       });
-      process.exit(1);
+      process.exit(0);
     } catch (e) {
       console.log(e);
     }

@@ -1,18 +1,17 @@
-const Social = require('../base/Command.js');
+const Command = require('../base/Command.js');
 
-class Store extends Social {
+class Store extends Command {
   constructor(client) {
     super(client, {
       name: 'store',
       description: 'Display All Store Items',
-      usage: 'store <-buy|-sell|-add|-del|-view>',
-      category: 'Economy',
+      category: 'Pokéblob',
+      usage: 'store <-buy|-sell|-view>',
       aliases: []
     });
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
-    const settings = this.client.settings.get(message.guild.id);
     if (!message.flags.length) {
       return message.reply(`|\`❌\`| ${this.help.usage}`);
     }
@@ -21,97 +20,83 @@ class Store extends Social {
       case ('buy'): {
         const name = args.join(' ');
         
-        if (!name) return this.client.commands.get('store').run(message, args, level);
-            
-        const item = this.client.store.filter(i => i.name.toLowerCase().includes(name.toLowerCase()));
-        
-        if (item.size > 1) return message.reply(`Please be more specific, there is more than one item on sale with ${name} as their name`);
-        if (!item) return message.channel.send('That item doesn\'t exist, Please make sure it is spelled correctly');
-        
-        if (item.array()[0].price > message.member.score.points) {
-          return message.channel.send(`You currently have <:blobcoin:${settings.blobCoin}>${message.member.score.points}, but the role costs ${item.array()[0].price}!`);
-        }
-        
-        const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${item.array()[0].name} for <:blobcoin:${settings.blobCoin}>${item.array()[0].price}?`, undefined, null);
-        if (['y', 'yes'].includes(response.toLowerCase())) {
-        
-          message.member.takePoints(item.array()[0].price);
-          message.channel.send('You have bought the item :tada: ');
-        
-        } else
-        
-        if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
-          message.channel.send('Transaction cancelled.');
+        const connection = await this.client.db.acquire();
+        let storeItem;
+        try {
+          storeItem = await this.client.db.getStoreItemByName(connection, name);
+
+          if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
+
+          const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${storeItem.name} for 💰 ${storeItem.value}? (yes/no)\n"${storeItem.description}"`, undefined, null);
+          if (['y', 'yes'].includes(response.toLowerCase())) {
+          
+            await connection.query('BEGIN');
+            const deducted = await this.client.db.takeUserCurrency(connection, message.guild.id, message.author.id, storeItem.value);
+            if (!deducted) {
+              await connection.query('ROLLBACK');
+              return message.channel.send('You don\'t appear to have the funds for that.');
+            }
+            await this.client.db.giveUserItem(connection, message.guild.id, message.author.id, storeItem.id, 1);
+            await connection.query('COMMIT');
+            return message.channel.send('You have bought the item :tada:');
+          } else
+          
+          if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
+            return message.channel.send('Transaction cancelled.');
+          }
+        } finally {
+          connection.release();
         }
         break;
       }
 
       case ('sell'): {
         const name = args.join(' ');
-        
-        if (!name) return this.client.commands.get('store').run(message, args, level);
-            
-        const item = this.client.store.filter(i => i.name.toLowerCase().includes(name.toLowerCase()));
-              
-        if (!item) return message.channel.send('That item doesn\'t exist, Please make sure it is spelled correctly');
-        
-        const returnPrice = Math.floor(item.array()[0].price/2);
-        
-        const response = await this.client.awaitReply(message, `Are you sure you want to sell ${item.array()[0].name} for <:blobcoin:${settings.blobCoin}>${returnPrice}?`, undefined, null);
-        if (['y', 'yes'].includes(response.toLowerCase())) {
-        
-          message.member.givePoints(returnPrice);
-          message.channel.send('You have sold the item :tada: ');
-        
-        } else
-        
-        if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
-          message.channel.send('Transaction cancelled.');
-        }
-        break;
-      }
 
-      case ('add'): {
-        const price = args.pop();
-        const name = args.join(' ');
+        const connection = await this.client.db.acquire();
+        let storeItem;
+        try {
+          storeItem = await this.client.db.getStoreItemByName(connection, name);
 
-        if (!name) return message.reply('Please add the exact name of the item');
-        
-        if (this.client.store.has(name)) return message.reply('This item is already on sale');
-        
-        if (!price) return message.reply('Please specify a price');
-        
-        const item = { name: name.toLowerCase(), id: Math.random(), price: price, guildId: message.guild.id };
-        this.client.store.set(item.id, item);
-        message.reply(`${name} is now on sale `);
-        break;
-      }
+          const returnPrice = Math.floor(storeItem.value/2);
 
-      case ('del'): {
-        const name = args.join(' ');
-        if (!name) return message.reply('Please specify the exact name of the item');
-        
-        if (!this.client.store.has(name)) return message.reply('This item is not on sale');
-        
-        const response = await this.client.awaitReply(message, `Are you sure you want to remove ${name} from the shop?`);
-        if (['y', 'yes'].includes(response)) {
-        
-          await this.client.store.delete(name);
-          message.reply('The item is now off the store.');
-        } else
-        
-        if (['n','no','cancel'].includes(response)) {
-          message.reply('Action cancelled.');
+          if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
+
+          const response = await this.client.awaitReply(message, `Are you sure you want to sell ${storeItem.name} for 💰 ${returnPrice}? (yes/no)`, undefined, null);
+          if (['y', 'yes'].includes(response.toLowerCase())) {
+          
+            await connection.query('BEGIN');
+            const deducted = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, storeItem.id, 1);
+            if (!deducted) {
+              await connection.query('ROLLBACK');
+              return message.channel.send('You don\'t appear to actually have that item.');
+            }
+            await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, returnPrice);
+            await connection.query('COMMIT');
+            return message.channel.send('You have sold the item :tada: ');
+          } else
+          
+          if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
+            return message.channel.send('Transaction cancelled.');
+          }
+        } finally {
+          connection.release();
         }
         break;
       }
 
       case ('view'): {
-        const items = message.guild.store;
-        if (items.length === 0) return message.channel.send('Nothing is for sale');
-        message.channel.send(items.map(item => 
-          `${message.guild.roles.get(item.id.toString()).name}: ${item.price} 💰`).join('\n'), { code: true }
-        );
+        const connection = await this.client.db.acquire();
+        let storeItems, userData;
+        try {
+          storeItems = await this.client.db.getStoreItems(connection);
+          userData = await this.client.db.getUserData(connection, message.guild.id, message.author.id);
+        } finally {
+          connection.release();
+        }
+        if (storeItems.length === 0) return message.channel.send('Nothing is for sale');
+        const map = storeItems.map(item => `**${item.name}**: ${item.value} <:blobcoin:398579309276823562> | ${item.description}`).join('\n');
+        message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n${map}`);
       }
     }
   }

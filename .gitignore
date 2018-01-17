@@ -1,7 +1,6 @@
 # Directories
-/data/
+/data/settings/
 /node_modules/
 
 # Specific Files
 config.js
-package-lock.json

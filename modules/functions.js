@@ -1,5 +1,31 @@
+const moment = require('moment');
+require('moment-duration-format');
+
 module.exports = (client) => {
 
+
+  /*
+  COMMAND RATELIMIT
+
+  Credit for the ratelimit method goes to York#2400
+  */
+
+  client.ratelimit = async (message, level, key, duration) => {
+    if (level > 2) return false;
+    
+    duration = duration * 1000;
+    const ratelimits = client.ratelimits.get(message.author.id) || {}; //get the ENMAP first.
+    if (!ratelimits[key]) ratelimits[key] = Date.now() - duration; //see if the command has been run before if not, add the ratelimit
+    const differnce = Date.now() - ratelimits[key]; //easier to see the difference
+    if (differnce < duration) { //check the if the duration the command was run, is more than the cooldown
+      return moment.duration(duration - differnce).format('D [days], H [hours], m [minutes], s [seconds]', 1); //returns a string to send to a channel
+    } else {
+      ratelimits[key] = Date.now(); //set the key to now, to mark the start of the cooldown
+      client.ratelimits.set(message.author.id, ratelimits); //set it
+      return true;
+    }
+  };
+  
   /*
   SINGLE-LINE AWAITMESSAGE
 
@@ -33,7 +59,7 @@ module.exports = (client) => {
   This is mostly only used by the Eval and Exec commands.
   */
   client.clean = async (client, text) => {
-    if (text && text.constructor.name == 'Promise')
+    if (text && text.constructor.name === 'Promise')
       text = await text;
     if (typeof text !== 'string')
       text = require('util').inspect(text, {depth: 0});

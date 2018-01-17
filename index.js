@@ -1,8 +1,4 @@
-// This will check if the node version you are running is the required
-// Node version, if it isn't it will throw the following error to inform
-// you.
-if (process.version.slice(1).split('.')[0] < 8) throw new Error('Node 8.0.0 or higher is required. Update Node on your system.');
-
+require(`${process.cwd()}/extenders/Guild.js`);
 // Load up the discord.js library
 const Discord = require('discord.js');
 // We also load the rest of the things we need in this file:
@@ -12,6 +8,7 @@ const Enmap = require('enmap');
 const EnmapLevel = require('enmap-level');
 const klaw = require('klaw');
 const path = require('path');
+const dbBackend = require(`${process.cwd()}/util/db.js`);
 
 
 class PokeBlob extends Discord.Client {
@@ -27,17 +24,15 @@ class PokeBlob extends Discord.Client {
     // catalogued, listed, etc.
     this.commands = new Enmap();
     this.aliases = new Enmap();
+    this.ratelimits = new Enmap();
+
+    // PostgreSQL database connection
+    this.db = new dbBackend(this.config.dbCredentials);
 
     // Now we integrate the use of Evie's awesome Enhanced Map module, which
     // essentially saves a collection to disk. This is great for per-server configs,
     // and makes things extremely easy for this purpose.
     this.settings = new Enmap({ provider: new EnmapLevel({ name: 'settings' }) });
-    this.energy = new Enmap({ provider: new EnmapLevel({ name: 'energy' }) });
-    this.inventory = new Enmap({ provider: new EnmapLevel({ name: 'inventory' }) });
-    this.stats = new Enmap({ provider: new EnmapLevel({ name: 'stats' }) });
-    this.store = new Enmap({ provider: new EnmapLevel({ name: 'store' }) });
-
-    //requiring the Logger class for easy console logging
   }
 
   /*
@@ -128,7 +123,7 @@ class PokeBlob extends Discord.Client {
   getSettings(id) {
     const defaults = client.settings.get('default');
     let guild = client.settings.get(id);
-    if (typeof guild != 'object') guild = {};
+    if (typeof guild !== 'object') guild = {};
     const returnObject = {};
     Object.keys(defaults).forEach((key) => {
       returnObject[key] = guild[key] ? guild[key] : defaults[key];
@@ -141,7 +136,7 @@ class PokeBlob extends Discord.Client {
   writeSettings(id, newSettings) {
     const defaults = client.settings.get('default');
     let settings = client.settings.get(id);
-    if (typeof settings != 'object') settings = {};
+    if (typeof settings !== 'object') settings = {};
     for (const key in newSettings) {
       if (defaults[key] !== newSettings[key]) {
         settings[key] = newSettings[key];
@@ -177,6 +172,20 @@ const init = async () => {
     if (response) console.log(response);
   });
 
+  const extendList = [];
+  klaw('./extenders').on('data', (item) => {
+    const extFile = path.parse(item.path);
+    if (!extFile.ext || extFile.ext !== '.js') return;
+    try {
+      require(`${extFile.dir}${path.sep}${extFile.base}`);
+      extendList.push(extFile.name);
+    } catch (error) {
+      console.log(`Error loading ${extFile.name} extension: ${error}`);
+    }
+  }).on('end', () => {
+    console.log(`[Log] [Log] Loaded a total of ${extendList.length} extensions.`);
+  }).on('error', (error) => console.log(error));
+  
   const evtFiles = await readdir('./events/');
   client.log('Log', `Loading a total of ${evtFiles.length} events.`);
   evtFiles.forEach(file => {
@@ -192,8 +201,18 @@ const init = async () => {
     client.levelCache[thisLevel.name] = thisLevel.level;
   }
 
+  // Test the DB connection
+  const connection = await client.db.acquire();
+  try {
+    // checks the connection works, and that the relation exists
+    const res = await connection.query('SELECT id FROM guilds');
+    client.log('Log', `DB connection test succeeded, returned ${res.rows.length} rows.`);
+  } finally {
+    connection.release();
+  }
+
   // Here we login the client.
-  if (client.config.token !== 'testmode')
+  if (!process.env.POKEBLOB_TEST_ONLY)
     client.login(client.config.token);
 
   // End top-level async/await function.

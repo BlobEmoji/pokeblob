@@ -23,9 +23,9 @@ const config = {
   },
 
   'dbCredentials': {
-    'user': 'example_user',
-    'host': 'localhost',
-    'database': 'example_database',
+    'user': 'postgres',
+    'host': 'db',
+    'database': '',
     'password': '',
     'port': 5432
   },

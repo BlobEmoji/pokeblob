@@ -7,7 +7,7 @@ class Reload extends Command {
       description: 'Reloads a command that has been modified.',
       category: 'System',
       usage: 'reload [command]',
-      permLevel: 'Bot Admin'
+      permLevel: 'Police'
     });
   }
 

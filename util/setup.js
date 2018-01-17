@@ -8,11 +8,12 @@ let baseConfig = fs.readFileSync('./util/setup_base.js', 'utf8');
 const defaultSettings = `{
   "prefix": "-",
   "modLogChannel": "mod-log",
-  "traineeRole": "395299609196494861",
-  "councilRole": "294928463536586754",
-  "policeRole": "295476842935353345",
-  "systemNotice": "true",
-  "blobCoin": "398579309276823562"
+  "traineeRole": "Council Trainee",
+  "councilRole": "Blob Council",
+  "policeRole": "Blob Police",
+  "systemNotice": true,
+  "minPoints": 5,
+  "maxPoints": 1000
 }`;
 
 const settings = new Enmap({provider: new EnmapLevel({name: 'settings'})});
@@ -34,6 +35,13 @@ let prompts = [
 (async function() {
   console.log('Setting Up PokeBlob Configuration...');
   await settings.defer;
+  
+  if (process.env.POKEBLOB_TEST_ONLY) {
+    await settings.setAsync('default', defaultSettings);
+    fs.writeFileSync('./config.js', baseConfig);
+    return;
+  }
+
   if (!settings.has('default')) {
     prompts = prompts.slice(1);
     console.log('First Start! Inserting default guild settings in the database...');

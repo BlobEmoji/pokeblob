@@ -8,11 +8,11 @@
     "prepublish": "node util/setup.js"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=8.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/BlobEmoji/pokeblob-js.git"
+    "url": "git+https://github.com/BlobEmoji/pokeblob-js.git"
   },
   "author": "OGNovuh",
   "dependencies": {
@@ -23,6 +23,7 @@
     "inquirer": "^4.0.2",
     "klaw": "^2.1.1",
     "moment": "^2.20.1",
-    "moment-duration-format": "^2.1.1"
+    "moment-duration-format": "^2.1.1",
+    "pg": "^7.4.1"
   }
 }

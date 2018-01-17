@@ -7,6 +7,11 @@ jobs:
   "build and run 8.9.1":
     docker:
       - image: circleci/node:8.9.1-stretch
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: example_user
+          POSTGRES_DB: example_database
+          POSTGRES_PASSWORD: ""
 
     working_directory: ~/repo
 
@@ -19,23 +24,51 @@ jobs:
 
       - run:
           name: install bot
-          command: echo -e "testmode\r\n" | npm install
+          command: npm install
           no_output_timeout: 45s
+          environment:
+            POKEBLOB_TEST_ONLY: true
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-8-{{ checksum "package.json" }}
         
+      - run:
+          name: install psql
+          command: |
+            sudo apt update
+            sudo apt install postgresql-client
+      
+      - run:
+          name: wait for postgres..
+          command: sleep 2
+
+      - run:
+          name: apply schema
+          command: |
+            psql -d example_database -U example_user < schema.sql
+            psql -d example_database -U example_user < setup.sql
+          environment:
+            PGHOST: localhost
+            PGPORT: 5432
       # run tests!
       - run:
           name: faux start bot
           command: npm start
           no_output_timeout: 20s
+          environment:
+            POKEBLOB_TEST_ONLY: true
   
   "build and run 9.3.0":
     docker:
       - image: circleci/node:9.3.0-stretch
+
+      - image: circleci/postgres:latest
+        environment:
+          POSTGRES_USER: example_user
+          POSTGRES_DB: example_database
+          POSTGRES_PASSWORD: ""
 
     working_directory: ~/repo
 
@@ -48,19 +81,42 @@ jobs:
 
       - run:
           name: install bot
-          command: echo -e "testmode\r\n" | npm install
+          command: npm install
           no_output_timeout: 45s
+          environment:
+            POKEBLOB_TEST_ONLY: true
 
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-9-{{ checksum "package.json" }}
+
+      - run:
+          name: install psql
+          command: |
+            sudo apt update
+            sudo apt install postgresql-client
+      
+      - run:
+          name: wait for postgres..
+          command: sleep 2
+
+      - run:
+          name: apply schema
+          command: |
+            psql -d example_database -U example_user < schema.sql
+            psql -d example_database -U example_user < setup.sql
+          environment:
+            PGHOST: localhost
+            PGPORT: 5432
         
       # run tests!
       - run:
           name: faux start bot
           command: npm start
           no_output_timeout: 20s
+          environment:
+            POKEBLOB_TEST_ONLY: true
 
   "eslint":
     docker:
