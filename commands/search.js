@@ -61,7 +61,7 @@ class Search extends Command {
           catchDesc = `Type \`${settings.prefix}catch\` to use your ${userPokeBalls[0].name}.`;
         }
 
-        msg.edit(`_${message.author} ${searchText}..._ a ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching`); // eslint-disable-line no-undef
+        msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching`); // eslint-disable-line no-undef
 
         const transform = s => s.toLowerCase().replace(/ /g, '');
         const pokeBallNames = userPokeBalls.map(x => transform(x.name)).concat(['']);
