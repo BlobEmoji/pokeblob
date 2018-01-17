@@ -50,7 +50,7 @@ class Search extends Command {
         const userPokeBalls = (await this.client.db.getUserInventory(connection, message.guild.id, message.author.id)).filter(x => x.mode === 1 && x.amount > 0).sort((x, y) => x.potential - y.potential);
 
         if (userPokeBalls.length === 0) {
-          return msg.edit(`_${message.author} ${searchText}..._ a ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\nSadly, you don't have any PokeBalls, so you have no choice but to let this one run away.\n\n\`${settings.prefix}search\` to continue looking (1 energy)\n\`${settings.prefix}cancel\` to stop searching`); // eslint-disable-line no-undef
+          return msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\nSadly, you don't have any PokeBalls, so you have no choice but to let this one run away.\n\n\`${settings.prefix}search\` to continue looking (1 energy)\n\`${settings.prefix}cancel\` to stop searching`); // eslint-disable-line no-undef
         }
 
         let catchDesc;
@@ -61,7 +61,7 @@ class Search extends Command {
           catchDesc = `Type \`${settings.prefix}catch\` to use your ${userPokeBalls[0].name}.`;
         }
 
-        msg.edit(`_${message.author} ${searchText}..._ a ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching`); // eslint-disable-line no-undef
+        msg.edit(`_${message.author} ${searchText}..._ a ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching`); // eslint-disable-line no-undef
 
         const transform = s => s.toLowerCase().replace(/ /g, '');
         const pokeBallNames = userPokeBalls.map(x => transform(x.name)).concat(['']);
