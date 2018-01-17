@@ -6,19 +6,33 @@ class Store extends Command {
       name: 'store',
       description: 'Display All Store Items',
       category: 'Pokéblob',
-      usage: 'store <-buy|-sell|-view>',
+      usage: 'store <buy|sell|view>',
       aliases: []
     });
   }
 
-  async run(message, args, level) { // eslint-disable-line no-unused-vars
-    if (!message.flags.length) {
-      return message.reply(`|\`❌\`| ${this.help.usage}`);
+  detectAmount(args) {
+    const maybeAmount = parseInt(args[args.length - 1]);
+    if (isNaN(maybeAmount)) {
+      return {amount: 1, name: args.join(' ')};
+    } else {
+      return {amount: maybeAmount, name: args.slice(0, -1).join(' ')};
     }
+  }
 
-    switch (message.flags[0]) {
+  async run(message, rawargs, level) { // eslint-disable-line no-unused-vars
+    const trigger = rawargs[0];
+    const args = rawargs.slice(1);
+
+    switch (trigger) {
       case ('buy'): {
-        const name = args.join(' ');
+        const { name, amount } = this.detectAmount(args);
+
+        if (amount <= 0) {
+          return message.channel.send('You must buy at least one item from the store.');
+        } else if (amount >= 100) {
+          return message.channel.send('I\'m not even sure if I have that much stock on me..');
+        }
         
         const connection = await this.client.db.acquire();
         let storeItem;
@@ -27,18 +41,18 @@ class Store extends Command {
 
           if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
 
-          const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${storeItem.name} for 💰 ${storeItem.value}? (yes/no)\n"${storeItem.description}"`, undefined, null);
+          const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${amount}x ${storeItem.name} for <:blobcoin:398579309276823562> ${storeItem.value * amount}? (yes/no)\n"${storeItem.description}"`, undefined, null);
           if (['y', 'yes'].includes(response.toLowerCase())) {
           
             await connection.query('BEGIN');
-            const deducted = await this.client.db.takeUserCurrency(connection, message.guild.id, message.author.id, storeItem.value);
+            const deducted = await this.client.db.takeUserCurrency(connection, message.guild.id, message.author.id, storeItem.value * amount);
             if (!deducted) {
               await connection.query('ROLLBACK');
               return message.channel.send('You don\'t appear to have the funds for that.');
             }
-            await this.client.db.giveUserItem(connection, message.guild.id, message.author.id, storeItem.id, 1);
+            await this.client.db.giveUserItem(connection, message.guild.id, message.author.id, storeItem.id, amount);
             await connection.query('COMMIT');
-            return message.channel.send('You have bought the item :tada:');
+            return message.channel.send(`You have bought ${amount}x ${storeItem.name} :tada:`);
           } else
           
           if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
@@ -51,7 +65,13 @@ class Store extends Command {
       }
 
       case ('sell'): {
-        const name = args.join(' ');
+        const { name, amount } = this.detectAmount(args);
+
+        if (amount <= 0) {
+          return message.channel.send('You must sell at least one item to the store.');
+        } else if (amount >= 100) {
+          return message.channel.send('I won\'t be able to hold that much stuff!');
+        }
 
         const connection = await this.client.db.acquire();
         let storeItem;
@@ -62,18 +82,18 @@ class Store extends Command {
 
           if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
 
-          const response = await this.client.awaitReply(message, `Are you sure you want to sell ${storeItem.name} for 💰 ${returnPrice}? (yes/no)`, undefined, null);
+          const response = await this.client.awaitReply(message, `Are you sure you want to sell ${amount}x ${storeItem.name} for <:blobcoin:398579309276823562> ${returnPrice * amount}? (yes/no)`, undefined, null);
           if (['y', 'yes'].includes(response.toLowerCase())) {
           
             await connection.query('BEGIN');
-            const deducted = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, storeItem.id, 1);
+            const deducted = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, storeItem.id, amount);
             if (!deducted) {
               await connection.query('ROLLBACK');
-              return message.channel.send('You don\'t appear to actually have that item.');
+              return message.channel.send(`You don't appear to actually have ${amount === 1 ? 'that item' : 'those items'}.`);
             }
-            await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, returnPrice);
+            await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, returnPrice * amount);
             await connection.query('COMMIT');
-            return message.channel.send('You have sold the item :tada: ');
+            return message.channel.send(`You have sold ${amount}x ${storeItem.name} :tada:`);
           } else
           
           if (['n', 'no', 'cancel'].includes(response.toLowerCase())) {
@@ -96,7 +116,11 @@ class Store extends Command {
         }
         if (storeItems.length === 0) return message.channel.send('Nothing is for sale');
         const map = storeItems.map(item => `**${item.name}**: ${item.value} <:blobcoin:398579309276823562> | ${item.description}`).join('\n');
-        message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n${map}`);
+        return message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n${map}`);
+      }
+
+      default: {
+        return message.reply(`|\`❌\`| ${this.help.usage}`);
       }
     }
   }
