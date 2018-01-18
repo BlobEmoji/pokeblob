@@ -32,7 +32,7 @@ class DatabaseBackend {
         $2::BIGINT
       ) ON CONFLICT (id, guild) DO UPDATE
       SET energy = CASE
-        WHEN users.energy < 30 AND users.last_used_energy < day_timestamp() THEN 30
+        WHEN users.energy < 50 AND users.last_used_energy < day_timestamp() THEN 50
         ELSE users.energy
         END,
       last_used_energy = day_timestamp()

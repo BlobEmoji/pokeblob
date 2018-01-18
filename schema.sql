@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS users (
 
     -- energy the user has right now (or the last time it was relevant)
     -- bot will update this as it checks for user existence during interactions
-    energy INT CONSTRAINT energy_clamp CHECK (energy >= 0) DEFAULT 30,
+    energy INT CONSTRAINT energy_clamp CHECK (energy >= 0) DEFAULT 50,
 
     -- defined as floor(extract(epoch from now()) / 86400)
     -- number defining how many days has passed since 1970-01-01 00:00 UTC
