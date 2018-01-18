@@ -14,6 +14,44 @@ class Search extends Command {
     });
   }
 
+  formCatchDescription(pokeBalls, energy, settings) {
+    if (pokeBalls.length === 0) {
+      return { allowCapture: false, description: `You have ${energy-1} energy remaining.\nSadly, you don't have any PokeBalls left, so you have no choice but to let this one run away.\n\n\`${settings.prefix}search\` to continue looking (1 energy)\n\`${settings.prefix}cancel\` to stop searching` };
+    }
+
+    let catchDesc;
+    if (pokeBalls.length > 1) {
+      const otherDesc = pokeBalls.slice(1).map(x => `\`${settings.prefix}catch ${x.name}\` to use your ${x.name},`).join('\n');
+      catchDesc = `${otherDesc}\nor type just \`${settings.prefix}catch\` to use your ${pokeBalls[0].name}.\n`;
+    } else {
+      catchDesc = `Type \`${settings.prefix}catch\` to use your ${pokeBalls[0].name}.`;
+    }
+
+    return { allowCapture: true, description: `You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching` };
+  }
+
+  async waitForCatchResponse(message, pokeBalls, escapedPrefix) {
+    const transform = s => s.toLowerCase().replace(/ /g, '');
+    const pokeBallNames = pokeBalls.map(x => transform(x.name)).concat(['']);
+
+    const re = new RegExp(`^${escapedPrefix}(catch|cancel|search)(.*)$`);
+    const filter = m => (m.author.id === message.author.id && re.test(m.content) && pokeBallNames.includes(transform(re.exec(m.content)[2])));
+
+    let response;
+    try {
+      response = re.exec((await message.channel.awaitMessages(filter, { max: 1, time: 60000, errors: ['time'] })).first().content);
+    } catch (e) {
+      return { threwBall: false, usedBall: null };
+    }
+
+    if (response[1] === 'catch') {
+      const ballUsed = transform(response[2]) === '' ? pokeBalls[0] : pokeBalls[pokeBallNames.indexOf(transform(response[2]))];
+      return { threwBall: true, usedBall: ballUsed };
+    } else {
+      return { threwBall: false, usedBall: null };
+    }
+  }
+
   async run(message, args, level) { // eslint-disable-line no-unused-vars
     const settings = message.settings;
     const connection = await this.client.db.acquire();
@@ -47,56 +85,81 @@ class Search extends Command {
 
         // Pokeballs are filtered from the user's inventory, and sorted least effective first.
         // By default, the least effective ball is always used.
-        const userPokeBalls = (await this.client.db.getUserInventory(connection, message.guild.id, message.author.id)).filter(x => x.mode === 1 && x.amount > 0).sort((x, y) => x.potential - y.potential);
+        let userPokeBalls = (await this.client.db.getUserInventory(connection, message.guild.id, message.author.id)).filter(x => x.mode === 1 && x.amount > 0).sort((x, y) => x.potential - y.potential);
 
-        if (userPokeBalls.length === 0) {
-          return msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\nSadly, you don't have any PokeBalls, so you have no choice but to let this one run away.\n\n\`${settings.prefix}search\` to continue looking (1 energy)\n\`${settings.prefix}cancel\` to stop searching`); // eslint-disable-line no-undef
+        const { allowCapture, description } = this.formCatchDescription(userPokeBalls, energy, settings);
+
+        msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** ${description}`); // eslint-disable-line no-undef
+
+        if (!allowCapture) return;
+
+        let { threwBall, usedBall } = await this.waitForCatchResponse(message, userPokeBalls, escapedPrefix);
+
+        if (!threwBall) return;
+
+        await connection.query('BEGIN');
+        const consumed = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, usedBall.item_id, 1);
+
+        if (!consumed) {
+          await connection.query('ROLLBACK');
+          return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
         }
 
-        let catchDesc;
-        if (userPokeBalls.length > 1) {
-          const otherDesc = userPokeBalls.slice(1).map(x => `\`${settings.prefix}catch ${x.name}\` to use your ${x.name},`).join('\n');
-          catchDesc = `${otherDesc}\nor type just \`${settings.prefix}catch\` to use your ${userPokeBalls[0].name}.\n`;
-        } else {
-          catchDesc = `Type \`${settings.prefix}catch\` to use your ${userPokeBalls[0].name}.`;
+        let successChance = usedBall.potential / 100;
+        let catchRoll = Math.random();
+
+        if (catchRoll < successChance) {
+          await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
+          await connection.query('COMMIT');
+          return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
         }
-
-        msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching`); // eslint-disable-line no-undef
-
-        const transform = s => s.toLowerCase().replace(/ /g, '');
-        const pokeBallNames = userPokeBalls.map(x => transform(x.name)).concat(['']);
         
-        const re = new RegExp(`^${escapedPrefix}(catch|cancel|search)(.*)$`);
-        const filter = m => (m.author.id === message.author.id && re.test(m.content) && pokeBallNames.includes(transform(re.exec(m.content)[2])));
+        // user didn't capture the blob, time to see if we're giving them a second chance
+        await connection.query('COMMIT'); // first destroy their first ball
 
-        let response;
-        try {
-          response = re.exec((await message.channel.awaitMessages(filter, { max: 1, time: 60000, errors: ['time'] })).first().content);
-        } catch (e) {
-          return;
-        }
+        const retryRoll = Math.random();
+        if (retryRoll < (2 / 3)) {
+          // user gets another chance... this time.
 
-        if (response[1] === 'catch') {
-          const ballUsed = transform(response[2]) === '' ? userPokeBalls[0] : userPokeBalls[pokeBallNames.indexOf(transform(response[2]))];
+          // update our knowledge of their pokeballs
+          userPokeBalls = (await this.client.db.getUserInventory(connection, message.guild.id, message.author.id)).filter(x => x.mode === 1 && x.amount > 0).sort((x, y) => x.potential - y.potential);
 
+          const { allowCapture: aC2, description: desc2 } = this.formCatchDescription(userPokeBalls, energy, settings);
+
+          message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
+
+          if (!aC2) return;
+
+          const { threwBall: tB2, usedBall: uB2 } = await this.waitForCatchResponse(message, userPokeBalls, escapedPrefix);
+
+          if (!tB2) return;
+
+          // we reassign here so that the failure text below uses the right ball
+          threwBall = tB2, usedBall = uB2;
+
+          // start new transaction for handling second ball
           await connection.query('BEGIN');
-          const consumed = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, ballUsed.item_id, 1);
-          if (!consumed) {
+          const consumed2 = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, usedBall.item_id, 1);
+
+          if (!consumed2) {
             await connection.query('ROLLBACK');
-            return message.channel.send(`You try to use your ${ballUsed.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
-          } else {
-            const successChance = ballUsed.potential / 100;
-            const catchRoll = Math.random();
-            if (catchRoll < successChance) {
-              await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
-              await connection.query('COMMIT');
-              return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${ballUsed.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
-            } else {
-              await connection.query('COMMIT');
-              return message.channel.send(`You try to use your ${ballUsed.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free and runs away! You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy)`);
-            }
+            return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
           }
+
+          successChance = usedBall.potential / 100;
+          catchRoll = Math.random();
+
+          if (catchRoll < successChance) {
+            await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
+            await connection.query('COMMIT');
+            return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
+          }
+
+          // unlucky, commit to destroy the second ball
+          await connection.query('COMMIT');
         }
+
+        return message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free and runs away! You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy)`);
       }
       else if (roll >= blobChance && roll < blobChance + moneyChance) {
         const money = Math.ceil(Math.random()*10);
