@@ -17,7 +17,7 @@
   "author": "OGNovuh",
   "dependencies": {
     "chalk": "^2.3.0",
-    "discord.js": "github:hydrabolt/discord.js",
+    "discord.js": "discordjs/discord.js",
     "enmap": "^0.4.2",
     "enmap-level": "^1.0.0",
     "inquirer": "^4.0.2",
