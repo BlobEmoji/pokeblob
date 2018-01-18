@@ -212,6 +212,7 @@ class DatabaseBackend {
       FROM blobs
       INNER JOIN blobdefs ON blobs.blob_id = blobdefs.unique_id
       WHERE user_id = $1::BIGINT
+      ORDER BY blobdefs.rarity DESC
     `, [member.unique_id]);
     return res.rows;
   }
