@@ -18,7 +18,7 @@ class Update extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
-    const { stdout, stderr, err } = await exec('git pull origin feature/Energy');
+    const { stdout, stderr, err } = await exec('git pull');
     if (err) return console.error(err);
     const out = [];
     if (stdout) out.push(stdout);
