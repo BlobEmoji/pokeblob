@@ -14,8 +14,12 @@ class User extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
+    const allArgs = args.join(' ').trim();
     const firstMention = message.mentions.users.first();
-    const target = (firstMention) ? firstMention : message.author;
+    let parseID;
+    if (!isNaN(allArgs)) parseID = message.guild.member(allArgs);
+    const target = (firstMention) ? firstMention : (parseID) ? parseID.user : message.author;
+
     const connection = await this.client.db.acquire();
     let userData, inventory, blobData, effectData;
     try {
