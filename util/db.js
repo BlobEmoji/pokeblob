@@ -208,11 +208,16 @@ class DatabaseBackend {
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
       SELECT blobs.unique_id, blobs.blob_id, blobs.caught, blobs.amount,
-      blobdefs.emoji_id, blobdefs.emoji_name
+      blobdefs.emoji_id, blobdefs.emoji_name,
+      blobrarity.rarity_scalar
       FROM blobs
       INNER JOIN blobdefs ON blobs.blob_id = blobdefs.unique_id
+      INNER JOIN blobrarity ON blobdefs.rarity = blobrarity.id
       WHERE user_id = $1::BIGINT
-      ORDER BY blobdefs.rarity DESC
+      ORDER BY
+      blobrarity.rarity_scalar DESC,
+      blobs.amount DESC,
+      blobdefs.emoji_name ASC
     `, [member.unique_id]);
     return res.rows;
   }
