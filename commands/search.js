@@ -52,6 +52,14 @@ class Search extends Command {
     }
   }
 
+  calculateCatchChance(pokeBall, blob) {
+    const b = pokeBall.potential;
+    const r = blob.rarity_scalar;
+
+    // magic do not touch
+    return Math.max(Math.min((5.8 * 10**-5) * r**2 + (-0.01) * r + (4.8 * 10**-5) * b**2 + (0.004) * b + (0.5), 1), 0);
+  }
+
   async run(message, args, level) { // eslint-disable-line no-unused-vars
     const settings = message.settings;
     const connection = await this.client.db.acquire();
@@ -107,7 +115,7 @@ class Search extends Command {
           return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
         }
 
-        let successChance = usedBall.potential / 100;
+        let successChance = this.calculateCatchChance(usedBall, blob);
         let catchRoll = Math.random();
 
         if (catchRoll < successChance) {
@@ -151,7 +159,7 @@ class Search extends Command {
             return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
           }
 
-          successChance = usedBall.potential / 100;
+          successChance = this.calculateCatchChance(usedBall, blob);
           catchRoll = Math.random();
 
           if (catchRoll < successChance) {
