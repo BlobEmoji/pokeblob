@@ -12,6 +12,7 @@ class Search extends Command {
       botPerms: ['SEND_MESSAGES'],
       permLevel: 'User'
     });
+    this.activeSearches = new Map();
   }
 
   formCatchDescription(pokeBalls, energy, settings) {
@@ -61,6 +62,11 @@ class Search extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
+    if (this.activeSearches.has(message.author.id))
+      return;
+
+    this.activeSearches.set(message.author.id);
+    
     const settings = message.settings;
     const connection = await this.client.db.acquire();
     const escapedPrefix = settings.prefix.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -84,8 +90,8 @@ class Search extends Command {
       message.delete().catch(() => {});
       await this.client.wait(2500);    
 
-      const blobChance = lureActive ? 1/2 : 1/3;
-      const moneyChance = 1/3;            
+      const blobChance = lureActive ? 2/3 : 1/3;
+      const moneyChance = lureActive ? 3/12 : 1/3;
 
       const roll = Math.random();    
       if (roll < blobChance) {
@@ -98,9 +104,12 @@ class Search extends Command {
 
         const { allowCapture, description } = this.formCatchDescription(userPokeBalls, energy, settings);
 
-        msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** ${description}`); // eslint-disable-line no-undef
+        await msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** ${description}`); // eslint-disable-line no-undef
 
         if (!allowCapture) return;
+
+        // no longer lock starting a new search (as this is one of the options of this interaction)
+        this.activeSearches.delete(message.author.id);
 
         let { threwBall, usedBall } = await this.waitForCatchResponse(message, userPokeBalls, escapedPrefix);
 
@@ -179,12 +188,13 @@ class Search extends Command {
       else if (roll >= blobChance && roll < blobChance + moneyChance) {
         const money = Math.ceil(Math.random()*10);
         await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, money);
-        msg.edit(`_${message.author} ${searchText}..._ ${money} 💰**!** You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` continue looking (1 energy).`); // eslint-disable-line no-undef
+        msg.edit(`_${message.author} ${searchText}..._ ${money} <:blobcoin:398579309276823562>**!** You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` continue looking (1 energy).`); // eslint-disable-line no-undef
       }
       else {
         msg.edit(`_${message.author} ${searchText}..._ nothing**!** You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy).`); // eslint-disable-line no-undef
       }
     } finally {
+      this.activeSearches.delete(message.author.id);
       connection.release();
     }
   }

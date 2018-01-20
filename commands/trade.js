@@ -1,5 +1,5 @@
 const Command = require('../base/Command.js');
-const { MessageEmbed } = require('discord.js');
+const { Collection, MessageEmbed } = require('discord.js');
 
 class Trade extends Command {
   constructor(client) {
@@ -54,11 +54,11 @@ class Trade extends Command {
         return message.channel.send('That person hasn\'t had enough blob-catching experience to trade with you yet.');
 
       const state = {
-        offerItems: new Map(),
-        offerBlobs: new Map(),
+        offerItems: new Collection(),
+        offerBlobs: new Collection(),
         offerCoins: 0,
-        requestItems: new Map(),
-        requestBlobs: new Map(),
+        requestItems: new Collection(),
+        requestBlobs: new Collection(),
         requestCoins: 0,
         finished: false,
         continue: false,
@@ -131,11 +131,11 @@ class Trade extends Command {
     if (state.requestCoins !== 0)
       requestsList.push(`**${state.requestCoins}** <:blobcoin:398579309276823562>`);
 
-    offersList = offersList.concat(Array.from(state.offerBlobs.values()).filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
-    requestsList = requestsList.concat(Array.from(state.requestBlobs.values()).filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
+    offersList = offersList.concat(state.offerBlobs.filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
+    requestsList = requestsList.concat(state.requestBlobs.filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
 
-    offersList = offersList.concat(Array.from(state.offerItems.values()).filter(x => x.amount > 0).map(x => `${x.amount}x ${x.definition.name}`));
-    requestsList = requestsList.concat(Array.from(state.requestItems.values()).filter(x => x.amount > 0).map(x => `${x.amount}x ${x.definition.name}`));
+    offersList = offersList.concat(state.offerItems.filter(x => x.amount > 0).map(x => `${x.amount}x ${x.definition.name}`));
+    requestsList = requestsList.concat(state.requestItems.filter(x => x.amount > 0).map(x => `${x.amount}x ${x.definition.name}`));
 
     const offerFormatting = (offersList.length > 0) ? offersList.join(', ') : 'Nothing';
     const requestFormatting = (requestsList.length > 0) ? requestsList.join(', ') : 'Nothing';

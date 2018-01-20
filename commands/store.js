@@ -7,7 +7,7 @@ class Store extends Command {
       description: 'Display All Store Items',
       category: 'Pokéblob',
       usage: 'store <buy|sell|view>',
-      aliases: []
+      aliases: ['shop']
     });
   }
 
