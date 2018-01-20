@@ -4,9 +4,9 @@
 #
 version: 2
 jobs:
-  "build and run 8.9.1":
+  "build and run 8.9.4":
     docker:
-      - image: circleci/node:8.9.1-stretch
+      - image: circleci/node:8.9.4-stretch
       - image: circleci/postgres:latest
         environment:
           POSTGRES_USER: example_user
@@ -42,7 +42,7 @@ jobs:
       
       - run:
           name: wait for postgres..
-          command: sleep 2
+          command: sleep 4
 
       - run:
           name: apply schema
@@ -99,7 +99,7 @@ jobs:
       
       - run:
           name: wait for postgres..
-          command: sleep 2
+          command: sleep 4
 
       - run:
           name: apply schema
@@ -149,6 +149,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - "build and run 8.9.1"
+      - "build and run 8.9.4"
       - "build and run 9.3.0"
       - "eslint"
