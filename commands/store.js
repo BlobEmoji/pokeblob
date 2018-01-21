@@ -25,6 +25,7 @@ class Store extends Command {
     const args = rawargs.slice(1);
 
     switch (trigger) {
+      case ('purchase'):
       case ('buy'): {
         const { name, amount } = this.detectAmount(args);
 
@@ -105,7 +106,7 @@ class Store extends Command {
         break;
       }
 
-      case ('view'): {
+      default: {
         const connection = await this.client.db.acquire();
         let storeItems, userData;
         try {
@@ -116,11 +117,7 @@ class Store extends Command {
         }
         if (storeItems.length === 0) return message.channel.send('Nothing is for sale');
         const map = storeItems.map(item => `**${item.name}**: ${item.value} <:blobcoin:398579309276823562> | ${item.description}`).join('\n');
-        return message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n${map}`);
-      }
-
-      default: {
-        return message.reply(`|\`❌\`| ${this.help.usage}`);
+        return message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n\nUse \`${message.settings.prefix}store buy <item> <amount>\` to buy items.\n\`${message.settings.prefix}store sell <item> <amount>\` lets you sell items in your inventory.\n\n${map}`);
       }
     }
   }
