@@ -4,9 +4,9 @@
 #
 version: 2
 jobs:
-  "build and run 8.9.4":
+  "build and run 8.9":
     docker:
-      - image: circleci/node:8.9.4-stretch
+      - image: circleci/node:8.9-stretch
       - image: circleci/postgres:latest
         environment:
           POSTGRES_USER: example_user
@@ -60,9 +60,9 @@ jobs:
           environment:
             POKEBLOB_TEST_ONLY: true
   
-  "build and run 9.3.0":
+  "build and run 9.4":
     docker:
-      - image: circleci/node:9.3.0-stretch
+      - image: circleci/node:9.4-stretch
 
       - image: circleci/postgres:latest
         environment:
@@ -120,7 +120,7 @@ jobs:
 
   "eslint":
     docker:
-      - image: circleci/node:9.2.1-stretch
+      - image: circleci/node:9.4-stretch
 
     working_directory: ~/repo
 
@@ -149,6 +149,6 @@ workflows:
   version: 2
   build:
     jobs:
-      - "build and run 8.9.4"
-      - "build and run 9.3.0"
+      - "build and run 8.9"
+      - "build and run 9.4"
       - "eslint"
