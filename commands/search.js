@@ -22,10 +22,10 @@ class Search extends Command {
 
     let catchDesc;
     if (pokeBalls.length > 1) {
-      const otherDesc = pokeBalls.slice(1).map(x => `\`${settings.prefix}catch ${x.name}\` to use your ${x.name},`).join('\n');
-      catchDesc = `${otherDesc}\nor type just \`${settings.prefix}catch\` to use your ${pokeBalls[0].name}.\n`;
+      const otherDesc = pokeBalls.slice(1).map(x => `\`${settings.prefix}catch ${x.name}\` to use your ${x.name} (${x.amount} remaining),`).join('\n');
+      catchDesc = `${otherDesc}\nor type just \`${settings.prefix}catch\` to use your ${pokeBalls[0].name} (${pokeBalls[0].amount} remaining).\n`;
     } else {
-      catchDesc = `Type \`${settings.prefix}catch\` to use your ${pokeBalls[0].name}.`;
+      catchDesc = `Type \`${settings.prefix}catch\` to use your ${pokeBalls[0].name} (${pokeBalls[0].amount} remaining).`;
     }
 
     return { allowCapture: true, description: `You have ${energy-1} energy remaining.\n${catchDesc}\n\`${settings.prefix}search\` to let this blob run away and continue looking (1 energy)\n\`${settings.prefix}cancel\` to let the blob run away and stop searching` };
@@ -83,10 +83,9 @@ class Search extends Command {
 
       await this.client.db.bumpSearchCount(connection, message.guild.id, message.author.id);
       const activeEffects = await this.client.db.consumeUserEffects(connection, message.guild.id, message.author.id, 1);
-      const effectIDs = activeEffects.map(x => x.effect_id);
-      const lureActive = effectIDs.includes(1);
+      const lureActive = activeEffects.filter(x => x.effect_id === 1)[0];
 
-      const searchText = lureActive ? 'walks through the tall grass with their Blob Lure and finds' : 'searches through the tall grass and finds';
+      const searchText = lureActive ? `walks through the tall grass with their Blob Lure (${lureActive.life} remaining) and finds` : 'searches through the tall grass and finds';
       let msg = await message.channel.send(`_${message.author} ${searchText}..._`);
       message.delete().catch(() => {});
       await this.client.wait(2500);    
