@@ -359,7 +359,7 @@ class DatabaseBackend {
         [200, [[4, 3]]]
       ];
 
-      const blobCaughtAmount = (await this.getUserBlobs(client, guildID, memberID)).map(x => x.caught).length;
+      const blobCaughtAmount = (await this.getUserBlobs(client, guildID, memberID)).filter(x => x.caught).length;
       for (const blobTier of blobItemLookup) {
         if (blobCaughtAmount >= blobTier[0] && member.unique_blob_milestone < blobTier[0]) {
           await client.query(`
