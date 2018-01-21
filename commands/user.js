@@ -6,7 +6,7 @@ class User extends Command {
     super(client, {
       name: 'user',
       description: 'Display info on a user.',
-      category: 'Moderation',
+      category: 'Pokéblob',
       usage: 'user <id>',
       guildOnly: true,
       botPerms: ['EMBED_LINKS', 'SEND_MESSAGES'],
