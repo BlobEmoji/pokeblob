@@ -37,7 +37,15 @@ CREATE TABLE IF NOT EXISTS users (
     -- total currency a user has acquired in their lifetime (non-deductable)
     accumulated_currency INT DEFAULT 0,
 
-    search_count INT DEFAULT 0
+    -- amount of searches a user has done in their lifetime (non-deductable)
+    search_count INT DEFAULT 0,
+
+
+    -- milestone stuff, this covers the 'steps' of a milestone a user has already received rewards for
+    unique_blob_milestone INT DEFAULT 0,
+    search_count_milestone INT DEFAULT 0,
+    accumulated_currency_milestone INT DEFAULT 0,
+    currency_milestone INT DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS itemmodes (

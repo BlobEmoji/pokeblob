@@ -36,7 +36,7 @@ class DatabaseBackend {
         ELSE users.energy
         END,
       last_used_energy = day_timestamp()
-      RETURNING id, unique_id, guild, energy, last_used_energy, xmax != 0 as updated
+      RETURNING *, xmax != 0 as updated
     `, [memberID, guildID]);
     if (res.rows[0] && !res.rows[0].updated) await this.supplyBasicInventory(client, guildID, memberID);
     return res.rows[0];
@@ -65,6 +65,17 @@ class DatabaseBackend {
       WHERE unique_id = $2::BIGINT
       RETURNING id, guild, energy, last_used_energy
     `, [amount, member.unique_id]);
+    return res.rows[0];
+  }
+
+  async bumpSearchCount(client, guildID, memberID) {
+    const member = await this.ensureMember(client, guildID, memberID);
+    const res = await client.query(`
+      UPDATE users
+      SET search_count = search_count + 1
+      WHERE unique_id = $1::BIGINT
+      RETURNING id, guild, search_count
+    `, [member.unique_id]);
     return res.rows[0];
   }
 
@@ -287,6 +298,129 @@ class DatabaseBackend {
     // returns the discord IDs of those who pass this check
     // if the length is equal to 2, both users passed
     return res.rows.map(x => x.user_id);
+  }
+
+  async updateMilestonesBackground(destination, guildID, memberID) {
+    const client = await this.acquire();
+    try {
+      const member = await this.ensureMember(client, guildID, memberID);
+
+      await client.query('BEGIN');
+
+      const milestones = [];
+
+      // coins over lifetime, this one is easy to calculate
+      for (const coinAmount of [5, 10, 20, 30, 40, 50]) {
+        const threshold = coinAmount * 10;
+        if (member.accumulated_currency >= threshold && member.accumulated_currency_milestone < threshold) {
+          await client.query(`
+            UPDATE users
+            SET currency = users.currency + $1,
+            accumulated_currency = users.accumulated_currency + $1,
+            accumulated_currency_milestone = $1 * 10
+            WHERE unique_id = $2::BIGINT
+            RETURNING *
+          `, [coinAmount, member.unique_id]);
+          milestones.push(`You've found ${threshold} Coins over your lifetime! You've earned ${coinAmount} as a bonus!`);
+        }
+      }
+
+      // coins in pocket
+      for (const coinAmount of [5, 10, 20, 30, 40]) {
+        const threshold = coinAmount * 5;
+        if (member.currency >= threshold && member.currency_milestone < threshold) {
+          await client.query(`
+            UPDATE users
+            SET currency = users.currency + $1,
+            accumulated_currency = users.accumulated_currency + $1,
+            currency_milestone = $1 * 5
+            WHERE unique_id = $2::BIGINT
+            RETURNING *
+          `, [coinAmount, member.unique_id]);
+          milestones.push(`You have ${threshold} Coins in your pocket! You've earned ${coinAmount} as a bonus for saving up!`);
+        }
+      }
+
+      const itemDefLookup = await this.getStoreItems(client);
+
+      // unique blobs
+      // this is the lookup to determine tiers and items given
+      // works like: [<blob amount>, [[<item 1 id>, <item 1 amount>], [<item 2 id>, <item 2 amount>]]]
+      const blobItemLookup = [
+        [1, [[1, 3]]],
+        [10, [[2, 1], [5, 1]]],
+        [25, [[2, 2]]],
+        [50, [[2, 3]]],
+        [75, [[3, 1]]],
+        [100, [[3, 2]]],
+        [125, [[3, 3]]],
+        [150, [[4, 1]]],
+        [175, [[4, 2]]],
+        [200, [[4, 3]]]
+      ];
+
+      const blobCaughtAmount = (await this.getUserBlobs(client, guildID, memberID)).map(x => x.caught).length;
+      for (const blobTier of blobItemLookup) {
+        if (blobCaughtAmount >= blobTier[0] && member.unique_blob_milestone < blobTier[0]) {
+          await client.query(`
+            UPDATE users
+            SET unique_blob_milestone = $1
+            WHERE unique_id = $2::BIGINT
+            RETURNING *
+          `, [blobTier[0], member.unique_id]);
+          const itemList = [];
+          for (const itemSet of blobTier[1]) {
+            await this.giveUserItem(client, guildID, memberID, itemSet[0], itemSet[1]);
+            const itemDef = itemDefLookup.filter(x => x.id === itemSet[0])[0];
+            itemList.push(`${itemSet[1]}x ${itemDef.name}`);
+          }
+          const itemFormatting = itemList.join(', ');
+          milestones.push(`Great job, you've owned ${blobTier[0]} unique blob(s)! As a reward, you've been given ${itemFormatting}.`);
+        }
+      }
+
+      // search milestones
+      const searchItemLookup = [
+        [50, [[5, 1]]],
+        [100, [[5, 2]]],
+        [150, [[6, 1]]],
+        [200, [[6, 2]]],
+        [250, [[7, 1]]],
+        [300, [[7, 2]]]
+      ];
+
+      for (const searchTier of searchItemLookup) {
+        if (member.search_count >= searchTier[0] && member.search_count_milestone < searchTier[0]) {
+          await client.query(`
+            UPDATE users
+            SET search_count_milestone = $1
+            WHERE unique_id = $2::BIGINT
+            RETURNING *
+          `, [searchTier[0], member.unique_id]);
+          const itemList = [];
+          for (const itemSet of searchTier[1]) {
+            await this.giveUserItem(client, guildID, memberID, itemSet[0], itemSet[1]);
+            const itemDef = itemDefLookup.filter(x => x.id === itemSet[0])[0];
+            itemList.push(`${itemSet[1]}x ${itemDef.name}`);
+          }
+          const itemFormatting = itemList.join(', ');
+          milestones.push(`You've been searching a lot! As a reward for completing ${searchTier[0]} searches, you've been given ${itemFormatting}. Go out and search more!`);
+        }
+      }
+
+      if (milestones.length > 0) {
+        const milestoneFormatting = milestones.map(x => `- ${x}`).join('\n');
+        const finalMessage = `<@${memberID}>, you've earned some milestones:\n${milestoneFormatting}`;
+        
+        await client.query('COMMIT');
+        await destination.send(finalMessage, { split: true });
+      } else {
+        // no point even committing
+        await client.query('ROLLBACK');
+      }
+    } finally {
+      client.release();
+    }
   }
 }
 
