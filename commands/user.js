@@ -8,8 +8,9 @@ class User extends Command {
       description: 'Display info on a user.',
       category: 'Moderation',
       usage: 'user <id>',
+      guildOnly: true,
       botPerms: ['EMBED_LINKS', 'SEND_MESSAGES'],
-      permLevel: 'Council'
+      permLevel: 'User'
     });
   }
 

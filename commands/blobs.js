@@ -9,7 +9,7 @@ class Blobs extends Command {
       category: 'Pokéblob',
       usage: 'blobs',
       guildOnly: true,
-      botPerms: ['SEND_MESSAGES'],
+      botPerms: ['EMBED_LINKS', 'SEND_MESSAGES'],
       permLevel: 'User'
     });
   }
