@@ -8,12 +8,9 @@ let baseConfig = fs.readFileSync('./util/setup_base.js', 'utf8');
 const defaultSettings = `{
   "prefix": "-",
   "modLogChannel": "mod-log",
-  "traineeRole": "Council Trainee",
   "councilRole": "Blob Council",
   "policeRole": "Blob Police",
-  "systemNotice": true,
-  "minPoints": 5,
-  "maxPoints": 1000
+  "systemNotice": true
 }`;
 
 const settings = new Enmap({provider: new EnmapLevel({name: 'settings'})});
