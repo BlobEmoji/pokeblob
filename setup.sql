@@ -203,7 +203,7 @@ COPY itemdefs (id, name, value, potential, mode, description, confirm_use_messag
 4	Master Ball	80	95	1	The gold standard, catches blobs almost every time.	.
 5	Spikey Fruit	15	5	2	Regenerates 5 energy	regenerating 5 energy.
 6	Pudding	40	15	2	Regenerates 15 energy	regenerating 15 energy.
-7	Sugar Cube	70	30	2	Regenerates 30 energy	regenerating 15 energy.
+7	Sugar Cube	70	30	2	Regenerates 30 energy	regenerating 30 energy.
 8	Blob Lure	30	10	3	Increases the chance of finding a blob to 66% for the next 10 searches	their next 10 search attempts will have an increased chance of finding a blob!
 \.
 
