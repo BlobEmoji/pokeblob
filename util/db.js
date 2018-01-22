@@ -309,9 +309,12 @@ class DatabaseBackend {
 
       const milestones = [];
 
+      const lifetimeLookup = [[50, 5], [100, 10], [200, 20], [300, 30], [500, 40], [750, 50], [1000, 60], [1500, 70], [2000, 80], [2500, 90], [3000, 100]];
+
       // coins over lifetime, this one is easy to calculate
-      for (const coinAmount of [5, 10, 20, 30, 40, 50]) {
-        const threshold = coinAmount * 10;
+      for (const coinSet of lifetimeLookup) {
+        const coinAmount = coinSet[1];
+        const threshold = coinSet[0];
         if (member.accumulated_currency >= threshold && member.accumulated_currency_milestone < threshold) {
           await client.query(`
             UPDATE users
@@ -325,9 +328,12 @@ class DatabaseBackend {
         }
       }
 
+      const pocketLookup = [[25, 5], [50, 10], [100, 20], [150, 30], [200, 40], [300, 50], [400, 60], [500, 70]];
+
       // coins in pocket
-      for (const coinAmount of [5, 10, 20, 30, 40]) {
-        const threshold = coinAmount * 5;
+      for (const coinSet of pocketLookup) {
+        const coinAmount = coinSet[1];
+        const threshold = coinSet[0];
         if (member.currency >= threshold && member.currency_milestone < threshold) {
           await client.query(`
             UPDATE users
@@ -384,9 +390,12 @@ class DatabaseBackend {
         [50, [[5, 1]]],
         [100, [[5, 2]]],
         [150, [[6, 1]]],
-        [200, [[6, 2]]],
-        [250, [[7, 1]]],
-        [300, [[7, 2]]]
+        [300, [[6, 2]]],
+        [500, [[7, 1]]],
+        [750, [[7, 2]]],
+        [1000, [[7, 3]]],
+        [1500, [[7, 4]]],
+        [2000, [[7, 5]]]
       ];
 
       for (const searchTier of searchItemLookup) {
