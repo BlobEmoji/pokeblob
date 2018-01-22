@@ -59,6 +59,46 @@ class Blobs extends Command {
         return message.channel.send({ embed });
       }
 
+      case ('common'): {
+        const commonBlobs = blobsOnHand.filter(x => x.rarity === 4);
+        for (let index = 0; index < commonBlobs.length; index += 15) {
+          const chunk = commonBlobs.slice(index, index+15);
+          embed.addField(`Common (${index + 1}-${Math.min(commonBlobs.length, index + 15)})`, this.trimFormat(chunk), false);
+        }
+
+        return message.channel.send({ embed });
+      }
+
+      case ('uncommon'): {
+        const uncommonBlobs = blobsOnHand.filter(x => x.rarity === 3);
+        for (let index = 0; index < uncommonBlobs.length; index += 15) {
+          const chunk = uncommonBlobs.slice(index, index+15);
+          embed.addField(`Uncommon (${index + 1}-${Math.min(uncommonBlobs.length, index + 15)})`, this.trimFormat(chunk), false);
+        }
+
+        return message.channel.send({ embed });
+      }
+
+      case ('rare'): {
+        const rareBlobs = blobsOnHand.filter(x => x.rarity === 2);
+        for (let index = 0; index < rareBlobs.length; index += 15) {
+          const chunk = rareBlobs.slice(index, index+15);
+          embed.addField(`Rare (${index + 1}-${Math.min(rareBlobs.length, index + 15)})`, this.trimFormat(chunk), false);
+        }
+
+        return message.channel.send({ embed });
+      }
+
+      case ('legendary'): {
+        const legendaryBlobs = blobsOnHand.filter(x => x.rarity === 1);
+        for (let index = 0; index < legendaryBlobs.length; index += 15) {
+          const chunk = legendaryBlobs.slice(index, index+15);
+          embed.addField(`Legendary (${index + 1}-${Math.min(legendaryBlobs.length, index + 15)})`, this.trimFormat(chunk), false);
+        }
+
+        return message.channel.send({ embed });
+      }
+
       default: {
         if (blobsOnHand.length > 0)
           embed.addField(`Blobs owned on hand (${blobsOnHand.length})`, this.trimFormat(blobsOnHand), false);
