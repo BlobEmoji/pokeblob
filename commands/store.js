@@ -42,7 +42,7 @@ class Store extends Command {
 
           if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
 
-          const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${amount}x ${storeItem.name} for <:blobcoin:398579309276823562> ${storeItem.value * amount}? (yes/no)\n"${storeItem.description}"`, undefined, null);
+          const response = await this.client.awaitReply(message, `Are you sure you want to purchase ${amount}x ${storeItem.name} for <:blobcoin:386630453224013824> ${storeItem.value * amount}? (yes/no)\n"${storeItem.description}"`, undefined, null);
           if (['y', 'yes'].includes(response.toLowerCase())) {
           
             await connection.query('BEGIN');
@@ -83,7 +83,7 @@ class Store extends Command {
 
           if (!storeItem) return message.channel.send('I\'m not sure what that item is, did you spell it correctly?');
 
-          const response = await this.client.awaitReply(message, `Are you sure you want to sell ${amount}x ${storeItem.name} for <:blobcoin:398579309276823562> ${returnPrice * amount}? (yes/no)`, undefined, null);
+          const response = await this.client.awaitReply(message, `Are you sure you want to sell ${amount}x ${storeItem.name} for <:blobcoin:386630453224013824> ${returnPrice * amount}? (yes/no)`, undefined, null);
           if (['y', 'yes'].includes(response.toLowerCase())) {
           
             await connection.query('BEGIN');
@@ -116,8 +116,8 @@ class Store extends Command {
           connection.release();
         }
         if (storeItems.length === 0) return message.channel.send('Nothing is for sale');
-        const map = storeItems.map(item => `**${item.name}**: ${item.value} <:blobcoin:398579309276823562> | ${item.description}`).join('\n');
-        return message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:398579309276823562>\n\nUse \`${message.settings.prefix}store buy <item> <amount>\` to buy items.\n\`${message.settings.prefix}store sell <item> <amount>\` lets you sell items in your inventory.\n\n${map}`);
+        const map = storeItems.map(item => `**${item.name}**: ${item.value} <:blobcoin:386630453224013824> | ${item.description}`).join('\n');
+        return message.channel.send(`Welcome to the PokéBlob shop! You currently have ${userData.currency} <:blobcoin:386630453224013824>\n\nUse \`${message.settings.prefix}store buy <item> <amount>\` to buy items.\n\`${message.settings.prefix}store sell <item> <amount>\` lets you sell items in your inventory.\n\n${map}`);
       }
     }
   }

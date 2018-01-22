@@ -129,9 +129,9 @@ class Trade extends Command {
     let requestsList = [];
 
     if (state.offerCoins !== 0)
-      offersList.push(`**${state.offerCoins}** <:blobcoin:398579309276823562>`);
+      offersList.push(`**${state.offerCoins}** <:blobcoin:386630453224013824>`);
     if (state.requestCoins !== 0)
-      requestsList.push(`**${state.requestCoins}** <:blobcoin:398579309276823562>`);
+      requestsList.push(`**${state.requestCoins}** <:blobcoin:386630453224013824>`);
 
     offersList = offersList.concat(state.offerBlobs.filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
     requestsList = requestsList.concat(state.requestBlobs.filter(x => x.amount > 0).map(x => `${x.amount}x <:${x.definition.emoji_name}:${x.definition.emoji_id}>`));
