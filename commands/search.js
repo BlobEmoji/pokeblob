@@ -66,7 +66,7 @@ class Search extends Command {
       return;
 
     this.activeSearches.set(message.author.id);
-    
+
     const settings = message.settings;
     const connection = await this.client.db.acquire();
     const escapedPrefix = settings.prefix.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
@@ -87,13 +87,15 @@ class Search extends Command {
 
       const searchText = lureActive ? `walks through the tall grass with their Blob Lure (${lureActive.life} remaining) and finds` : 'searches through the tall grass and finds';
       let msg = await message.channel.send(`_${message.author} ${searchText}..._`);
-      message.delete().catch(() => {});
-      await this.client.wait(2500);    
+
+      await this.client.wait(2500);
+
+      message.delete({ timeout: 5000 }).catch(() => {});
 
       const blobChance = lureActive ? 2/3 : 1/3;
       const moneyChance = lureActive ? 3/12 : 1/3;
 
-      const roll = Math.random();    
+      const roll = Math.random();
       if (roll < blobChance) {
         const blob = await this.client.db.getRandomWeightedBlob(connection);
         await this.client.db.acknowledgeBlob(connection, message.guild.id, message.author.id, blob.unique_id);
@@ -120,7 +122,7 @@ class Search extends Command {
 
         if (!consumed) {
           await connection.query('ROLLBACK');
-          msg.delete();
+          msg.delete({ timeout: 5000 });
           return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
         }
 
@@ -130,10 +132,10 @@ class Search extends Command {
         if (catchRoll < successChance) {
           await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
           await connection.query('COMMIT');
-          msg.delete();
+          msg.delete({ timeout: 5000 });
           return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
         }
-        
+
         // user didn't capture the blob, time to see if we're giving them a second chance
         await connection.query('COMMIT'); // first destroy their first ball
 
@@ -146,7 +148,7 @@ class Search extends Command {
 
           const { allowCapture: aC2, description: desc2 } = this.formCatchDescription(userPokeBalls, energy, settings);
 
-          msg.delete();
+          msg.delete({ timeout: 5000 });
           msg = await message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
 
           if (!aC2) return;
@@ -164,7 +166,7 @@ class Search extends Command {
 
           if (!consumed2) {
             await connection.query('ROLLBACK');
-            msg.delete();
+            msg.delete({ timeout: 5000 });
             return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
           }
 
@@ -174,7 +176,7 @@ class Search extends Command {
           if (catchRoll < successChance) {
             await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
             await connection.query('COMMIT');
-            msg.delete();
+            msg.delete({ timeout: 5000 });
             return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
           }
 
@@ -182,7 +184,7 @@ class Search extends Command {
           await connection.query('COMMIT');
         }
 
-        msg.delete();
+        msg.delete({ timeout: 5000 });
         return message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free and runs away! You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy)`);
       }
       else if (roll >= blobChance && roll < blobChance + moneyChance) {
