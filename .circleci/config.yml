@@ -55,7 +55,7 @@ jobs:
       # run tests!
       - run:
           name: faux start bot
-          command: npm start
+          command: bash .docker/startloop.sh
           no_output_timeout: 20s
           environment:
             POKEBLOB_TEST_ONLY: true
@@ -113,7 +113,7 @@ jobs:
       # run tests!
       - run:
           name: faux start bot
-          command: npm start
+          command: bash .docker/startloop.sh
           no_output_timeout: 20s
           environment:
             POKEBLOB_TEST_ONLY: true
