@@ -2,8 +2,9 @@ PokéBlob
 =========
 
 .. |d.js| image:: https://img.shields.io/badge/Discord.js-12.0-blue.svg
+   :target: https://discord.js.org/
 
-.. |node| image:: https://img.shields.io/badge/Node-8.9.4-brightgreen.svg?label=Node
+.. |node| image:: https://img.shields.io/badge/Node-9.4.0-brightgreen.svg?label=Node
    :target: https://nodejs.org/en/download/
 
 .. |circleci| image:: https://img.shields.io/circleci/project/github/BlobEmoji/pokeblob.svg?label=CircleCI
@@ -18,7 +19,7 @@ PokéBlob
 |d.js| |node| |circleci| |issues| |commits|
 
 PokéBlob is the bot created by the Google Emoji team for the 1 year server anniversary.
-It requires Node >=8 and the `Discord.js <https://www.npmjs.com/package/discord.js>`__ library.
+It requires Node >=9.4 and the `Discord.js <https://www.npmjs.com/package/discord.js>`__ library.
 
 It is not recommended to run an instance of this bot yourself. The code is here primarily for reference and bug fixing.
 
