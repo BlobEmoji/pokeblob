@@ -75,7 +75,7 @@ class Search extends Command {
       const { energy } = await this.client.db.getUserData(connection, message.guild.id, message.author.id);
 
       if (energy <= 0) {
-        await message.channel.send('Not enough energy...');
+        await message.channel.send(`${message.author} Not enough energy...`);
         return;
       }
 
