@@ -18,7 +18,7 @@ PokéBlob
 
 |d.js| |node| |circleci| |issues| |commits|
 
-PokéBlob is the bot created by the Google Emoji team for the 1 year server anniversary.
+PokéBlob is the bot created by the Blob Emoji team for the 1 year server anniversary.
 It requires Node >=9.4 and the `Discord.js <https://www.npmjs.com/package/discord.js>`__ library.
 
 It is not recommended to run an instance of this bot yourself. The code is here primarily for reference and bug fixing.
