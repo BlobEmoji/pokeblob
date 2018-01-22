@@ -123,7 +123,7 @@ class Search extends Command {
         if (!consumed) {
           await connection.query('ROLLBACK');
           msg.delete({ timeout: 5000 });
-          return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
+          return message.channel.send(`${message.author} You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
         }
 
         let successChance = this.calculateCatchChance(usedBall, blob);
@@ -133,7 +133,7 @@ class Search extends Command {
           await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
           await connection.query('COMMIT');
           msg.delete({ timeout: 5000 });
-          return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
+          return message.channel.send(`${message.author} You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
         }
 
         // user didn't capture the blob, time to see if we're giving them a second chance
@@ -149,7 +149,7 @@ class Search extends Command {
           const { allowCapture: aC2, description: desc2 } = this.formCatchDescription(userPokeBalls, energy, settings);
 
           msg.delete({ timeout: 5000 });
-          msg = await message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
+          msg = await message.channel.send(`${message.author} You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
 
           if (!aC2) return;
 
@@ -167,7 +167,7 @@ class Search extends Command {
           if (!consumed2) {
             await connection.query('ROLLBACK');
             msg.delete({ timeout: 5000 });
-            return message.channel.send(`You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
+            return message.channel.send(`${message.author} You try to use your ${usedBall.name}, but for some reason it's disappeared from you. Did you use it elsewhere?`);
           }
 
           successChance = this.calculateCatchChance(usedBall, blob);
@@ -177,7 +177,7 @@ class Search extends Command {
             await this.client.db.giveUserBlob(connection, message.guild.id, message.author.id, blob.unique_id, 1);
             await connection.query('COMMIT');
             msg.delete({ timeout: 5000 });
-            return message.channel.send(`You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
+            return message.channel.send(`${message.author} You captured the **${blob.rarity_name}** <:${blob.emoji_name}:${blob.emoji_id}> with your ${usedBall.name}!\n\`${settings.prefix}search\` to look for more (1 energy)`);
           }
 
           // unlucky, commit to destroy the second ball
@@ -185,7 +185,7 @@ class Search extends Command {
         }
 
         msg.delete({ timeout: 5000 });
-        return message.channel.send(`You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free and runs away! You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy)`);
+        return message.channel.send(`${message.author} You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free and runs away! You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy)`);
       }
       else if (roll >= blobChance && roll < blobChance + moneyChance) {
         const money = Math.ceil(Math.random()*10);
