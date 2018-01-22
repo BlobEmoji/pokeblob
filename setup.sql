@@ -104,6 +104,7 @@ COPY blobdefs (unique_id, emoji_id, emoji_name, rarity) FROM stdin;
 95	396521732233494528	blobtonguewink	4
 96	396521731428319233	blobtongue	4
 97	396521731629645834	blobtired	4
+98	396521401852624907	blobunsure	4
 99	396521731185180684	blobsmirk	4
 100	396521731633709067	blobsmiley	4
 101	396521731679977482	blobsmilesweat2	4
@@ -186,6 +187,7 @@ COPY blobdefs (unique_id, emoji_id, emoji_name, rarity) FROM stdin;
 178	396521401672269825	blobbandage	4
 179	396521401672007681	blobawkward	4
 180	396521401403703297	blobamused	4
+181	403752429809565703	blobfingerguns	4
 \.
 
 COPY itemmodes (id) FROM stdin;
