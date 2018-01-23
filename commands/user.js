@@ -8,6 +8,7 @@ class User extends Command {
       description: 'Display info on a user.',
       category: 'Pokéblob',
       usage: 'user <id>',
+      aliases: ['inv', 'inventory'],
       guildOnly: true,
       botPerms: ['EMBED_LINKS', 'SEND_MESSAGES'],
       permLevel: 'User'
