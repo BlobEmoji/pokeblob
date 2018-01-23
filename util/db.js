@@ -320,10 +320,10 @@ class DatabaseBackend {
             UPDATE users
             SET currency = users.currency + $1,
             accumulated_currency = users.accumulated_currency + $1,
-            accumulated_currency_milestone = $1 * 10
-            WHERE unique_id = $2::BIGINT
+            accumulated_currency_milestone = $2
+            WHERE unique_id = $3::BIGINT
             RETURNING *
-          `, [coinAmount, member.unique_id]);
+          `, [coinAmount, threshold, member.unique_id]);
           milestones.push(`You've found ${threshold} Coins over your lifetime! You've earned ${coinAmount} as a bonus!`);
         }
       }
@@ -339,10 +339,10 @@ class DatabaseBackend {
             UPDATE users
             SET currency = users.currency + $1,
             accumulated_currency = users.accumulated_currency + $1,
-            currency_milestone = $1 * 5
-            WHERE unique_id = $2::BIGINT
+            currency_milestone = $2
+            WHERE unique_id = $3::BIGINT
             RETURNING *
-          `, [coinAmount, member.unique_id]);
+          `, [coinAmount, threshold, member.unique_id]);
           milestones.push(`You have ${threshold} Coins in your pocket! You've earned ${coinAmount} as a bonus for saving up!`);
         }
       }
