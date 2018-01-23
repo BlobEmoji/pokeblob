@@ -281,13 +281,13 @@ class Trade extends Command {
       if (state.offerCoins) {
         if (!(await this.client.db.takeUserCurrency(connection, message.guild.id, message.author.id, state.offerCoins)))
           return `${message.author} does not have ${state.offerCoins} coin(s).`;
-        await this.client.db.giveUserCurrency(connection, message.guild.id, correspondent.user.id, state.offerCoins);
+        await this.client.db.giveUserUntrackedCurrency(connection, message.guild.id, correspondent.user.id, state.offerCoins);
       }
 
       if (state.requestCoins) {
         if (!(await this.client.db.takeUserCurrency(connection, message.guild.id, correspondent.user.id, state.requestCoins)))
           return `${correspondent.user} does not have ${state.requestCoins} coin(s).`;
-        await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, state.requestCoins);
+        await this.client.db.giveUserUntrackedCurrency(connection, message.guild.id, message.author.id, state.requestCoins);
       }
 
       // items

@@ -117,6 +117,17 @@ class DatabaseBackend {
     return res.rows[0];
   }
 
+  async giveUserUntrackedCurrency(client, guildID, memberID, amount) {
+    const member = await this.ensureMember(client, guildID, memberID);
+    const res = await client.query(`
+      UPDATE users
+      SET currency = users.currency + $1
+      WHERE unique_id = $2::BIGINT
+      RETURNING id, guild, currency, accumulated_currency
+    `, [amount, member.unique_id]);
+    return res.rows[0];
+  }
+
   async takeUserCurrency(client, guildID, memberID, amount) {
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
