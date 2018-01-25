@@ -40,7 +40,7 @@ class Search extends Command {
 
     let response;
     try {
-      response = re.exec((await message.channel.awaitMessages(filter, { max: 1, time: 60000, errors: ['time'] })).first().content);
+      response = re.exec((await message.channel.awaitMessages(filter, { max: 1, time: 120000, errors: ['time'] })).first().content);
     } catch (e) {
       return { threwBall: false, usedBall: null };
     }
@@ -117,6 +117,9 @@ class Search extends Command {
 
         if (!threwBall) return;
 
+        // the user didn't cancel or search-by; re-engage lock
+        this.activeSearches.set(message.author.id);
+
         await connection.query('BEGIN');
         const consumed = await this.client.db.removeUserItem(connection, message.guild.id, message.author.id, usedBall.item_id, 1);
 
@@ -152,6 +155,9 @@ class Search extends Command {
           msg = await message.channel.send(`${message.author} You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
 
           if (!aC2) return;
+
+          // release lock again for second catch
+          this.activeSearches.delete(message.author.id);
 
           const { threwBall: tB2, usedBall: uB2 } = await this.waitForCatchResponse(message, userPokeBalls, escapedPrefix);
 
