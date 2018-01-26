@@ -195,8 +195,8 @@ class Search extends Command {
       }
       else if (roll >= blobChance && roll < blobChance + moneyChance) {
         const money = Math.ceil(Math.random()*10);
-        await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, money);
-        msg.edit(`_${message.author} ${searchText}..._ ${money} <:blobcoin:386630453224013824>**!** You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` continue looking (1 energy).`); // eslint-disable-line no-undef
+        const updatedUser = await this.client.db.giveUserCurrency(connection, message.guild.id, message.author.id, money);
+        msg.edit(`_${message.author} ${searchText}..._ ${money} <:blobcoin:386630453224013824>**!** You now have a total of ${updatedUser.currency} <:blobcoin:386630453224013824> with ${energy-1} energy remaining.\n\`${settings.prefix}search\` continue looking (1 energy).`); // eslint-disable-line no-undef
       }
       else {
         msg.edit(`_${message.author} ${searchText}..._ nothing**!** You have ${energy-1} energy remaining.\n\`${settings.prefix}search\` to continue looking (1 energy).`); // eslint-disable-line no-undef
