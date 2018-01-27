@@ -57,17 +57,6 @@ class DatabaseBackend {
     return res.rows[0];
   }
 
-  async updateMemberEnergy(client, guildID, memberID, amount) {
-    const member = await this.ensureMember(client, guildID, memberID);
-    const res = await client.query(`
-      UPDATE users
-      SET energy = $1
-      WHERE unique_id = $2::BIGINT
-      RETURNING id, guild, energy, last_used_energy
-    `, [amount, member.unique_id]);
-    return res.rows[0];
-  }
-
   async bumpSearchCount(client, guildID, memberID) {
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
@@ -206,14 +195,6 @@ class DatabaseBackend {
     return res.rows;
   }
 
-  async getUserData(client, guildID, memberID) {
-    const member = await this.ensureMember(client, guildID, memberID);
-    const res = await client.query(`
-      SELECT * FROM users WHERE unique_id = $1::BIGINT
-    `, [member.unique_id]);
-    return res.rows[0];
-  }
-
   async getUserInventory(client, guildID, memberID) {
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
@@ -292,23 +273,6 @@ class DatabaseBackend {
       LIMIT 1
     `);
     return res.rows[0];
-  }
-
-  async checkHasBlobs(client, guildID, senderID, senderBlobID, receiverID, receiverBlobID) {
-    const sender = await this.ensureMember(client, guildID, senderID);
-    const receiver = await this.ensureMember(client, guildID, receiverID);
-    const res = await client.query(`
-      SELECT users.id AS user_id FROM blobs
-      INNER JOIN users ON blobs.user_id = users.unique_id
-      WHERE
-      ((blobs.blob_id = $2::BIGINT AND blobs.user_id = $1::BIGINT) OR
-      (blobs.blob_id = $4::BIGINT AND blobs.user_id = $3::BIGINT)) AND
-      blobs.amount > 0
-    `, [sender.unique_id, senderBlobID, receiver.unique_id, receiverBlobID]);
-
-    // returns the discord IDs of those who pass this check
-    // if the length is equal to 2, both users passed
-    return res.rows.map(x => x.user_id);
   }
 
   async updateMilestonesBackground(destination, guildID, memberID) {

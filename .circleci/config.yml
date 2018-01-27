@@ -21,19 +21,22 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-9-{{ checksum "package.json" }}
+          - v1-dependencies-9-{{ checksum "package.json" }}-mocha
 
       - run:
-          name: install bot
-          command: npm install
-          no_output_timeout: 45s
+          name: install dependencies
+          command: |
+            npm install mocha
+            npm install nyc
+            npm install
+          no_output_timeout: 60s
           environment:
             POKEBLOB_TEST_ONLY: true
 
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-9-{{ checksum "package.json" }}
+          key: v1-dependencies-9-{{ checksum "package.json" }}-mocha
 
       - run:
           name: install psql
@@ -59,6 +62,14 @@ jobs:
           name: faux start bot
           command: bash .docker/startloop.sh
           no_output_timeout: 20s
+          environment:
+            POKEBLOB_TEST_ONLY: true
+
+      - run:
+          name: do mocha tests
+          command: |
+            ./node_modules/.bin/nyc ./node_modules/.bin/mocha --delay
+          no_output_timeout: 120s
           environment:
             POKEBLOB_TEST_ONLY: true
 

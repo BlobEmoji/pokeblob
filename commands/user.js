@@ -25,7 +25,7 @@ class User extends Command {
     const connection = await this.client.db.acquire();
     let userData, inventory, blobData, effectData;
     try {
-      userData = await this.client.db.getUserData(connection, message.guild.id, target.id);
+      userData = await this.client.db.ensureMember(connection, message.guild.id, target.id);
       inventory = await this.client.db.getUserInventory(connection, message.guild.id, target.id);
       blobData = await this.client.db.getUserBlobs(connection, message.guild.id, target.id);
       effectData = await this.client.db.getUserEffects(connection, message.guild.id, target.id);

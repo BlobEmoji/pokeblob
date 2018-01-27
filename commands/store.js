@@ -111,7 +111,7 @@ class Store extends Command {
         let storeItems, userData;
         try {
           storeItems = await this.client.db.getStoreItems(connection);
-          userData = await this.client.db.getUserData(connection, message.guild.id, message.author.id);
+          userData = await this.client.db.ensureMember(connection, message.guild.id, message.author.id);
         } finally {
           connection.release();
         }

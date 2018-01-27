@@ -72,7 +72,7 @@ class Search extends Command {
     const escapedPrefix = settings.prefix.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
 
     try {
-      const { energy } = await this.client.db.getUserData(connection, message.guild.id, message.author.id);
+      const { energy } = await this.client.db.ensureMember(connection, message.guild.id, message.author.id);
 
       if (energy <= 0) {
         await message.channel.send(`${message.author} Not enough energy...`);

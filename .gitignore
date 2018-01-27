@@ -4,3 +4,10 @@
 
 # Specific Files
 config.js
+
+# IDEs
+.vscode
+.code
+
+# Testing
+_mocha
