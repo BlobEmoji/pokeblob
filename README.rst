@@ -77,7 +77,7 @@ If you get an error saying the bot cannot find a package, you simply need to run
 
    npm install <package name>
    
-Licence
+License
 --------
 PokéBlob is released under the `MIT License`_. See the `NOTICE`_ file for additional details.
 
