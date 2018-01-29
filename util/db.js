@@ -132,12 +132,15 @@ class DatabaseBackend {
 
   async acknowledgeBlob(client, guildID, memberID, blobID) {
     const member = await this.ensureMember(client, guildID, memberID);
-    await client.query(`
+    const res = await client.query(`
       INSERT INTO blobs (blob_id, user_id)
       VALUES ($1::BIGINT, $2::BIGINT)
       ON CONFLICT (blob_id, user_id)
-      DO NOTHING
+      DO UPDATE SET
+      blob_id = $1::BIGINT  -- meaningless, but required
+      RETURNING unique_id, blob_id, user_id, amount, caught
     `, [blobID, member.unique_id]);
+    return res.rows[0];
   }
 
   async giveUserBlob(client, guildID, memberID, blobID, amount) {

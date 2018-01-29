@@ -98,7 +98,7 @@ class Search extends Command {
       const roll = Math.random();
       if (roll < blobChance) {
         const blob = await this.client.db.getRandomWeightedBlob(connection);
-        await this.client.db.acknowledgeBlob(connection, message.guild.id, message.author.id, blob.unique_id);
+        const hasBlob = (await this.client.db.acknowledgeBlob(connection, message.guild.id, message.author.id, blob.unique_id)).amount > 0;
 
         // Pokeballs are filtered from the user's inventory, and sorted least effective first.
         // By default, the least effective ball is always used.
@@ -106,7 +106,7 @@ class Search extends Command {
 
         const { allowCapture, description } = this.formCatchDescription(userPokeBalls, energy, settings);
 
-        await msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!** ${description}`); // eslint-disable-line no-undef
+        await msg.edit(`_${message.author} ${searchText}..._ ${blob.rarity_name.charAt(0) === 'u' ? 'an' : 'a'} ${blob.rarity_name} <:${blob.emoji_name}:${blob.emoji_id}> (${blob.emoji_name})**!**${hasBlob ? ' *(already owned)*' : ''} ${description}`); // eslint-disable-line no-undef
 
         if (!allowCapture) return;
 
@@ -152,7 +152,7 @@ class Search extends Command {
           const { allowCapture: aC2, description: desc2 } = this.formCatchDescription(userPokeBalls, energy, settings);
 
           msg.delete({ timeout: 5000 });
-          msg = await message.channel.send(`${message.author} You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}> breaks free. ${desc2}`);
+          msg = await message.channel.send(`${message.author} You try to use your ${usedBall.name}, but the <:${blob.emoji_name}:${blob.emoji_id}>${hasBlob ? ' *(already owned)*' : ''} breaks free. ${desc2}`);
 
           if (!aC2) return;
 
