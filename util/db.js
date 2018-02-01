@@ -131,6 +131,7 @@ class DatabaseBackend {
   }
 
   async acknowledgeBlob(client, guildID, memberID, blobID) {
+    // TODO: reimplement/replace
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
       INSERT INTO blobs (blob_id, user_id)
@@ -144,6 +145,7 @@ class DatabaseBackend {
   }
 
   async giveUserBlob(client, guildID, memberID, blobID, amount) {
+    // TODO: reimplement
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
       INSERT INTO blobs (blob_id, user_id, caught, amount)
@@ -158,6 +160,7 @@ class DatabaseBackend {
   }
 
   async takeUserBlob(client, guildID, memberID, blobID, amount) {
+    // TODO: reimplement/remove
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
       UPDATE blobs SET
@@ -211,6 +214,7 @@ class DatabaseBackend {
   }
 
   async getUserBlobs(client, guildID, memberID) {
+    // TODO: reimplement
     const member = await this.ensureMember(client, guildID, memberID);
     const res = await client.query(`
       SELECT blobs.unique_id, blobs.blob_id, blobs.caught, blobs.amount,
@@ -267,6 +271,7 @@ class DatabaseBackend {
   }
 
   async getRandomWeightedBlob(client) {
+    // TODO: reimplement
     const res = await client.query(`
       SELECT blobdefs.unique_id, blobdefs.emoji_id, blobdefs.emoji_name,
       blobrarity.name AS rarity_name, blobrarity.rarity_scalar
@@ -328,6 +333,8 @@ class DatabaseBackend {
 
       const itemDefLookup = await this.getStoreItems(client);
 
+      // TODO: reimplement
+      
       // unique blobs
       // this is the lookup to determine tiers and items given
       // works like: [<blob amount>, [[<item 1 id>, <item 1 amount>], [<item 2 id>, <item 2 amount>]]]

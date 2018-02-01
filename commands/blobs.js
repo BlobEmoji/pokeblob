@@ -15,6 +15,7 @@ class Blobs extends Command {
   }
 
   async run(message, [mode, memberID], level) { // eslint-disable-line no-unused-vars
+    // TODO: reimplement
     const firstMention = message.mentions.users.first();
     let parseID;
     if (!isNaN(memberID)) parseID = message.guild.member(memberID);

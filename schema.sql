@@ -32,7 +32,17 @@ CREATE TABLE IF NOT EXISTS users (
     last_used_energy SMALLINT DEFAULT day_timestamp(),
 
     -- how much money the user has at the present time
-    currency INT DEFAULT 0,
+    currency INT CONSTRAINT currency_check CHECK (currency >= 0) DEFAULT 0,
+
+    -- how much experience the user currently has
+    experience BIGINT CONSTRAINT experience_check CHECK (experience >= 0) DEFAULT 0,
+
+    -- user state
+    --  bit 0 is whether the user is roaming or not
+    --  bit 1 is whether the user is engaged or not (in encounter, trade, gym, duel, etc)
+    --  bit 2 is whether the user is battling or not (gym/duel)
+    --  bit 3+ are reserved
+    "state" BIT(16) DEFAULT B'0000000000000000',
 
     -- total currency a user has acquired in their lifetime (non-deductable)
     accumulated_currency INT DEFAULT 0,
@@ -116,7 +126,7 @@ CREATE TABLE IF NOT EXISTS blobrarity (
 CREATE TABLE IF NOT EXISTS blobdefs (
     -- unique ID is a single number used to identify this blob.
     -- this way if the emoji ID changes we won't break everything
-    unique_id BIGSERIAL PRIMARY KEY,
+    id BIGSERIAL PRIMARY KEY,
 
     -- the ID of the emoji in discord
     emoji_id BIGINT,
@@ -128,20 +138,60 @@ CREATE TABLE IF NOT EXISTS blobdefs (
     rarity INT NOT NULL REFERENCES blobrarity ON DELETE RESTRICT
 );
 
+CREATE TABLE IF NOT EXISTS blobnames (
+    id BIGSERIAL PRIMARY KEY,
+
+    -- the actual name
+    "name" VARCHAR(32)
+);
+
 CREATE TABLE IF NOT EXISTS blobs (
 
     unique_id BIGSERIAL PRIMARY KEY,
 
+    -- unique name for this blob, used to distinguish from other blobs of the same type.
+    name_id BIGINT NOT NULL REFERENCES blobnames ON DELETE RESTRICT,
+
     blob_id BIGINT NOT NULL REFERENCES blobdefs ON DELETE RESTRICT,
 
-    user_id BIGINT NOT NULL REFERENCES users ON DELETE RESTRICT,
+    -- if user_id is NULL, this blob is currently roaming.
+    user_id BIGINT REFERENCES users ON DELETE RESTRICT,
 
-    UNIQUE (blob_id, user_id),
+    -- max HP of this blob (HP when undamaged)
+    vitality INT CONSTRAINT vitality_check CHECK (vitality >= 1) DEFAULT 40,
 
-    -- whether this blob has been caught before
-    caught BOOLEAN DEFAULT false,
+    -- how much health this blob has. if this is 0, the blob has fainted.
+    health INT CONSTRAINT health_check CHECK (health >= 0 AND vitality >= health) DEFAULT 40,
 
-    amount INT CONSTRAINT amount_clamp CHECK (amount >= 0) DEFAULT 0
+    -- attack power of this blob
+    attack INT CONSTRAINT attack_check CHECK (attack >= 0) DEFAULT 5,
+
+    -- how much the attack stat deviates at any given time, higher values decrease attack power certainty
+    attack_dev INT CONSTRAINT attack_dev_check CHECK (attack_dev >= 0 AND attack >= attack_dev) DEFAULT 1,
+
+    -- defense power of this blob
+    defense INT CONSTRAINT defense_check CHECK (defense >= 0) DEFAULT 5,
+
+    -- how much the defense stat deviates at any given time, higher values decrease defense certainty
+    defense_dev INT CONSTRAINT defense_dev_check CHECK (defense_dev >= 0 AND defense >= defense_dev) DEFAULT 0,
+
+    -- 'special' power, used to determine effectiveness of env/stage moves
+    special INT CONSTRAINT special_check CHECK (special >= 0) DEFAULT 0,
+
+    -- how much the special stat deviates at any given time, higher values decrease effectiveness certainty
+    special_dev INT CONSTRAINT special_dev_check CHECK (special_dev >= 0 AND special >= special_dev) DEFAULT 0,
+
+    -- 'speed' of this blob, helps determine who goes first
+    speed INT CONSTRAINT speed_check CHECK (speed >= 0) DEFAULT 5,
+
+    -- how much the speed deviates at any given time, higher values decrease speed certainty
+    speed_dev INT CONSTRAINT speed_dev_check CHECK (speed_dev >= 0 AND speed >= speed_dev) DEFAULT 0,
+
+    -- when this blob was captured. NULL if still roaming.
+    capture_time TIMESTAMP,
+
+    -- time this was traded to a user last. NULL if never traded.
+    traded_time TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS effecttypes (

@@ -6,7 +6,7 @@ COPY blobrarity (id, name, rarity_scalar) FROM stdin;
 4	common	10
 \.
 
-COPY blobdefs (unique_id, emoji_id, emoji_name, rarity) FROM stdin;
+COPY blobdefs (id, emoji_id, emoji_name, rarity) FROM stdin;
 1	396521772842745857	wolfiriblob	1
 2	396521773115637810	b1nzyblob	1
 3	396521772905922562	b4nzyblob	1

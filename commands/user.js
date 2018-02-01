@@ -16,6 +16,7 @@ class User extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
+    // TODO: reimplement
     const allArgs = args.join(' ').trim();
     const firstMention = message.mentions.users.first();
     let parseID;

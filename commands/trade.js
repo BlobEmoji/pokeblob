@@ -17,6 +17,7 @@ class Trade extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
+    // TODO: reimplement
     if (this.activeTrades.has(message.author.id))
       return message.channel.send('Finish your active trade first, then we can talk.');
 

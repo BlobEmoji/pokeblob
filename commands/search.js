@@ -62,6 +62,7 @@ class Search extends Command {
   }
 
   async run(message, args, level) { // eslint-disable-line no-unused-vars
+    // TODO: reimplement
     if (this.activeSearches.has(message.author.id))
       return;
 
