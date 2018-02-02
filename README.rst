@@ -66,7 +66,14 @@ Running this setup.js file will prompt you for your token. Simply input it, and 
 
    docker-compose up
 
-This will build the bot. However, the bot will not launch, due to PostgreSQL being slow on the first launch. You just need to do `Ctrl + C` and run `docker-compose up` again.
+This will build and start the bot. If you need to rebuild the bot, just use:
+
+.. code-block:: sh
+
+   docker-compose down
+   docker-compose rm -f
+   docker-compose build --no-cache
+   docker-compose up
 
 Common Errors
 -------------
@@ -79,7 +86,6 @@ If you get an error saying the bot cannot find a package, you simply need to run
    
 License
 --------
-PokéBlob is released under the `MIT License`_. See the `NOTICE`_ file for additional details.
+PokéBlob is released under the `MIT License`_.
 
 .. _MIT License: https://github.com/BlobEmoji/pokeblob/blob/master/LICENSE
-.. _NOTICE: https://github.com/BlobEmoji/pokeblob/blob/master/NOTICE

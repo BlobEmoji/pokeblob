@@ -7,13 +7,5 @@ module.exports = Structures.extend('Message', DiscordMessage => {
       super(...args);
     }
 
-    async response(emoji = '❌', content, embed, options = {}) { // eslint-disable-line no-unused-vars
-      return this.channel.send(`${this.author} \`|${emoji}|\` ${content}`, embed);
-    }
-
-    buildEmbed() {
-      return this.channel.buildEmbed();
-    }
-
   };
 });

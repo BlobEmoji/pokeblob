@@ -5,11 +5,7 @@ module.exports = Structures.extend('Guild', DiscordGuild => {
 
     constructor(...args) {
       super(...args);
-      
     }
 
-    get store() {
-      return this.client.store.findAll('guildId', this.id);
-    }
   };
 });
