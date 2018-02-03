@@ -14,6 +14,10 @@ class Context {
     return this;
   }
 
+  log(...args) {
+    return this.client.logger.log(...args);
+  }
+
   get splitArgs() {
     return this.args.trim().split(/ +/g);
   }

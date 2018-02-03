@@ -8,6 +8,10 @@ db:
   password: ''
   port: 5432
 
+logging:
+  console: verbose
+  file: info
+
 admins:
   - '69198249432449024'  # FrostLuma#0001  /gh/FrostLuma
   - '203300837928206337'  # Xenthys#0001  /gh/Xenthys

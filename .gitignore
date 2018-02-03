@@ -2,6 +2,9 @@
 /data/
 /node_modules/
 
+# Logs
+*.log
+
 # Specific Files
 config.js
 config.yml

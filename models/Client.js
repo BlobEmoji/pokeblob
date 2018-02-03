@@ -1,6 +1,7 @@
 
 const Discord = require('discord.js');
 const klaw = require('klaw');
+const winston = require('winston');
 
 const Context = require('./Context.js');
 const Director = require('./database/Director.js');
@@ -14,6 +15,48 @@ class Client extends Discord.Client {
     this.commands = new Discord.Collection();
     this.lookup = new Discord.Collection();
     this.prefixes = options.prefixes ? options.prefixes : ['-'];
+
+    this.logger = winston.createLogger({
+      levels: {
+        error: 0,
+        warn: 1,
+        info: 2,
+        verbose: 3,
+        debug: 4,
+        silly: 5
+      },
+      transports: [
+        new winston.transports.Console({
+          level: options.logging.console,
+          format: winston.format.combine(
+            winston.format.timestamp({
+              format: 'ddd D HH:mm:ss'
+            }),
+            winston.format.colorize({
+              colors: {
+                error: 'red',
+                warn: 'yellow',
+                info: 'white',
+                verbose: 'grey',
+                debug: 'cyan',
+                silly: 'magenta'
+              }
+            }),
+            winston.format.printf((info) => `[${info.timestamp}] <${info.level}> ${info.message}`)
+          )
+        }),
+        new winston.transports.File({
+          filename: 'bot.log',
+          level: options.logging.file,
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.printf((info) => `[${info.timestamp}] <${info.level}> ${info.message}`)
+          )
+        })
+      ]
+    });
+
+    this.logger.log('info', 'bot instance created; logger engaged');
 
     this.on('message', this.processCommands);
   }
@@ -37,8 +80,13 @@ class Client extends Discord.Client {
     const context = await (new Context(this, message, match[1], match[3])).prepare();
 
     try {
-      if (await command.check(context))
+      if (await command.check(context)) {
+        this.logger.log('verbose', `${message.author.id} issued command: ${command.meta.name}`);
         await command.run(context);
+        this.logger.log('debug', `${message.author.id} finished running command: ${command.meta.name}`);
+      } else {
+        this.logger.log('debug', `${message.author.id} tried to run a command but failed the check: ${command.meta.name}`);
+      }
     } finally {
       await context.destroy();
     }
@@ -61,9 +109,13 @@ class Client extends Discord.Client {
     this.commands.set(command.meta.name, command);
     this.lookup.set(command.meta.name, command);
 
+    this.logger.log('info', `loaded command: ${command.meta.name}`);
+
     if (command.meta.aliases)
-      for (const alias of command.meta.aliases)
+      for (const alias of command.meta.aliases) {
         this.lookup.set(alias, command);
+        this.logger.log('verbose', `loaded alias: ${alias} => ${command.meta.name}`);
+      }
   }
 
   async loadCommandByPath(path) {
@@ -72,8 +124,10 @@ class Client extends Discord.Client {
 
   findLoadCommands() {
     klaw('./commands').on('data', filepath => {
-      if (filepath.path.slice(-11) === '/command.js')
+      if (filepath.path.slice(-11) === '/command.js') {
+        this.logger.log('debug', `loading walked command from path: ${filepath.path}`);
         this.loadCommandByPath(filepath.path);
+      }
     });
   }
 
