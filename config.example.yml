@@ -1,0 +1,29 @@
+
+token: MyT0k3N.G0eS.1nTHiSFi3Ld
+
+db:
+  user: 'postgres'
+  host: 'db'
+  database: ''
+  password: ''
+  port: 5432
+
+admins:
+  - '69198249432449024'  # FrostLuma#0001  /gh/FrostLuma
+  - '203300837928206337'  # Xenthys#0001  /gh/Xenthys
+  - '122122926760656896'  # devon#4089  /gh/Gorialis
+
+roles:
+  # hierarchy
+  maker: '300510738026463232'
+  artisan: '298993418577903616'
+  lite: '300509002520068097'
+  council: '294928463536586754'
+  police: '295476842935353345'
+  boss: '290295853124550657'
+  blobot: '292388383823495168'
+  # restrictions
+  notalk: '289494296703533058'
+  noupload: '315316327415808003'
+  noreact: '358105816852856833'
+  nosuggest: '312775821335199754'

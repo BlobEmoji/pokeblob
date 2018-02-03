@@ -4,6 +4,7 @@
 
 # Specific Files
 config.js
+config.yml
 
 # IDEs
 .vscode

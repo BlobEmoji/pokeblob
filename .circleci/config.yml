@@ -10,8 +10,8 @@ jobs:
 
       - image: circleci/postgres:latest
         environment:
-          POSTGRES_USER: example_user
-          POSTGRES_DB: example_database
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
           POSTGRES_PASSWORD: ""
 
     working_directory: ~/repo
@@ -51,11 +51,15 @@ jobs:
       - run:
           name: apply schema
           command: |
-            psql -d example_database -U example_user < schema.sql
-            psql -d example_database -U example_user < setup.sql
+            psql -U postgres < schema.sql
+            psql -U postgres < setup.sql
           environment:
             PGHOST: localhost
             PGPORT: 5432
+
+      - run:
+          name: copy config file
+          command: cp config.example.yml config.yml
         
       # run tests!
       - run:
