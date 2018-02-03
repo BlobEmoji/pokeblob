@@ -1,6 +1,7 @@
 
 const Discord = require('discord.js');
 const klaw = require('klaw');
+const util = require('util');
 const winston = require('winston');
 
 const Context = require('./Context.js');
@@ -11,10 +12,13 @@ class Client extends Discord.Client {
   constructor(options) {
     super(options);
 
+    // always remove the token so we don't expose it accidentally
+    this.config = Object.assign({}, options, { token: null });
     this.db = new Director(options.db);
+    this.prefixes = options.prefixes ? options.prefixes : ['-'];
+
     this.commands = new Discord.Collection();
     this.lookup = new Discord.Collection();
-    this.prefixes = options.prefixes ? options.prefixes : ['-'];
 
     this.logger = winston.createLogger({
       levels: {
@@ -65,7 +69,7 @@ class Client extends Discord.Client {
     // escape the prefixes so they're 'regex-safe'
     const escapedPrefixes = this.prefixes.map(x => x.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|');
     // return the regex that captures commands
-    return new RegExp(`^(${escapedPrefixes})([a-zA-Z](?:[a-zA-Z0-9]+)?) *(?: (.+))?$`);
+    return new RegExp(`^(${escapedPrefixes})([a-zA-Z](?:[a-zA-Z0-9]+)?) *(?: ([\\s\\S]+))?$`);
   }
 
   async processCommands(message) {
@@ -87,6 +91,10 @@ class Client extends Discord.Client {
       } else {
         this.logger.log('debug', `${message.author.id} tried to run a command but failed the check: ${command.meta.name}`);
       }
+    } catch (err) {
+      this.logger.log('error', `an unexpected error occurred while ${message.author.id} was executing command: ${command.meta.name}\n` +
+                               `(guild ${message.guild.id}, channel ${message.channel.id}, user ${message.author.id}, message ${message.id})\n` + 
+                               `${util.inspect(err)}`);
     } finally {
       await context.destroy();
     }
@@ -120,6 +128,16 @@ class Client extends Discord.Client {
 
   async loadCommandByPath(path) {
     await this.loadCommandObject(require(path));
+  }
+
+  clean(text) {
+    if (typeof text !== 'string')
+      text = util.inspect(text, { depth: 1 });
+    
+    const zwsp = String.fromCharCode(8203);
+    text = text.replace(/@|`/gi, x => `${x}${zwsp}`);
+
+    return text;
   }
 
   findLoadCommands() {
