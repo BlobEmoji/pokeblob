@@ -12,6 +12,7 @@ class Client extends Discord.Client {
 
     this.db = new Director(options.db);
     this.commands = new Discord.Collection();
+    this.lookup = new Discord.Collection();
     this.prefixes = options.prefixes ? options.prefixes : ['-'];
 
     this.on('message', this.processCommands);
@@ -29,7 +30,7 @@ class Client extends Discord.Client {
     if (!match)
       return;
 
-    const command = this.commands.get(match[2]);
+    const command = this.lookup.get(match[2]);
     if (!command)
       return;
     
@@ -51,8 +52,18 @@ class Client extends Discord.Client {
 
     if (this.commands.has(command.meta.name))
       throw new Error('command of name already registered');
+
+    if (command.meta.aliases)
+      if (command.meta.aliases.filter(x => this.lookup.has(x)).length !== 0)
+        throw new Error('command registers alias that is already in use');
     
+    // register the command
     this.commands.set(command.meta.name, command);
+    this.lookup.set(command.meta.name, command);
+
+    if (command.meta.aliases)
+      for (const alias of command.meta.aliases)
+        this.lookup.set(alias, command);
   }
 
   async loadCommandByPath(path) {

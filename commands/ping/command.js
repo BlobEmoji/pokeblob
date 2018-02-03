@@ -6,7 +6,8 @@ class Ping extends CommandBaseClass {
     super(...args);
 
     this.meta = {
-      name: 'ping'
+      name: 'ping',
+      aliases: ['rtt']
     };
   }
 
