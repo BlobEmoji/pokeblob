@@ -1,5 +1,6 @@
 
 const Discord = require('discord.js');
+const klaw = require('klaw');
 
 const Context = require('./Context.js');
 const Director = require('./database/Director.js');
@@ -12,6 +13,8 @@ class Client extends Discord.Client {
     this.db = new Director(options.db);
     this.commands = new Discord.Collection();
     this.prefixes = options.prefixes ? options.prefixes : ['-'];
+
+    this.on('message', this.processCommands);
   }
 
   get commandRegex() {
@@ -50,6 +53,17 @@ class Client extends Discord.Client {
       throw new Error('command of name already registered');
     
     this.commands.set(command.meta.name, command);
+  }
+
+  async loadCommandByPath(path) {
+    await this.loadCommandObject(require(path));
+  }
+
+  findLoadCommands() {
+    klaw('./commands').on('data', filepath => {
+      if (filepath.path.slice(-11) === '/command.js')
+        this.loadCommandByPath(filepath.path);
+    });
   }
 
   async destroy() {
