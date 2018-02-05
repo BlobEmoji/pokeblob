@@ -1,27 +1,102 @@
 
 CREATE TABLE IF NOT EXISTS guilds (
-    id BIGINT NOT NULL PRIMARY KEY
+    id BIGINT NOT NULL PRIMARY KEY,
+    "name" VARCHAR(100) NOT NULL
 );
 
-CREATE OR REPLACE FUNCTION day_timestamp() RETURNS INT AS
-$$ SELECT floor(extract(epoch from now()) / 86400)::INT $$
+CREATE TABLE IF NOT EXISTS users (
+    id BIGINT NOT NULL PRIMARY KEY,
+    "name" VARCHAR(32) NOT NULL,
+    discriminator SMALLINT NOT NULL,
+    bot BOOLEAN NOT NULL
+);
+
+CREATE OR REPLACE FUNCTION day_timestamp() RETURNS BIGINT AS
+$$ SELECT floor(extract(epoch from now()) / 86400)::BIGINT $$
 LANGUAGE SQL;
 
-CREATE TABLE IF NOT EXISTS users (
+CREATE OR REPLACE FUNCTION quarter_timestamp() RETURNS BIGINT AS
+$$ SELECT floor(extract(epoch from now()) / 900)::BIGINT $$
+LANGUAGE SQL;
+
+CREATE TYPE location_info AS (
+    -- value in range [4-32), from ((x + 1) % 28) + 4
+    -- rough approx to celsius, classifications are as such:
+    --  y <= 8 is cold
+    --  8 < y <= 14 is cool
+    --  14 < y <= 24 is moderate
+    --  24 < y <= 29 is warm
+    --  29 < y is hot
+    -- this value is never echoed to the player verbatum, only by description
+    loc_temperature INT,
+
+    -- value in range [20-100), from ((x + 2) % 80) + 20
+    -- if temperature < 29 and humidity potential is >80, it is currently raining.
+    -- this value is never echoed to the player verbatum, only by description
+    loc_humidity_potential INT,
+
+    -- value in range [0-39), from sqrt(1521 - ((x + 3) % 1521))
+    -- rough approx to mph, classifications are as such:
+    --  y <= 6 is calm
+    --  6 < y <= 14 is a light breeze
+    --  14 < y <= 22 is a moderate breeze
+    --  22 < y <= 32 is a strong breeze
+    --  32 < y is fast winds
+    -- this value is never echoed to the player verbatum, only by description
+    loc_wind_speed INT,
+
+    -- true or false, whether this area has a shop or not
+    -- calculated from ((x + 4) % 1414) < 565
+    loc_has_shop BOOLEAN,
+
+    -- true or false, whether this area has a pokeblob center or not
+    -- calculated from ((x + 5) % 2103) < 841
+    loc_has_center BOOLEAN,
+
+    -- true or false, whether this area has a gym or not
+    -- calculated from ((x + 6) % 47181) < 4718
+    loc_has_gym BOOLEAN,
+
+    -- value that determines what items appear in the store
+    loc_store_potential INT
+);
+
+CREATE OR REPLACE FUNCTION parse_location(IN BIGINT) RETURNS location_info AS
+$$
+SELECT
+((($1 + 1) % 28) + 4)::INT,
+((($1 + 2) % 80) + 20)::INT,
+SQRT(1521 - (($1 + 3) % 1521))::INT,
+((($1 + 4) % 1414) < 565)::BOOLEAN,
+((($1 + 5) % 2103) < 841)::BOOLEAN,
+((($1 + 6) % 47181) < 4718)::BOOLEAN,
+(($1 + 7) % 2147483646)::INT
+$$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION generate_location() RETURNS BIGINT AS
+$$ SELECT (RANDOM()*9223372036854775806)::BIGINT $$
+LANGUAGE SQL;
+
+CREATE OR REPLACE FUNCTION generate_center_location() RETURNS BIGINT AS
+$$ SELECT (((RANDOM()*4381649423683979)::BIGINT * 2103) + 6)::BIGINT $$
+LANGUAGE SQL;
+
+CREATE TABLE IF NOT EXISTS user_data (
     -- unique ID is a single number used to identify this member-guild id pair.
     -- it doesn't have any particular significance except for foreign keys from
     -- other tables.
     unique_id BIGSERIAL PRIMARY KEY,
 
-    -- this member's discord ID
-    id BIGINT NOT NULL,
+    -- this ID of the user this record corresponds to
+    "user" BIGINT NOT NULL REFERENCES users ON DELETE RESTRICT,
 
     -- the ID of the guild this record corresponds to
     guild BIGINT NOT NULL REFERENCES guilds ON DELETE RESTRICT,
 
     -- this causes conflicts on the same member but not on the same member
     -- in different guilds for testing reasons
-    UNIQUE (id, guild),
+    UNIQUE ("user", guild),
 
     -- energy the user has right now (or the last time it was relevant)
     -- bot will update this as it checks for user existence during interactions
@@ -29,7 +104,7 @@ CREATE TABLE IF NOT EXISTS users (
 
     -- defined as floor(extract(epoch from now()) / 86400)
     -- number defining how many days has passed since 1970-01-01 00:00 UTC
-    last_used_energy SMALLINT DEFAULT day_timestamp(),
+    last_used_energy BIGINT DEFAULT day_timestamp(),
 
     -- how much money the user has at the present time
     currency INT CONSTRAINT currency_check CHECK (currency >= 0) DEFAULT 0,
@@ -44,12 +119,18 @@ CREATE TABLE IF NOT EXISTS users (
     --  bit 3+ are reserved
     "state" BIT(16) DEFAULT B'0000000000000000',
 
+    -- user location
+    -- determines a bunch of factors, see location_info
+    "location" BIGINT DEFAULT generate_center_location(),
+
+    -- when the user last ack'd their location, when this updates, if the user is roaming, their location changes too.
+    last_moved_location BIGINT DEFAULT quarter_timestamp(),
+
     -- total currency a user has acquired in their lifetime (non-deductable)
     accumulated_currency INT DEFAULT 0,
 
     -- amount of searches a user has done in their lifetime (non-deductable)
     search_count INT DEFAULT 0,
-
 
     -- milestone stuff, this covers the 'steps' of a milestone a user has already received rewards for
     unique_blob_milestone INT DEFAULT 0,
@@ -85,7 +166,11 @@ CREATE TABLE IF NOT EXISTS itemdefs (
 
     "description" TEXT,
 
-    confirm_use_message TEXT
+    confirm_use_message TEXT,
+
+    appearance_modulus INT CONSTRAINT no_divide_zero CHECK (appearance_modulus > 0),
+
+    appearance_threshold INT CONSTRAINT no_dead_items CHECK (appearance_threshold > 0)
 );
 
 CREATE TABLE IF NOT EXISTS items (
@@ -98,7 +183,7 @@ CREATE TABLE IF NOT EXISTS items (
     item_id INT NOT NULL REFERENCES itemdefs ON DELETE RESTRICT,
 
     -- ID of the user this item belongs to
-    user_id BIGINT NOT NULL REFERENCES users ON DELETE RESTRICT,
+    user_id BIGINT NOT NULL REFERENCES user_data ON DELETE RESTRICT,
 
     UNIQUE (item_id, user_id),
 
@@ -155,7 +240,7 @@ CREATE TABLE IF NOT EXISTS blobs (
     blob_id BIGINT NOT NULL REFERENCES blobdefs ON DELETE RESTRICT,
 
     -- if user_id is NULL, this blob is currently roaming.
-    user_id BIGINT REFERENCES users ON DELETE RESTRICT,
+    user_id BIGINT REFERENCES user_data ON DELETE RESTRICT,
 
     -- max HP of this blob (HP when undamaged)
     vitality INT CONSTRAINT vitality_check CHECK (vitality >= 1) DEFAULT 40,
@@ -200,7 +285,7 @@ CREATE TABLE IF NOT EXISTS effecttypes (
 
 CREATE TABLE IF NOT EXISTS effectdefs (
 
-    unique_id SERIAL PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
 
     "name" TEXT,
 
@@ -216,7 +301,7 @@ CREATE TABLE IF NOT EXISTS effects (
 
     effect_id INT NOT NULL REFERENCES effectdefs ON DELETE RESTRICT,
 
-    user_id BIGINT NOT NULL REFERENCES users ON DELETE RESTRICT,
+    user_id BIGINT NOT NULL REFERENCES user_data ON DELETE RESTRICT,
 
     UNIQUE(effect_id, user_id),
 

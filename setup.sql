@@ -195,21 +195,26 @@ COPY itemmodes (id) FROM stdin;
 3
 \.
 
-COPY itemdefs (id, name, value, potential, mode, description, confirm_use_message) FROM stdin;
-1	Basic Ball	5	30	1	Basic blob capture device. Good for common blobs, struggles on rarer types.	.
-2	Great Ball	25	50	1	A step up from the Basic Ball, great on common blobs and decent on rare blobs.	.
-3	Ultra Ball	50	75	1	A more powerful Ball that offers a great chance for all blobs.	.
-4	Master Ball	80	95	1	The gold standard, catches blobs almost every time.	.
-5	Spikey Fruit	15	5	2	Regenerates 5 energy	regenerating 5 energy.
-6	Pudding	40	15	2	Regenerates 15 energy	regenerating 15 energy.
-7	Sugar Cube	70	30	2	Regenerates 30 energy	regenerating 30 energy.
-8	Blob Lure	30	10	3	Increases the chance of finding a blob to 66% for the next 10 searches	their next 10 search attempts will have an increased chance of finding a blob!
+COPY itemdefs (id, name, value, potential, mode, description, confirm_use_message, appearance_modulus, appearance_threshold) FROM stdin;
+1	Basic Ball	5	30	1	Basic blob capture device. Good for common blobs, struggles on rarer types.	.	1	1
+2	Great Ball	25	45	1	A step up from the Basic Ball, great on common blobs and decent on rare blobs.	.	66	60
+3	Ultra Ball	50	70	1	A more powerful Ball that offers a great chance for all blobs.	.	32	26
+4	Master Ball	80	95	1	The gold standard, catches blobs almost every time.	.	127	40
+5	Aqua Ball	30	40	1	A ball that performs twice as well in rainy conditions.	.	64	40
+6	Gale Ball	40	40	1	A ball that performs twice as well in strong winds.	.	65	39
+7	Calm Ball	40	35	1	A ball that performs twice as well when the air is calm.	.	80	38
+8	Desert Ball	35	35	1	A ball that performs twice as well in hot temperatures.	.	70	38
+9	Improbability Ball	120	120	1	Never fails.	.	452	2
+10	Spikey Fruit	15	5	2	Regenerates 5 energy	regenerating 5 energy.	258	220
+11	Pudding	40	15	2	Regenerates 15 energy	regenerating 15 energy.	259	200
+12	Sugar Cube	70	30	2	Regenerates 30 energy	regenerating 30 energy.	280	200
+13	Blob Lure	30	10	3	Increases the chance of finding a blob to 66% for the next 10 searches	their next 10 search attempts will have an increased chance of finding a blob!	67	38
 \.
 
 COPY effecttypes (id) FROM stdin;
 1
 \.
 
-COPY effectdefs (unique_id, name, potential, type) FROM stdin;
+COPY effectdefs (id, name, potential, type) FROM stdin;
 1	Blob Lure	0	1
 \.
