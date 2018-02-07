@@ -5,15 +5,16 @@ class ConnectionInterface extends ConnectionInterfaceBase {
   async memberData(member) {
     const resp = await this.query(`
     WITH guild_table AS (
-      INSERT INTO guilds (id, "name")
+      INSERT INTO guilds (id, "name", locale)
       VALUES (
         $1::BIGINT,
-        $2
+        $2,
+        'en'
       )
       ON CONFLICT (id)
       DO UPDATE SET
         "name" = $2
-      RETURNING guilds.id as guild_id
+      RETURNING guilds.id as guild_id, guilds.locale
     ), user_table AS (
       INSERT INTO users (id, "name", discriminator, bot)
       VALUES (
@@ -46,7 +47,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
         last_moved_location = quarter_timestamp()
       RETURNING *, xmax != 0 AS updated
     )
-    SELECT * FROM final_query, parse_location(final_query.location)
+    SELECT * FROM final_query, parse_location(final_query.location), guild_table
     `, [
       member.guild.id,
       member.guild.name,

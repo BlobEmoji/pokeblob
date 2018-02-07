@@ -1,9 +1,15 @@
 
+COPY locales (id) FROM stdin;
+en
+ja
+fr
+\.
+
 COPY blobrarity (id, name, rarity_scalar) FROM stdin;
-1	legendary	100
-2	rare	50
-3	uncommon	30
-4	common	10
+1	rarity.legendary	100
+2	rarity.rare	50
+3	rarity.uncommon	30
+4	rarity.common	10
 \.
 
 COPY blobdefs (id, emoji_id, emoji_name, rarity) FROM stdin;
@@ -196,19 +202,19 @@ COPY itemmodes (id) FROM stdin;
 \.
 
 COPY itemdefs (id, name, value, potential, mode, description, confirm_use_message, appearance_modulus, appearance_threshold) FROM stdin;
-1	Basic Ball	5	30	1	Basic blob capture device. Good for common blobs, struggles on rarer types.	.	1	1
-2	Great Ball	25	45	1	A step up from the Basic Ball, great on common blobs and decent on rare blobs.	.	66	60
-3	Ultra Ball	50	70	1	A more powerful Ball that offers a great chance for all blobs.	.	32	26
-4	Master Ball	80	95	1	The gold standard, catches blobs almost every time.	.	127	40
-5	Aqua Ball	30	40	1	A ball that performs twice as well in rainy conditions.	.	64	40
-6	Gale Ball	40	40	1	A ball that performs twice as well in strong winds.	.	65	39
-7	Calm Ball	40	35	1	A ball that performs twice as well when the air is calm.	.	80	38
-8	Desert Ball	35	35	1	A ball that performs twice as well in hot temperatures.	.	70	38
-9	Improbability Ball	120	120	1	Never fails.	.	452	2
-10	Spikey Fruit	15	5	2	Regenerates 5 energy	regenerating 5 energy.	258	220
-11	Pudding	40	15	2	Regenerates 15 energy	regenerating 15 energy.	259	200
-12	Sugar Cube	70	30	2	Regenerates 30 energy	regenerating 30 energy.	280	200
-13	Blob Lure	30	10	3	Increases the chance of finding a blob to 66% for the next 10 searches	their next 10 search attempts will have an increased chance of finding a blob!	67	38
+1	item.ball.basic.name	5	30	1	item.ball.basic.description	.	1	1
+2	item.ball.great.name	25	45	1	item.ball.great.description	.	66	60
+3	item.ball.ultra.name	50	70	1	item.ball.ultra.description	.	32	26
+4	item.ball.master.name	80	95	1	item.ball.master.description	.	127	40
+5	item.ball.aqua.name	30	40	1	item.ball.aqua.description	.	64	40
+6	item.ball.gale.name	40	40	1	item.ball.gale.description	.	65	39
+7	item.ball.calm.name	40	35	1	item.ball.calm.description	.	80	38
+8	item.ball.desert.name	35	35	1	item.ball.desert.description	.	70	38
+9	item.ball.improbability.name	120	120	1	item.ball.improbability.description	.	452	2
+10	item.regen.spikey_fruit	15	5	2	item.regen.description	item.regen.use_message	258	220
+11	item.regen.pudding	40	15	2	item.regen.description	item.regen.use_message	259	200
+12	item.regen.sugar_cube	70	30	2	item.regen.description	item.regen.use_message	280	200
+13	item.lure.blob.name	30	10	3	item.lure.blob.description	item.lure.blob.use_message	67	38
 \.
 
 COPY effecttypes (id) FROM stdin;
@@ -216,5 +222,5 @@ COPY effecttypes (id) FROM stdin;
 \.
 
 COPY effectdefs (id, name, potential, type) FROM stdin;
-1	Blob Lure	0	1
+1	effect.blob_lure.name	0	1
 \.

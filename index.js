@@ -20,6 +20,7 @@ fs.readFile('./config.yml', 'utf8', (err, data) => {
   });
 
   client.findLoadCommands();
+  client.findLoadLocales();
 
   if (!process.env.POKEBLOB_TEST_ONLY)
     client.login(config.token);

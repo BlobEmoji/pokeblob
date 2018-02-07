@@ -1,0 +1,149 @@
+
+meta:
+  # name of the bot. appears in embed footers, etc
+  # don't translate this, or do, i don't mind
+  pokeblobs: |
+    PokéBlobs
+
+  help:
+    no_category: |
+      No Category
+    command_header: |
+      Command List
+
+    categories:
+      admin: |
+        Administration
+      meta: |
+        Meta
+      pokeblobs: |
+        PokéBlobs
+
+    commands:
+      # help strings for various commands
+      help: |
+        Displays commands available to you.
+      meta: |
+        Displays info on the bot's current status.
+      eval: |
+        Executes arbitrary JS code.
+      ping: |
+        Calculates the bot connection round-trip time.
+
+      roam: |
+        Start roaming the world.
+      stay: |
+        Stop roaming the world.
+
+blobs:
+  # blob names are not included here because they're not gonna be translated
+  # even if they were i'd probably just leave them because it's too hectic lol
+  # so this section is basically just surrounding syntax
+
+  # how an amount of a blob should appear in screens; meta, trade, etc
+  plural: |
+    {AMOUNT, plural, =0{} other{#x }}{BLOB}
+  
+
+rarity:
+  # names of the rarity levels
+  legendary: |
+    legendary
+  rare: |
+    rare
+  uncommon: |
+    uncommon
+  common: |
+    common
+
+item:
+  # item related data
+  ball:
+    # ball items
+    basic:
+      name: |
+        {AMOUNT, select, mass{Basic Balls} singular{a Basic Ball} concept{Basic Ball} other{{AMOUNT, plural, =0{no Basic Balls} one{1 Basic Ball} other{# Basic Balls}}}}
+      description: |
+        Basic blob capture device. Good for common blobs, struggles on rarer types.
+
+    great:
+      name: |
+        {AMOUNT, select, mass{Great Balls} singular{a Great Ball} concept{Great Ball} other{{AMOUNT, plural, =0{no Great Balls} one{1 Great Ball} other{# Great Balls}}}}
+      description: |
+        A step up from the Basic Ball, great on common blobs and decent on rare blobs.
+
+    ultra:
+      name: |
+        {AMOUNT, select, mass{Ultra Balls} singular{an Ultra Ball} concept{Ultra Ball} other{{AMOUNT, plural, =0{no Ultra Balls} one{1 Ultra Ball} other{# Ultra Balls}}}}
+      description: |
+        A more powerful Ball that offers a great chance for all blobs.
+
+    master:
+      name: |
+        {AMOUNT, select, mass{Master Balls} singular{a Master Ball} concept{Master Ball} other{{AMOUNT, plural, =0{no Master Balls} one{1 Master Ball} other{# Master Balls}}}}
+      description: |
+        The gold standard, catches blobs almost every time.
+
+    aqua:
+      name: |
+        {AMOUNT, select, mass{Aqua Balls} singular{an Aqua Ball} concept{Aqua Ball} other{{AMOUNT, plural, =0{no Aqua Balls} one{1 Aqua Ball} other{# Aqua Balls}}}}
+      description: |
+        A ball that performs twice as well in rainy conditions.
+
+    gale:
+      name: |
+        {AMOUNT, select, mass{Gale Balls} singular{a Gale Ball} concept{Gale Ball} other{{AMOUNT, plural, =0{no Gale Balls} one{1 Gale Ball} other{# Gale Balls}}}}
+      description: |
+        A ball that performs twice as well in strong winds.
+
+    calm:
+      name: |
+        {AMOUNT, select, mass{Calm Balls} singular{a Calm Ball} concept{Calm Ball} other{{AMOUNT, plural, =0{no Calm Balls} one{1 Calm Ball} other{# Calm Balls}}}}
+      description: |
+        A ball that performs twice as well when the air is calm.
+
+    desert:
+      name: |
+        {AMOUNT, select, mass{Desert Balls} singular{a Desert Ball} concept{Desert Ball} other{{AMOUNT, plural, =0{no Desert Balls} one{1 Desert Ball} other{# Desert Balls}}}}
+      description: |
+        A ball that performs twice as well in hot temperatures.
+
+    improbability:
+      name: |
+        {AMOUNT, select, mass{Improbability Balls} singular{an Improbability Ball} concept{Improbability Ball} other{{AMOUNT, plural, =0{no Improbability Balls} one{1 Desert Ball} other{# Improbability Balls}}}}
+      description: |
+        Never fails.
+
+  regen:
+    # items that regen
+
+    # generic regen description
+    description: |
+      Regenerates {RECOVER} energy.
+    # generic use message
+    use_message: |
+      {USER} used their {ITEM}, regenerating {RECOVER} energy.
+
+    # item names
+    spikey_fruit: |
+      {AMOUNT, select, mass{Spikey Fruit} singular{a Spikey Fruit} concept{Spikey Fruit} other{{AMOUNT, plural, =0{no Spikey Fruit} one{1 Spikey Fruit} other{# Spikey Fruit}}}}
+    pudding: |
+      {AMOUNT, select, mass{Puddings} singular{a Pudding} concept{Pudding} other{{AMOUNT, plural, =0{no Puddings} one{1 Pudding} other{# Puddings}}}}
+    sugar_cube: |
+      {AMOUNT, select, mass{Sugar Cubes} singular{a Sugar Cube} concept{Sugar Cube} other{{AMOUNT, plural, =0{no Sugar Cubes} one{1 Sugar Cube} other{# Sugar Cubes}}}}
+
+  lure:
+    # lures
+    blob:
+      name: |
+        {AMOUNT, select, mass{Blob Lures} singular{a Blob Lure} concept{Blob Lure} other{{AMOUNT, plural, =0{no Blob Lure} one{1 Blob Lure} other{# Blob Lures}}}}
+      description: |
+        Increases the chance of finding a blob for the next 10 searches.
+      use_message: |
+        {USER} used {ITEM}, their next 10 search attempts will have an increased chance of finding a blob.
+
+effect:
+  # effect-related data
+  blob_lure:
+    name: |
+      Blob Lure

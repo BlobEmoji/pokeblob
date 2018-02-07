@@ -1,8 +1,13 @@
 
 const Discord = require('discord.js');
+const fs = require('fs');
 const klaw = require('klaw');
+const lodash = require('lodash');
+const MessageFormat = require('messageformat');
+const path = require('path');
 const util = require('util');
 const winston = require('winston');
+const yaml = require('js-yaml');
 
 const Context = require('./Context.js');
 const Director = require('./database/Director.js');
@@ -19,6 +24,8 @@ class Client extends Discord.Client {
 
     this.commands = new Discord.Collection();
     this.lookup = new Discord.Collection();
+
+    this.locale = new Discord.Collection();
 
     this.logger = winston.createLogger({
       levels: {
@@ -126,8 +133,8 @@ class Client extends Discord.Client {
       }
   }
 
-  async loadCommandByPath(path) {
-    await this.loadCommandObject(require(path));
+  async loadCommandByPath(pathName) {
+    await this.loadCommandObject(require(pathName));
   }
 
   clean(text) {
@@ -142,9 +149,29 @@ class Client extends Discord.Client {
 
   findLoadCommands() {
     klaw('./commands').on('data', filepath => {
-      if (filepath.path.slice(-11) === '/command.js') {
+      if (path.parse(filepath.path).base === 'command.js') {
         this.logger.log('debug', `loading walked command from path: ${filepath.path}`);
         this.loadCommandByPath(filepath.path);
+      }
+    });
+  }
+
+  localize(localeName, localeStrName, ...args) {
+    const localeObj = this.locale.has(localeName) ? this.locale.get(localeName) : this.locale.get('en');
+    const localeTransform = lodash.get(localeObj, localeStrName, false);
+    return localeTransform ? localeTransform(...args).trim('\n') : localeStrName;
+  }
+
+  findLoadLocales() {
+    klaw('./locale').on('data', filepath => {
+      const pathData = path.parse(filepath.path);
+      if (pathData.ext === '.yml') {
+        this.logger.log('debug', `loading walked locale: ${pathData.base}`);
+        const client = this;  // can't access 'this' from anon
+        fs.readFile(filepath.path, 'utf8', function (err, data) {
+          if (err) throw err;
+          client.locale.set(pathData.name, (new MessageFormat(pathData.name)).compile(yaml.safeLoad(data)));
+        });
       }
     });
   }

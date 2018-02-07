@@ -1,7 +1,14 @@
 
+CREATE TABLE IF NOT EXISTS locales (
+    -- locale code for messageformat
+    -- http://www.unicode.org/cldr/charts/29/supplemental/language_territory_information.html
+    id TEXT NOT NULL PRIMARY KEY
+);
+
 CREATE TABLE IF NOT EXISTS guilds (
     id BIGINT NOT NULL PRIMARY KEY,
-    "name" VARCHAR(100) NOT NULL
+    "name" VARCHAR(100) NOT NULL,
+    locale TEXT REFERENCES locales ON DELETE RESTRICT
 );
 
 CREATE TABLE IF NOT EXISTS users (
@@ -150,7 +157,7 @@ CREATE TABLE IF NOT EXISTS itemdefs (
     -- specific unique behaviors if required.
     id SERIAL PRIMARY KEY,
 
-    -- name of this item, and therefore how it should display as text.
+    -- id of localestr that refers to the name of this item
     "name" VARCHAR(128),
 
     -- value is how much this item sells in the store for.
@@ -164,8 +171,10 @@ CREATE TABLE IF NOT EXISTS itemdefs (
 
     mode INT REFERENCES itemmodes ON DELETE RESTRICT,
 
+    -- id of localestr that refers to this item's description
     "description" TEXT,
 
+    -- id of localestr that refers to this item's use message
     confirm_use_message TEXT,
 
     appearance_modulus INT CONSTRAINT no_divide_zero CHECK (appearance_modulus > 0),
@@ -200,7 +209,8 @@ CREATE TABLE IF NOT EXISTS items (
 CREATE TABLE IF NOT EXISTS blobrarity (
     id SERIAL PRIMARY KEY,
 
-    "name" VARCHAR(128),
+    -- id of the localestr for this rarity level
+    "name" TEXT,
 
     -- scalar for random rolls that decreases winning roll chance
     -- e.g. 20 will unfairly bias against rolling the blob at an
@@ -287,6 +297,7 @@ CREATE TABLE IF NOT EXISTS effectdefs (
 
     id SERIAL PRIMARY KEY,
 
+    -- id of the localestr for this effect's name
     "name" TEXT,
 
     -- this effect's 'potential', if applicable.
