@@ -7,6 +7,8 @@ class Ping extends CommandBaseClass {
 
     this.meta = {
       name: 'ping',
+      category: 'meta.help.categories.meta',
+      description: 'meta.help.commands.ping',
       aliases: ['rtt']
     };
   }

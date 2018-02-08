@@ -6,7 +6,9 @@ class Eval extends CommandBaseClass {
     super(...args);
 
     this.meta = {
-      name: 'eval'
+      name: 'eval',
+      category: 'meta.help.categories.admin',
+      description: 'meta.help.commands.eval'
     };
   }
 

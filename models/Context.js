@@ -46,6 +46,10 @@ class Context {
     return this.message.author;
   }
 
+  get member() {
+    return this.message.member;
+  }
+
   get user() {
     return this.message.user;
   }
