@@ -290,7 +290,11 @@ CREATE TABLE IF NOT EXISTS blobs (
     capture_time TIMESTAMP,
 
     -- time this was traded to a user last. NULL if never traded.
-    traded_time TIMESTAMP
+    traded_time TIMESTAMP,
+
+    -- time this was added to the party. parties are sorted ascending on this value,
+    -- with the most recently added party member being last.
+    party_addition_time TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS effecttypes (
