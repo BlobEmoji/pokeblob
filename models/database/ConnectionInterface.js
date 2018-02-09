@@ -35,19 +35,26 @@ class ConnectionInterface extends ConnectionInterfaceBase {
         ON CONFLICT ("user", guild)
         DO UPDATE SET
           location = CASE
-            WHEN user_data.energy > 0 AND get_bit(user_data."state", 0) = 1 AND user_data.last_moved_location < quarter_timestamp() THEN generate_location()
+            WHEN user_data.energy > 0 AND get_bit(user_data."state", 0) = 1 AND user_data.last_acked_location < quarter_timestamp() THEN generate_location()
             ELSE user_data.location
           END,
           energy = CASE
             WHEN user_data.energy < 50 AND user_data.last_used_energy < day_timestamp() THEN 50
-            WHEN user_data.energy > 0 AND get_bit(user_data."state", 0) = 1 AND user_data.last_moved_location < quarter_timestamp() THEN user_data.energy - 1
+            WHEN user_data.energy > 0 AND get_bit(user_data."state", 0) = 1 AND user_data.last_acked_location < quarter_timestamp() THEN user_data.energy - 1
             ELSE user_data.energy
           END,
+          last_moved_location = CASE
+            WHEN user_data.energy > 0 AND get_bit(user_data."state", 0) = 1 AND user_data.last_acked_location < quarter_timestamp() THEN quarter_timestamp()
+            ELSE user_data.last_moved_location
+          END,
           last_used_energy = day_timestamp(),
-          last_moved_location = quarter_timestamp()
+          last_acked_location = quarter_timestamp()
         RETURNING *, xmax != 0 AS updated
       )
-      SELECT *, quarter_remaining() AS quarter_remaining FROM final_query, parse_location(final_query.location), guild_table
+      SELECT *, 
+        quarter_remaining() AS quarter_remaining,
+        last_acked_location = last_moved_location AS roaming_effect
+      FROM final_query, parse_location(final_query.location), guild_table
     `, [
       member.guild.id,
       member.guild.name,

@@ -135,7 +135,10 @@ CREATE TABLE IF NOT EXISTS user_data (
     "location" BIGINT DEFAULT generate_center_location(),
 
     -- when the user last ack'd their location, when this updates, if the user is roaming, their location changes too.
-    last_moved_location BIGINT DEFAULT quarter_timestamp(),
+    last_acked_location BIGINT DEFAULT quarter_timestamp(),
+
+    -- when the user last experienced a roaming move, determines if roaming benefits are active or not
+    last_moved_location BIGINT DEFAULT 0,
 
     -- total currency a user has acquired in their lifetime (non-deductable)
     accumulated_currency INT DEFAULT 0,
