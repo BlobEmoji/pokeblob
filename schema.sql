@@ -26,6 +26,10 @@ CREATE OR REPLACE FUNCTION quarter_timestamp() RETURNS BIGINT AS
 $$ SELECT floor(extract(epoch from now()) / 900)::BIGINT $$
 LANGUAGE SQL;
 
+CREATE OR REPLACE FUNCTION quarter_remaining() RETURNS REAL AS
+$$ SELECT (((extract(epoch from now()) * 10)::BIGINT % 9000)::REAL / 9000)::REAL $$
+LANGUAGE SQL;
+
 CREATE TYPE location_info AS (
     -- value in range [4-32), from ((x + 1) % 28) + 4
     -- rough approx to celsius, classifications are as such:

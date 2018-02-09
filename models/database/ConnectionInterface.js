@@ -47,7 +47,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
         last_moved_location = quarter_timestamp()
       RETURNING *, xmax != 0 AS updated
     )
-    SELECT * FROM final_query, parse_location(final_query.location), guild_table
+    SELECT *, quarter_remaining() AS quarter_remaining FROM final_query, parse_location(final_query.location), guild_table
     `, [
       member.guild.id,
       member.guild.name,

@@ -30,10 +30,76 @@ meta:
       ping: |
         Calculates the bot connection round-trip time.
 
+      look: |
+        Look around your current location.
       roam: |
         Start roaming the world.
       stay: |
         Stop roaming the world.
+
+commands:
+  # strings used in commands
+  look:
+    warn_moving: |
+      **You are about to move locations!**
+
+    roaming:
+      on: |
+        You are currently roaming.
+      off: |
+        You are not roaming.
+      force_off: |
+        You cannot roam right now.
+
+    energy:
+      none: |
+        You're too tired to do anything. (no energy)
+      # 'peril' is <=4 energy
+      peril: |
+        You feel exhausted. ({AMOUNT} energy)
+      # 'warn' is <=10 energy
+      warn: |
+        You feel tired. ({AMOUNT} energy)
+      # 'ok' is <=20 energy
+      ok: |
+        You're feeling fine. ({AMOUNT} energy)
+      # 'good' is <=40 energy
+      good: |
+        You feel good about your adventure. ({AMOUNT} energy)
+      # 'plenty' is <=60 energy
+      plenty: |
+        You have plenty of energy. ({AMOUNT} energy)
+      # 'lots' is >60 energy
+      lots: |
+        You have a lot of energy today. ({AMOUNT} energy)
+
+    places:
+      header: "Places"
+
+      shop: "\U0001F6D2 Shop"
+      center: "\U0001F3E5 PokéBlob Center"
+      gym: "\U0001F3DF PokéBlob Gym"
+
+      none: "None of interest."
+
+    weather:
+      header: "Weather"
+
+      # represents weather, uses a lot of emoji (keep emoji where possible)
+      cold: "\u2744 Cold"
+      cold_rain: "\U0001F328 Snowing"
+      cool: "\U0001F325 Cool"
+      cool_rain: "\U0001F326 Cool, raining"
+      moderate: "\u26C5 Moderate"
+      moderate_rain: "\U0001F327 Moderate, raining"
+      warm: "\U0001F324 Warm"
+      warm_rain: "\U0001F327 Warm, raining"
+      hot: "\u2600 Hot"
+
+      light_breeze: "\U0001F4A8 Light Breeze"
+      moderate_breeze: "\U0001F4A8 Moderate Breeze"
+      strong_breeze: "\U0001F4A8 Strong Breeze"
+      fast_winds: "\U0001F32A Fast Winds"
 
 blobs:
   # blob names are not included here because they're not gonna be translated
