@@ -6,6 +6,16 @@ class Context {
     this.prefix = prefix;
     this.args = args;
     this.connection = null;
+
+    this.targets = [];
+
+    let match, matchMember;
+    const re = /([0-9]{17,19})/g;
+
+    if (this.guild)
+      while ((match = re.exec(args)) !== null)
+        if (matchMember = this.guild.member(match[1]))
+          this.targets.push(matchMember);
   }
 
   async prepare() {
@@ -52,6 +62,10 @@ class Context {
 
   get user() {
     return this.message.user;
+  }
+
+  get target() {
+    return this.targets.length ? this.targets[0] : this.member;
   }
 
   async destroy() {
