@@ -1,14 +1,17 @@
-FROM node:9
+FROM node:9-alpine
 
-RUN mkdir -p /nodedeps/node_modules
+RUN apk add --no-cache bash gettext git
 
-WORKDIR /nodedeps
+RUN mkdir -p /app/depends/node_modules
+RUN mkdir /app/repo
+
+WORKDIR /app/depends
 COPY package*.json .
 
 RUN npm install
 
-WORKDIR /app
+WORKDIR /app/repo
 
-ENV NODE_PATH=/nodedeps/node_modules
+ENV NODE_PATH=/app/depends/node_modules
 
 CMD ["bash", ".docker/startloop.sh"]
