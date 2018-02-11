@@ -50,6 +50,8 @@ commands:
         You are not roaming.
       force_off: |
         You cannot roam right now.
+      effect: |
+        The experience of roaming has put you in a good mood, giving you a status effect.
 
     energy:
       none: |
@@ -100,6 +102,23 @@ commands:
       moderate_breeze: "\U0001F4A8 Moderate Breeze"
       strong_breeze: "\U0001F4A8 Strong Breeze"
       fast_winds: "\U0001F32A Fast Winds"
+
+  roam:
+    start: |
+      You are now in roaming mode. You'll move locations and consume energy passively every 15 minutes (use `{PREFIX}look` to check where you are)
+    # 'on' displays when the user tries to roam but already is roaming
+    on: |
+      You are already in roaming mode.
+    # 'out' displays when the user has no energy but switches to roaming mode anyway
+    out: |
+      You are now in roaming mode. You won't move anywhere without energy, but once you have energy, you'll passively consume it to move locations. (use `{PREFIX}look` to check where you are)
+    stop: |
+      You are no longer roaming, and your roaming effects will wear off in a couple minutes. (use `{PREFIX}look` to see what's here)
+    stop_no_effect: |
+      You are no longer roaming. (use `{PREFIX}look` to see what's here)
+    # 'off' displays when the user tries to stop roaming but already isn't
+    off: |
+      You aren't currently going anywhere.
 
 blobs:
   # blob names are not included here because they're not gonna be translated

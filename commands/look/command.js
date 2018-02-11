@@ -47,6 +47,9 @@ class Look extends CommandBaseClass {
     else
       descriptionAggregate.push(_('commands.look.roaming.off'));
 
+    if (userData.roaming_effect)
+      descriptionAggregate.push(_('commands.look.roaming.effect'));
+
     // if the user can move, and is about to, warn them
     if (userData.energy !== 0 && userData.state[0] === '1' && userData.quarter_remaining > 0.8)
       descriptionAggregate.push(_('commands.look.warn_moving'));

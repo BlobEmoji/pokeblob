@@ -122,6 +122,17 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     `, [memberData.unique_id]);
     return resp.rows;
   }
+
+  async updateRoamingState(member, yesNo) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET state = set_bit(user_data.state, 0, $2::BOOLEAN::INTEGER)
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, yesNo]);
+    return resp.rows[0];
+  }
 }
 
 module.exports = ConnectionInterface;
