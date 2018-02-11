@@ -112,10 +112,14 @@ class Look extends CommandBaseClass {
     if (locationAggregate.length === 0)
       locationAggregate.push(_('commands.look.places.none'));
 
+    // change embed color pertaining to weather
+    const embedColor = (temp > 24) ? [251, 110, 7] : (temp < 15) ? [158, 245, 255] : (humidity > 75) ? [92, 75, 255] : [128, 115, 254];
+
     // make the embed
     const embed = new MessageEmbed()
       .setAuthor(target.user.username, target.user.displayAvatarURL())
       .setTimestamp()
+      .setColor(embedColor)
       .addField(_('commands.look.weather.header'), weatherAggregate.join('\n'), true)
       .addField(_('commands.look.places.header'), locationAggregate.join('\n'), true)
       .setDescription(descriptionAggregate.join('\n'))
