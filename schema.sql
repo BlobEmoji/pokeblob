@@ -69,7 +69,13 @@ CREATE TYPE location_info AS (
     loc_has_gym BOOLEAN,
 
     -- value that determines what items appear in the store
-    loc_store_potential INT
+    loc_store_potential INT,
+
+    -- number that helps determine what name this place gets
+    loc_name_index_1 INT,
+
+    -- number that helps determine what name this place gets
+    loc_name_index_2 INT
 );
 
 CREATE OR REPLACE FUNCTION parse_location(IN BIGINT) RETURNS location_info AS
@@ -81,7 +87,9 @@ SQRT(1521 - (($1 + 3) % 1521))::INT,
 ((($1 + 4) % 1414) < 565)::BOOLEAN,
 ((($1 + 5) % 2103) < 841)::BOOLEAN,
 ((($1 + 6) % 47181) < 4718)::BOOLEAN,
-(($1 + 7) % 2147483646)::INT
+(($1 + 7) % 2147483646)::INT,
+(($1 + 8) % 2147482642)::INT,
+(($1 + 9) % 2147462557)::INT
 $$
 LANGUAGE SQL;
 

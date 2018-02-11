@@ -19,11 +19,18 @@ class Look extends CommandBaseClass {
 
     const userData = await context.connection.memberData(target);
     const _ = (...x) => context.client.localize(userData.locale, ...x);
+    const _i = (...x) => context.client.localizeIndex(userData.locale, ...x);
 
     const [temp, humidity, wind] = [userData.loc_temperature, userData.loc_humidity_potential, userData.loc_wind_speed];
 
     // prepare main description
     const descriptionAggregate = [];
+
+    const placeName = _i('commands.look.names.second', userData.loc_name_index_2, { FIRST:
+      _i('commands.look.names.first', userData.loc_name_index_1) });
+
+    descriptionAggregate.push(_('commands.look.names.at', { PLACENAME: placeName }));
+
     if (userData.energy === 0)
       descriptionAggregate.push(_('commands.look.energy.none'));
     else if (userData.energy <= 4)

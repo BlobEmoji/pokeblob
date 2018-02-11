@@ -103,6 +103,58 @@ commands:
       strong_breeze: "\U0001F4A8 Strong Breeze"
       fast_winds: "\U0001F32A Fast Winds"
 
+    names:
+      at: |
+        You are at {PLACENAME}.
+
+      # names are constructed of two parts, one part is chosen randomly and is randomly inserted into the second part
+      # these are lists, you can add or remove entries, but the dashes must stay in line
+      first:
+        - Blob
+        - Council
+        - Artisan
+        - Wolfiri
+        - Luma
+        - Devon
+        - Petal
+        - Lavender
+        - Orange
+        - Lumiose
+        - Glitz
+        - Mahogany
+        - New Bark
+        - Vermillion
+        - Viridian
+        - Hearthorne
+        - Lilycove
+        - Kannagi
+        - Acorn
+        - Cliffside
+        - Lakeside
+        - Chroma
+        - Triangle
+      # second part, 'FIRST' is first part
+      # as these contain braces and are not folded scalars, they must be in quotes
+      second:
+        - "{FIRST} Road"
+        - "{FIRST} Town"
+        - "Route to {FIRST} Town"
+        - "{FIRST} Grove"
+        - "{FIRST} Gulch"
+        - "{FIRST} Valley"
+        - "{FIRST} Way"
+        - "{FIRST} City"
+        - "Route to {FIRST} City"
+        - "{FIRST} Citadel"
+        - "Route to {FIRST} Citadel"
+        - "{FIRST} Highway"
+        - "{FIRST} Plains"
+        - "{FIRST} Village"
+        - "Route to {FIRST} Village"
+        - "{FIRST} Island"
+        - "{FIRST} Forest"
+        - "{FIRST} Street"
+
   roam:
     start: |
       You are now in roaming mode. You'll move locations and consume energy passively every 15 minutes (use `{PREFIX}look` to check where you are)
