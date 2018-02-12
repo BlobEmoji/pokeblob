@@ -21,6 +21,12 @@ class Transaction {
     return await this.connection.query('ROLLBACK');
   }
 
+  async dispose() {
+    if (this.complete)
+      return;
+    return await this.rollback();
+  }
+
   async savepoint() {
     const savepoint_id = Math.random().toString(36).substring(2);
     const savepoint_name = `savepoint_${savepoint_id}_${this.savepoint_count}`;

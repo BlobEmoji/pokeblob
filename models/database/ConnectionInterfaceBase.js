@@ -4,7 +4,7 @@ const Transaction = require('./Transaction.js');
 class ConnectionInterfaceBase {
   constructor(connection) {
     this.connection = connection;
-    this.transaction = null;
+    this.activeTransaction = null;
   }
 
   async query(...args) {
@@ -12,18 +12,18 @@ class ConnectionInterfaceBase {
   }
 
   async transaction() {
-    if (this.transaction && !this.transaction.complete)
+    if (this.activeTransaction && !this.activeTransaction.complete)
       // transaction is open, probably an accident
       throw new Error('tried to open a transaction twice on the same connectioninterface; open a new connection or use savepoints!');
     
-    this.transaction = new Transaction(this.connection);
-    await this.transaction.begin();
-    return this.transaction;
+    this.activeTransaction = new Transaction(this.connection);
+    await this.activeTransaction.begin();
+    return this.activeTransaction;
   }
 
   async release() {
-    if (this.transaction && !this.transaction.complete)
-      await this.transaction.rollback();
+    if (this.activeTransaction && !this.activeTransaction.complete)
+      await this.activeTransaction.rollback();
 
     return this.connection.release();
   }

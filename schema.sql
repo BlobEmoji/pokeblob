@@ -75,21 +75,29 @@ CREATE TYPE location_info AS (
     loc_name_index_1 INT,
 
     -- number that helps determine what name this place gets
-    loc_name_index_2 INT
+    loc_name_index_2 INT,
+
+    -- number that helps determine rarity of blobs in the current area
+    loc_search_potential INT,
+
+    -- if this location is not conventionally accessible (special event)
+    loc_strange BOOLEAN
 );
 
 CREATE OR REPLACE FUNCTION parse_location(IN BIGINT) RETURNS location_info AS
 $$
 SELECT
-((($1 + 1) % 28) + 4)::INT,
-((($1 + 2) % 80) + 20)::INT,
-SQRT(1521 - (($1 + 3) % 1521))::INT,
-((($1 + 4) % 1414) < 565)::BOOLEAN,
-((($1 + 5) % 2103) < 841)::BOOLEAN,
-((($1 + 6) % 47181) < 4718)::BOOLEAN,
-(($1 + 7) % 2147483646)::INT,
-(($1 + 8) % 2147482642)::INT,
-(($1 + 9) % 2147462557)::INT
+((abs($1 + 1) % 28) + 4)::INT,
+((abs($1 + 2) % 80) + 20)::INT,
+SQRT(1521 - (abs($1 + 3) % 1521))::INT,
+((abs($1 + 4) % 1414) < 565)::BOOLEAN,
+((abs($1 + 5) % 2103) < 841)::BOOLEAN,
+((abs($1 + 6) % 47181) < 4718)::BOOLEAN,
+(abs($1 + 7) % 2147483646)::INT,
+(abs($1 + 8) % 2147482642)::INT,
+(abs($1 + 9) % 2147462557)::INT,
+(abs($1 + 10) % 14175293)::INT,
+($1 < 0)::BOOLEAN
 $$
 LANGUAGE SQL;
 

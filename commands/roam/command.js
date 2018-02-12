@@ -13,15 +13,15 @@ class Roam extends CommandBaseClass {
   }
 
   async run(context) {
-    const { message, client } = context;
+    const { client, connection } = context;
 
-    const userData = await context.connection.memberData(context.member);
-    const _ = (...x) => context.client.localize(userData.locale, ...x);
+    const userData = await connection.memberData(context.member);
+    const _ = (...x) => client.localize(userData.locale, ...x);
 
     if (userData.state[0] === '1')
       return await context.send(_('commands.roam.on', { PREFIX: context.prefix }));
 
-    await context.connection.updateRoamingState(context.member, true);
+    await connection.updateRoamingState(context.member, true);
 
     if (userData.energy === 0)
       return await context.send(_('commands.roam.out', { PREFIX: context.prefix }));

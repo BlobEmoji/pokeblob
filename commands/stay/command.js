@@ -13,10 +13,10 @@ class Stay extends CommandBaseClass {
   }
 
   async run(context) {
-    const { message, client } = context;
+    const { client } = context;
 
     const userData = await context.connection.memberData(context.member);
-    const _ = (...x) => context.client.localize(userData.locale, ...x);
+    const _ = (...x) => client.localize(userData.locale, ...x);
 
     if (userData.state[0] === '0')
       return await context.send(_('commands.roam.off', { PREFIX: context.prefix }));

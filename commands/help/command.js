@@ -15,10 +15,10 @@ class Help extends CommandBaseClass {
   }
 
   async run(context) {
-    const { message, client } = context;
+    const { client } = context;
 
     const userData = await context.connection.memberData(context.member);
-    const _ = (...x) => context.client.localize(userData.locale, ...x);
+    const _ = (...x) => client.localize(userData.locale, ...x);
 
     // only show commands the user can do
     const usableCommands = (await Promise.all(client.commands.map(async x => [await x.check(context), x]))).filter(x => x[0]).map(x => x[1]);

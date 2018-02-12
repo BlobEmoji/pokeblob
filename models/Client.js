@@ -87,20 +87,23 @@ class Client extends Discord.Client {
     const command = this.lookup.get(match[2]);
     if (!command)
       return;
+
+    if (!message.guild)
+      return await message.channel.send('I don\'t work in DMs! Please find somewhere else to use commands.');
     
     const context = await (new Context(this, message, match[1], match[3])).prepare();
 
     try {
       if (await command.check(context)) {
-        this.logger.log('verbose', `${message.author.id} issued command: ${command.meta.name}`);
+        this.logger.log('verbose', `${message.author.id} issued command: ${command.meta.name} [${context.uid}]`);
         await command.run(context);
-        this.logger.log('debug', `${message.author.id} finished running command: ${command.meta.name}`);
+        this.logger.log('debug', `${message.author.id} finished running command: ${command.meta.name} [${context.uid}]`);
       } else {
-        this.logger.log('debug', `${message.author.id} tried to run a command but failed the check: ${command.meta.name}`);
+        this.logger.log('debug', `${message.author.id} tried to run a command but failed the check: ${command.meta.name} [${context.uid}]`);
       }
     } catch (err) {
       this.logger.log('error', `an unexpected error occurred while ${message.author.id} was executing command: ${command.meta.name}\n` +
-                               `(guild ${message.guild.id}, channel ${message.channel.id}, user ${message.author.id}, message ${message.id})\n` + 
+                               `(uid ${context.uid}, guild ${message.guild.id}, channel ${message.channel.id}, user ${message.author.id}, message ${message.id})\n` + 
                                `${util.inspect(err)}`);
     } finally {
       await context.destroy();
@@ -177,12 +180,16 @@ class Client extends Discord.Client {
       if (pathData.ext === '.yml') {
         this.logger.log('debug', `loading walked locale: ${pathData.base}`);
         const client = this;  // can't access 'this' from anon
-        fs.readFile(filepath.path, 'utf8', function (err, data) {
+        fs.readFile(filepath.path, 'utf8', function(err, data) {
           if (err) throw err;
           client.locale.set(pathData.name, (new MessageFormat(pathData.name)).compile(yaml.safeLoad(data)));
         });
       }
     });
+  }
+
+  wait(...args) {
+    return new Promise(r => setTimeout(r, ...args));
   }
 
   async destroy() {

@@ -36,6 +36,9 @@ meta:
         Start roaming the world.
       stay: |
         Stop roaming the world.
+      search: |
+        Search around your current area, if you have the energy.
+
 
 commands:
   # strings used in commands
@@ -52,6 +55,8 @@ commands:
         You cannot roam right now.
       effect: |
         The experience of roaming has put you in a good mood, giving you a status effect.
+      strange: |
+        The strange nature of the environment around you unsettles you slightly.
 
     energy:
       none: |
@@ -104,9 +109,8 @@ commands:
       fast_winds: "\U0001F32A Fast Winds"
 
     names:
-      at: |
-        You are at {PLACENAME}.
-
+      header: Location
+      unknown: "???"
       # names are constructed of two parts, one part is chosen randomly and is randomly inserted into the second part
       # these are lists, you can add or remove entries, but the dashes must stay in line
       first:
@@ -172,6 +176,53 @@ commands:
     off: |
       You aren't currently going anywhere.
 
+  search:
+    busy: |
+      You're busy doing something else right now. Finish that first.
+    no_energy: |
+      You're too tired to search right now.
+
+    # message when the user has just searched, while waiting for result
+    search_wait: |
+      {USER} searches the nearby area and finds..
+    search_lost: |
+      {USER} searches the nearby area and finds.. themselves lost. How did you even get here?
+      You have {ENERGY} energy remaining.
+    search_nothing: |
+      {USER} searches the nearby area and finds.. nothing.
+      You have {ENERGY} energy remaining.
+    search_coin: |
+      {USER} searches the nearby area and finds.. {AMOUNT} {COINEMOJI}!
+      You now have {TOTAL} {COINEMOJI} and {ENERGY} energy remaining.
+    search_coin_strange: |
+      {USER} searches the nearby area and finds.. {AMOUNT} {COINEMOJI}!
+      They appear many years old, but they're still legal tender. Probably.
+      You now have {TOTAL} {COINEMOJI} and {ENERGY} energy remaining.
+    search_blob:
+      prompt: |
+        {USER} searches the nearby area and finds.. {CLASS} {BLOB}!
+        You have {ENERGY} energy remaining.
+        {CATCHOPTS}
+      prompt_strange: |
+        {USER} searches the nearby area and finds.. {CLASS} {BLOB}, as confused as you are about their location.
+        You have {ENERGY} energy remaining.
+        {CATCHOPTS}
+      # catch_default is used when the user only has one type of ball.
+      catch_default: |
+        Type `{PREFIX}catch` to use {BALL}.
+      catch_multi: |
+        Type `{PREFIX}catch {BALLNAME}` to use {BALL}.
+      # catch_remain is the last in the list of multiple choices, detailing the default.
+      catch_remain: |
+        Or type `{PREFIX} catch` to use {BALL}.
+      catch_nope: |
+        Sadly, as you have no PokéBalls, you have no choice but to let this blob run away.
+      leave: |
+        `{PREFIX}cancel` to let the blob run away and stop searching.
+      continue: |
+        `{PREFIX}search` to keep searching.
+
+
 blobs:
   # blob names are not included here because they're not gonna be translated
   # even if they were i'd probably just leave them because it's too hectic lol
@@ -180,18 +231,20 @@ blobs:
   # how an amount of a blob should appear in screens; meta, trade, etc
   plural: |
     {AMOUNT, plural, =0{} other{#x }}{BLOB}
-  
+
 
 rarity:
   # names of the rarity levels
+  # STATE is singular if attached for a singular noun (*a legendary* blob), etc
   legendary: |
-    legendary
+    {STATE, select, singular{a } other{}}legendary
   rare: |
-    rare
+    {STATE, select, singular{a } other{}}rare
   uncommon: |
-    uncommon
+    {STATE, select, singular{an } other{}}uncommon
   common: |
-    common
+    {STATE, select, singular{a } other{}}common
+
 
 item:
   # item related data
@@ -278,6 +331,7 @@ item:
         Increases the chance of finding a blob for the next 10 searches.
       use_message: |
         {USER} used {ITEM}, their next 10 search attempts will have an increased chance of finding a blob.
+
 
 effect:
   # effect-related data

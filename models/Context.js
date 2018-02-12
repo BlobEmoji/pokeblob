@@ -6,6 +6,7 @@ class Context {
     this.prefix = prefix;
     this.args = args;
     this.connection = null;
+    this.uid = Math.random().toString(16).substring(2);
 
     this.targets = [];
 
@@ -13,9 +14,11 @@ class Context {
     const re = /([0-9]{17,19})/g;
 
     if (this.guild)
-      while ((match = re.exec(args)) !== null)
-        if (matchMember = this.guild.member(match[1]))
+      while ((match = re.exec(args)) !== null) {
+        matchMember = this.guild.member(match[1]);
+        if (matchMember)
           this.targets.push(matchMember);
+      }
   }
 
   async prepare() {
@@ -24,8 +27,8 @@ class Context {
     return this;
   }
 
-  log(...args) {
-    return this.client.logger.log(...args);
+  log(mode, text, ...args) {
+    return this.client.logger.log(mode, `[${this.uid}] ${text}`, ...args);
   }
 
   get splitArgs() {

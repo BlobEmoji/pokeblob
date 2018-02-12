@@ -15,21 +15,20 @@ class Look extends CommandBaseClass {
   }
 
   async run(context) {
-    const { message, client, target } = context;
+    const { client, target } = context;
 
     const userData = await context.connection.memberData(target);
-    const _ = (...x) => context.client.localize(userData.locale, ...x);
-    const _i = (...x) => context.client.localizeIndex(userData.locale, ...x);
+    const _ = (...x) => client.localize(userData.locale, ...x);
+    const _i = (...x) => client.localizeIndex(userData.locale, ...x);
 
     const [temp, humidity, wind] = [userData.loc_temperature, userData.loc_humidity_potential, userData.loc_wind_speed];
 
     // prepare main description
     const descriptionAggregate = [];
 
-    const placeName = _i('commands.look.names.second', userData.loc_name_index_2, { FIRST:
+    const placeName = (userData.loc_strange) ? _('commands.look.names.unknown') :
+      _i('commands.look.names.second', userData.loc_name_index_2, { FIRST:
       _i('commands.look.names.first', userData.loc_name_index_1) });
-
-    descriptionAggregate.push(_('commands.look.names.at', { PLACENAME: placeName }));
 
     if (userData.energy === 0)
       descriptionAggregate.push(_('commands.look.energy.none'));
@@ -54,7 +53,9 @@ class Look extends CommandBaseClass {
     else
       descriptionAggregate.push(_('commands.look.roaming.off'));
 
-    if (userData.roaming_effect)
+    if (userData.loc_strange)
+      descriptionAggregate.push(_('commands.look.roaming.strange'));
+    else if (userData.roaming_effect)
       descriptionAggregate.push(_('commands.look.roaming.effect'));
 
     // if the user can move, and is about to, warn them
@@ -120,6 +121,7 @@ class Look extends CommandBaseClass {
       .setAuthor(target.user.username, target.user.displayAvatarURL())
       .setTimestamp()
       .setColor(embedColor)
+      .addField(_('commands.look.names.header'), placeName, false)
       .addField(_('commands.look.weather.header'), weatherAggregate.join('\n'), true)
       .addField(_('commands.look.places.header'), locationAggregate.join('\n'), true)
       .setDescription(descriptionAggregate.join('\n'))

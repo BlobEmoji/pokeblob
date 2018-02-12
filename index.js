@@ -15,9 +15,8 @@ fs.readFile('./config.yml', 'utf8', (err, data) => {
 
   const client = new Client(config);
 
-  process.on('SIGINT', function() {
-    client.destroy();
-  });
+  process.on('SIGINT', client.destroy);
+  process.on('SIGTERM', client.destroy);
 
   client.findLoadCommands();
   client.findLoadLocales();

@@ -12,6 +12,8 @@ logging:
   console: verbose
   file: info
 
+coin_emoji: '<:blobcoin:386630453224013824>'
+
 admins:
   - '69198249432449024'  # FrostLuma#0001  /gh/FrostLuma
   - '203300837928206337'  # Xenthys#0001  /gh/Xenthys

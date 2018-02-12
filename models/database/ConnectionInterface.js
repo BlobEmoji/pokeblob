@@ -72,7 +72,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     const memberData = await this.memberData(member);
     if (updateList.length === 0) {
       // no blobs, so clear their party
-      const resp = await this.query(`
+      await this.query(`
         UPDATE blobs
         SET party_addition_time = NULL
         WHERE user_id = $1
@@ -131,6 +131,91 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       WHERE unique_id = $1
       RETURNING *
     `, [memberData.unique_id, yesNo]);
+    return resp.rows[0];
+  }
+
+  // startup function if the bot dies while a user was engaged
+  async clearEngaged() {
+    await this.query(`
+      UPDATE user_data
+      SET state = set_bit(user_data.state, 1, 0)
+    `);
+  }
+
+  async setEngaged(member, yesNo) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET state = set_bit(user_data.state, 1, $2::BOOLEAN::INTEGER)
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, yesNo]);
+    return resp.rows[0];
+  }
+
+  async modifyEnergy(member, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET energy = energy + $2
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, amount]);
+    return resp.rows[0];
+  }
+
+  async modifySearchCount(member, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET search_count = search_count + $2
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, amount]);
+    return resp.rows[0];
+  }
+
+  async getRandomWeightedBlob(potential, effect) {
+    const resp = await this.query(`
+      SELECT blobdefs.id, blobdefs.emoji_id, blobdefs.emoji_name,
+      blobrarity.name AS rarity_name, blobrarity.rarity_scalar
+      FROM blobdefs INNER JOIN blobrarity
+      ON blobdefs.rarity = blobrarity.id
+      ORDER BY random() * (
+        exp(ln(blobrarity.rarity_scalar) * (
+          CASE WHEN $2::BOOLEAN THEN 0.7
+          ELSE 0.8 END + (
+            SQRT(961 - (
+              ((blobdefs.id + $2::BOOLEAN::INT) * $1::BIGINT) % 961
+            ))
+          )
+        ))
+      )
+      LIMIT 1
+    `, [potential, effect]);
+    return resp.rows[0];
+  }
+
+  async modifyCoinsTracked(member, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET currency = currency + $2,
+      accumulated_currency = accumulated_currency + GREATEST($2, 0)
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, amount]);
+    return resp.rows[0];
+  }
+
+  async modifyCoinsUntracked(member, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE user_data
+      SET currency = currency + $2
+      WHERE unique_id = $1
+      RETURNING *
+    `, [memberData.unique_id, amount]);
     return resp.rows[0];
   }
 }
