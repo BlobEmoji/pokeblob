@@ -218,6 +218,61 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     `, [memberData.unique_id, amount]);
     return resp.rows[0];
   }
+
+  async getStoreItems(potential, effect) {
+    const resp = await this.query(`
+      SELECT *,
+      (exp(ln(value) * (
+          CASE WHEN $2::BOOLEAN AND $1 % 3 = 0 THEN 0.7
+          ELSE 0.8 END + (
+            SQRT(1764 - (
+              ((value) * $1::BIGINT) % 1764
+            )) * 0.005
+          )
+        )
+      ))::INTEGER AS actual_price,
+      (($1 + id) % appearance_modulus) < appearance_threshold AS available
+      FROM itemdefs
+    `, [potential, effect]);
+    return resp.rows;
+  }
+
+  async giveUserItem(member, itemID, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      INSERT INTO items (item_id, user_id, amount)
+      VALUES ($2::BIGINT, $1::BIGINT, $3)
+      ON CONFLICT (item_id, user_id)
+      DO UPDATE SET
+      amount = items.amount + $3
+      RETURNING *
+    `, [memberData.unique_id, itemID, amount]);
+    return resp.rows[0];
+  }
+
+  async takeUserItem(member, itemID, amount) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE items
+      SET amount = items.amount - $3
+      WHERE item_id = $2::BIGINT AND user_id = $1::BIGINT
+      RETURNING *
+    `, [memberData.unique_id, itemID, amount]);
+    if (!resp.rows[0])
+      throw { code: -1, error: 'no item entry' };
+    return resp.rows[0];
+  }
+
+  async getUserItems(member) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      SELECT * FROM items
+      INNER JOIN itemdefs
+      ON items.item_id = itemdefs.id
+      WHERE user_id = $1::BIGINT
+    `, [memberData.unique_id]);
+    return resp.rows;
+  }
 }
 
 module.exports = ConnectionInterface;

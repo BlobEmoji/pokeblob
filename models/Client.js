@@ -174,6 +174,15 @@ class Client extends Discord.Client {
     return localeTransform ? localeTransform(...args).trim('\n') : localeStrName;
   }
 
+  localizeRandom(localeName, localeStrName, ...args) {
+    const localeObj = this.locale.has(localeName) ? this.locale.get(localeName) : this.locale.get('en');
+    const localeList = lodash.get(localeObj, localeStrName, false);
+    if (!localeList)
+      return localeStrName;
+    const localeTransform = localeList[Math.floor(Math.random() * Object.keys(localeList).length)];
+    return localeTransform ? localeTransform(...args).trim('\n') : localeStrName;
+  }
+
   findLoadLocales() {
     klaw('./locale').on('data', filepath => {
       const pathData = path.parse(filepath.path);

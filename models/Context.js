@@ -32,7 +32,7 @@ class Context {
   }
 
   get splitArgs() {
-    return this.args.trim().split(/ +/g);
+    return this.args ? this.args.trim().split(/ +/g) : [];
   }
 
   send(...args) {

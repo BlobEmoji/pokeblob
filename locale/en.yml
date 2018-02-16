@@ -39,6 +39,9 @@ meta:
       search: |
         Search around your current area, if you have the energy.
 
+      store: |
+        Go to the store, if there's one in your area.
+
 
 commands:
   # strings used in commands
@@ -222,6 +225,108 @@ commands:
       continue: |
         `{PREFIX}search` to keep searching.
 
+  store:
+    busy: |
+      You're too busy to go searching for stores. Finish whatever you're doing first.
+    none_roaming: |
+      Where? I don't see one. Did you just roam away from one? (`{PREFIX}stay` to stop roaming.)
+    none: |
+      Where? I don't see one. You should probably go somewhere with a store before trying to buy things. (`{PREFIX}roam` to start roaming.)
+
+    strange: |
+      While there is a store here, it looks to be in disrepair, and nobody is around to tend to it.
+
+    enter: |
+      You look around the shop.
+    effect: |
+      Your good mood from roaming rubs off onto the store owner, giving you a marginal discount on some items.
+    
+    warn_moving: |
+      **You are about to move locations!**
+    warn_effect: |
+      **You are about to lose your roaming effect!**
+
+    # how the item is listed in the store
+    listing: |
+      **{ITEM}**: {AMOUNT} {COINEMOJI}
+
+    buy_help: |
+      `{PREFIX}store buy [item] <amount>` lets you buy an item from the store.
+    sell_help: |
+      `{PREFIX}store sell [item] <amount>` lets you sell items you have.
+
+    unsure_buy: |
+      I'm not sure what you're trying to buy.
+    unsure_sell: |
+      I'm not sure what you're trying to sell.
+
+    no_match_buy: |
+      I don't think I know of such an item.
+    no_match_sell: |
+      I don't think I know of such an item.
+
+    no_stock: |
+      I don't think that's in stock here.
+
+    # if a user tries to buy 0 of something
+    no_zero_buy:
+      - |
+        You buy 0 of your desired item. It goes nicely with your 0 confidence and 0 sense.
+      - |
+        Your bank won't be happy if they find out you've been on one of those nothing-buying sprees again.
+      - |
+        Good idea! You've been running low on nothings recently.
+      - |
+        No time for window shopping!
+    # if a user tries to buy less than 0 of something
+    no_negative_buy: |
+      If you want coins for your items, you should probably sell them (`{PREFIX}store sell [item] <amount>`)
+    # ditto for sell
+    no_negative_sell: |
+      If you want items for your coins, you should probably buy things (`{PREFIX}store buy [item] <amount>`)
+
+    no_money: |
+      I don't think you can afford that.
+    # if a user can afford an item, but doesn't have enough money for the amount they're quoting
+    no_money_mass: |
+      I don't think you can afford that many.
+
+    confirm_buy:
+      message: |
+        Are you sure you want to buy {ITEM} for {COST} {COINEMOJI}?
+      confirm: |
+        `{PREFIX}confirm` to confirm
+      cancel: |
+        `{PREFIX}cancel` to cancel
+
+    no_complete:
+      buy: |
+        The transaction could not be completed. Do you have the necessary funds?
+      sell: |
+        The transaction could not be completed. Do you have the necessary items?
+
+    complete: |
+      The transaction was completed. You now have {CURRENCY} {COINEMOJI}.
+
+    no_have_item: |
+      You don't seem to have that item.
+
+    not_enough_item: |
+      You don't seem to have as much of that item as you're offering.
+
+    no_zero_sell:
+      - |
+        You successfully sell absolutely nothing, making a profit of absolutely nothing.
+      - |
+        You'd love to, but the nothing-to-nothing exchange rate has been insane recently.
+
+    confirm_sell:
+      message: |
+        Are you sure you want to sell {ITEM} for {GAIN} {COINEMOJI}?
+      confirm: |
+        `{PREFIX}confirm` to confirm
+      cancel: |
+        `{PREFIX}cancel` to cancel
 
 blobs:
   # blob names are not included here because they're not gonna be translated
