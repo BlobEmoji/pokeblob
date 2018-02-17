@@ -123,6 +123,9 @@ commands:
         - Wolfiri
         - Luma
         - Devon
+        - Zeboto
+        - Dropheart
+        - Lyrus
         - Petal
         - Lavender
         - Orange
@@ -140,6 +143,32 @@ commands:
         - Lakeside
         - Chroma
         - Triangle
+        - Azure
+        - Lazuli
+        - Eterna
+        - Elm
+        - Oak
+        - Cedar
+        - Maple
+        - Pine
+        - Cypress
+        - Fir
+        - Hemlock
+        - Ash
+        - Aspen
+        - Birch
+        - Hickory
+        - Ironwood
+        - Teak
+        - Willow
+        - Palm
+        - Cherry
+        - Dragonfruit
+        - Fig
+        - Grape
+        - Lemon
+        - Mango
+        - Peach
       # second part, 'FIRST' is first part
       # as these contain braces and are not folded scalars, they must be in quotes
       second:
@@ -161,6 +190,18 @@ commands:
         - "{FIRST} Island"
         - "{FIRST} Forest"
         - "{FIRST} Street"
+        - "{FIRST} Meadow"
+        - "{FIRST} Desert"
+        - "{FIRST} Lake"
+        - "{FIRST} Peninsula"
+        - "{FIRST} Avenue"
+        - "{FIRST} Boulevard"
+        - "{FIRST} Canyon"
+        - "{FIRST} Dale"
+        - "{FIRST} Falls"
+        - "{FIRST} Manor"
+        - "{FIRST} Overpass"
+        - "{FIRST} Ridge"
 
   roam:
     start: |
