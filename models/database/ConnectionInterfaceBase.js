@@ -21,9 +21,13 @@ class ConnectionInterfaceBase {
     return this.activeTransaction;
   }
 
+  async disposeTransaction() {
+    if (this.activeTransaction)
+      await this.activeTransaction.dispose();
+  }
+
   async release() {
-    if (this.activeTransaction && !this.activeTransaction.complete)
-      await this.activeTransaction.rollback();
+    await this.disposeTransaction();
 
     return this.connection.release();
   }

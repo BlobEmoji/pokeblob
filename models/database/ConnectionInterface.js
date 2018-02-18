@@ -187,7 +187,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
           ELSE 0.8 END + (
             SQRT(961 - (
               ((blobdefs.id + $2::BOOLEAN::INT) * $1::BIGINT) % 961
-            ))
+            )) * 0.015
           )
         ))
       )
@@ -270,8 +270,34 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       INNER JOIN itemdefs
       ON items.item_id = itemdefs.id
       WHERE user_id = $1::BIGINT
+      ORDER BY potential DESC
     `, [memberData.unique_id]);
     return resp.rows;
+  }
+
+  async giveUserBlob(member, blobDef) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      WITH stat_info AS (
+        SELECT
+        (20 + (random() * 8 * ln($3 / 2)))::INT as health,
+        (5 + (random() * 2.5 * ln($3)))::INT as atk,
+        (random() * ln($3))::INT as atk_dev,
+        (2 + (random() * 2 * ln($3)))::INT as def,
+        (random() * 0.5 * ln($3))::INT as def_dev,
+        (3 + (random() * ln($3)))::INT as spc,
+        (random() * 0.33 * ln($3))::INT as spc_dev,
+        5 as spd,
+        (random() * 0.25 * ln($3))::INT as spd_dev
+      )
+      INSERT INTO blobs (blob_id, user_id, vitality, health, attack, attack_dev,
+        defense, defense_dev, special, special_dev, speed, speed_dev)
+      SELECT $2::BIGINT, $1::BIGINT, health, health, atk, atk_dev,
+      def, def_dev, spc, spc_dev, spd, spd_dev
+      FROM stat_info
+      RETURNING *
+    `, [memberData.unique_id, blobDef.id, blobDef.rarity_scalar]);
+    return resp.rows[0];
   }
 }
 

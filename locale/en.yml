@@ -240,16 +240,18 @@ commands:
       You now have {TOTAL} {COINEMOJI} and {ENERGY} energy remaining.
     search_coin_strange: |
       {USER} searches the nearby area and finds.. {AMOUNT} {COINEMOJI}!
-      They appear many years old, but they're still legal tender. Probably.
+      {AMOUNT, plural, one{It appears} other{They appear}} to be many years old, but {AMOUNT, plural, one{it's} other{they're}} still legal tender. Probably.
       You now have {TOTAL} {COINEMOJI} and {ENERGY} energy remaining.
     search_blob:
       prompt: |
         {USER} searches the nearby area and finds.. {CLASS} {BLOB}!
         You have {ENERGY} energy remaining.
+
         {CATCHOPTS}
       prompt_strange: |
-        {USER} searches the nearby area and finds.. {CLASS} {BLOB}, as confused as you are about their location.
+        {USER} searches the nearby area and finds.. {CLASS} {BLOB}, seemingly abandoned.
         You have {ENERGY} energy remaining.
+
         {CATCHOPTS}
       # catch_default is used when the user only has one type of ball.
       catch_default: |
@@ -258,13 +260,34 @@ commands:
         Type `{PREFIX}catch {BALLNAME}` to use {BALL}.
       # catch_remain is the last in the list of multiple choices, detailing the default.
       catch_remain: |
-        Or type `{PREFIX} catch` to use {BALL}.
+        Or type `{PREFIX}catch` to use {BALL}.
       catch_nope: |
         Sadly, as you have no PokéBalls, you have no choice but to let this blob run away.
       leave: |
-        `{PREFIX}cancel` to let the blob run away and stop searching.
+        `{PREFIX}ignore` to let the blob run away.
       continue: |
-        `{PREFIX}search` to keep searching.
+        `{PREFIX}search` to search again.
+    retry_blob:
+      prompt:
+        - |
+          {USER} Oh no! The {BLOB} broke free!
+
+          {CATCHOPTS}
+        - |
+          {USER} Argh! The {BLOB} broke free!
+
+          {CATCHOPTS}
+        - |
+          {USER} Shoot, the {BLOB} broke free! It was so close too!
+
+          {CATCHOPTS}
+    after_blob:
+      run: |
+        The {BLOB} runs away.
+      disappeared: |
+        The {BALL} you should have had has disappeared from you. Did it get used somewhere?
+      caught: |
+        {USER} Yes! You caught {NAME} the {BLOB}!
 
   store:
     busy: |
@@ -370,13 +393,16 @@ commands:
         `{PREFIX}cancel` to cancel
 
 blobs:
-  # blob names are not included here because they're not gonna be translated
-  # even if they were i'd probably just leave them because it's too hectic lol
-  # so this section is basically just surrounding syntax
-
   # how an amount of a blob should appear in screens; meta, trade, etc
   plural: |
     {AMOUNT, plural, =0{} other{#x }}{BLOB}
+
+  # change these!!
+  names:
+    - |
+      Placeholder 1
+    - |
+      Placeholder 2
 
 
 rarity:

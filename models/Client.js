@@ -73,10 +73,13 @@ class Client extends Discord.Client {
   }
 
   get commandRegex() {
-    // escape the prefixes so they're 'regex-safe'
-    const escapedPrefixes = this.prefixes.map(x => x.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|');
     // return the regex that captures commands
-    return new RegExp(`^(${escapedPrefixes})([a-zA-Z](?:[a-zA-Z0-9]+)?) *(?: ([\\s\\S]+))?$`);
+    return new RegExp(`^(${this.prefixRegex})([a-zA-Z](?:[a-zA-Z0-9]+)?) *(?: ([\\s\\S]+))?$`);
+  }
+
+  get prefixRegex() {
+    // escape the prefixes so they're 'regex-safe'
+    return this.prefixes.map(x => x.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')).join('|');
   }
 
   async processCommands(message) {

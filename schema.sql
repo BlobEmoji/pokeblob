@@ -256,19 +256,12 @@ CREATE TABLE IF NOT EXISTS blobdefs (
     rarity INT NOT NULL REFERENCES blobrarity ON DELETE RESTRICT
 );
 
-CREATE TABLE IF NOT EXISTS blobnames (
-    id BIGSERIAL PRIMARY KEY,
-
-    -- the actual name
-    "name" VARCHAR(32)
-);
-
 CREATE TABLE IF NOT EXISTS blobs (
 
     unique_id BIGSERIAL PRIMARY KEY,
 
-    -- unique name for this blob, used to distinguish from other blobs of the same type.
-    name_id BIGINT NOT NULL REFERENCES blobnames ON DELETE RESTRICT,
+    -- name potential for this blob, used to distinguish from other blobs of this type
+    name_potential INT NOT NULL DEFAULT (RANDOM()*2147482532)::INT,
 
     blob_id BIGINT NOT NULL REFERENCES blobdefs ON DELETE RESTRICT,
 
@@ -288,7 +281,7 @@ CREATE TABLE IF NOT EXISTS blobs (
     attack_dev INT CONSTRAINT attack_dev_check CHECK (attack_dev >= 0 AND attack >= attack_dev) DEFAULT 1,
 
     -- defense power of this blob
-    defense INT CONSTRAINT defense_check CHECK (defense >= 0) DEFAULT 5,
+    defense INT CONSTRAINT defense_check CHECK (defense >= 0) DEFAULT 4,
 
     -- how much the defense stat deviates at any given time, higher values decrease defense certainty
     defense_dev INT CONSTRAINT defense_dev_check CHECK (defense_dev >= 0 AND defense >= defense_dev) DEFAULT 0,
@@ -306,7 +299,7 @@ CREATE TABLE IF NOT EXISTS blobs (
     speed_dev INT CONSTRAINT speed_dev_check CHECK (speed_dev >= 0 AND speed >= speed_dev) DEFAULT 0,
 
     -- when this blob was captured. NULL if still roaming.
-    capture_time TIMESTAMP,
+    capture_time TIMESTAMP DEFAULT (now() AT TIME ZONE 'UTC'),
 
     -- time this was traded to a user last. NULL if never traded.
     traded_time TIMESTAMP,
