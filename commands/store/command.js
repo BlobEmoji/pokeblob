@@ -192,6 +192,9 @@ class Store extends CommandBaseClass {
           else if (userData.roaming_effect)
             outputListing.push(_('commands.store.warn_effect'));
 
+        outputListing.push(''); // blank line
+        outputListing.push(_('commands.store.coins', { AMOUNT: userData.currency, COINEMOJI: client.config.coin_emoji }));
+
         const storeItems = (await connection.getStoreItems(userData.loc_store_potential, userData.roaming_effect)).filter(x => x.available);
 
         const formattedItems = storeItems.map(x => _('commands.store.listing', { ITEM: _(x.name, { AMOUNT: 'concept' }), AMOUNT: x.actual_price, COINEMOJI: client.config.coin_emoji }));
@@ -220,7 +223,7 @@ class Store extends CommandBaseClass {
       itemLookup.set(clean(_(x.name, { AMOUNT: 'concept' })), x);
     });
 
-    const re = /^(-?\d+)?(?:(.+)(-?\d+)|(.+))$/g;
+    const re = /^(?:(-?\d+)\s)?(?:(.+)\s(-?\d+)|(.+))$/g;
     const match = re.exec(args.slice(1).join(' ').trim());
 
     if (!match)

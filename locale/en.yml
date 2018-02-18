@@ -304,6 +304,8 @@ commands:
       You look around the shop.
     effect: |
       Your good mood from roaming rubs off onto the store owner, giving you a marginal discount on some items.
+    coins: |
+      You have {AMOUNT} {COINEMOJI}.
     
     warn_moving: |
       **You are about to move locations!**
