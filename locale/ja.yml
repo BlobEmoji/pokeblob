@@ -264,7 +264,7 @@ commands:
       探検からもらった上機嫌は店の人まで伝える。
     coins: |
       {AMOUNT} {COINEMOJI}持っています。
-    
+
     warn_moving: |
       **場所を移動しようとしています**
     warn_effect: |

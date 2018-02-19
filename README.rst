@@ -18,8 +18,32 @@ PokéBlob
 
 |d.js| |node| |circleci| |issues| |commits|
 
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+| You are currently on the **post-event** branch of PokéBlob.                                                                                     |
+|                                                                                                                                                 |
+| It is being primarily maintained and developed by `Gorialis <https://github.com/Gorialis>`__.                                                   |
+|                                                                                                                                                 |
+| It is:                                                                                                                                          |
+|                                                                                                                                                 |
+| - Incomplete                                                                                                                                    |
+| - Unstable                                                                                                                                      |
+| - Subject to change at any time                                                                                                                 |
+|                                                                                                                                                 |
+| Schema and internal changes may be made without prior warning or instruction.                                                                   |
+|                                                                                                                                                 |
+| **Any data collected or stored by the bot as it is on this branch may be irrecoverably destroyed or inaccessible by even a single commit.**     |
+|                                                                                                                                                 |
+| **Only** run the bot to debug its features or commands.                                                                                         |
+|                                                                                                                                                 |
+| In addition:                                                                                                                                    |
+|                                                                                                                                                 |
+| - Do not push directly to this branch. Unauthorized direct pushes will be rebased out.                                                          |
+| - Only PR to this branch if you have seeked guidance regarding implementation and design beforehand.                                            |
+| - Do not rely on the branch history to remain linear. Rebases may require you to reset any clones you have of this branch.                      |
++-------------------------------------------------------------------------------------------------------------------------------------------------+
+
 PokéBlob is the bot created by the Blob Emoji team for the 1 year server anniversary.
-It requires Node >=9.4 and the `Discord.js <https://www.npmjs.com/package/discord.js>`__ library.
+It requires Node >=9.4 and the `discord.js <https://www.npmjs.com/package/discord.js>`__ library.
 
 It is not recommended to run an instance of this bot yourself. The code is here primarily for reference and bug fixing.
 
@@ -43,24 +67,14 @@ First, install all dependencies.
 
    npm install
 
-After all the dependencies install, you will be prompted for your bots token. Simply paste that into the console, and hit enter. The setup script will write the config for you.
-
-.. code-block:: sh
-
-   node .
+After all the dependencies install, copy the `config.example.yml <https://github.com/BlobEmoji/pokeblob/blob/post-event/config.example.yml>`__ included in the root directory. Rename it to ``config.yml`` and substitute information in as necessary.
 
 And the bot will launch.
 
 Launching with docker-compose
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First, we need to install all dependencies.
-
-.. code-block:: sh
-
-   node ./util/setup.js
-
-Running this setup.js file will prompt you for your token. Simply input it, and it'll write the config for you.
+First, copy the config as above. Once your config is ready, just run
 
 .. code-block:: sh
 
@@ -83,7 +97,7 @@ If you get an error saying the bot cannot find a package, you simply need to run
 .. code-block:: sh
 
    npm install <package name>
-   
+
 License
 --------
 PokéBlob is released under the `MIT License`_.

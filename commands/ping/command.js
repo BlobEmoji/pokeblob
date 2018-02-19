@@ -17,7 +17,7 @@ class Ping extends CommandBaseClass {
     const { message, client } = context;
     let pong = await context.send('Tick,');
     pong = await pong.edit('Tick, tock,');
-    await pong.edit('Tick, tock, tick..\n' + 
+    await pong.edit('Tick, tock, tick..\n' +
                     `Recv -> Send: ${pong.createdTimestamp - message.createdTimestamp}ms (+)\n` +
                     `Send -> Edit: ${pong.editedTimestamp - pong.createdTimestamp}ms (=)\n` +
                     `Recv -> Edit: ${pong.editedTimestamp - message.createdTimestamp}ms\n` +

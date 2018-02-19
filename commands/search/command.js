@@ -54,11 +54,11 @@ class Search extends CommandBaseClass {
         context.log('silly', 'rolled blob');
         const blob = await connection.getRandomWeightedBlob(userData.loc_search_potential, userData.roaming_effect);
         context.log('silly', `blob appeared: ${blob.id}`);
-        
+
         let attempt = 0;
         let lastMsg = msg;
         const chance = userData.roaming_effect ? 0.65 : 0.5;
-      
+
         // progressively reduce chances of being able to try again
         while ((Math.random() < chance ** attempt) && attempt < 4) {
           const { canContinue, resultMsg } = await this.catchOpportunity(context, userData, !attempt ? lastMsg : null, blob);

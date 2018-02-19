@@ -51,7 +51,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
           last_acked_location = quarter_timestamp()
         RETURNING *, xmax != 0 AS updated
       )
-      SELECT *, 
+      SELECT *,
         quarter_remaining() AS quarter_remaining,
         last_acked_location = last_moved_location AS roaming_effect
       FROM final_query, parse_location(final_query.location), guild_table

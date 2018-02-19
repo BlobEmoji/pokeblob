@@ -25,7 +25,7 @@ class Eval extends CommandBaseClass {
       return await context.send('Code in incompatible format.');
 
     const lambdaForm = code[1].includes(';') ? `{ ${code[1]} }` : code[1];
-    
+
     try {
       const evaled = await eval(`(async () => ${lambdaForm})()`);
       return await context.send(`\`\`\`js\n${this.client.clean(evaled)}\n\`\`\``);

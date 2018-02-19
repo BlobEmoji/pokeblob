@@ -175,7 +175,7 @@ class Store extends CommandBaseClass {
 
         break;
       }
-      
+
       default: {
         context.log('silly', 'user is viewing');
 

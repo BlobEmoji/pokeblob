@@ -19,7 +19,7 @@ class ConnectionInterfaceBase {
     if (this.activeTransaction && !this.activeTransaction.complete)
       // transaction is open, probably an accident
       throw new Error('tried to open a transaction twice on the same connectioninterface; open a new connection or use savepoints!');
-    
+
     this.activeTransaction = new Transaction(this.connection);
     await this.activeTransaction.begin();
     return this.activeTransaction;

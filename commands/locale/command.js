@@ -23,7 +23,7 @@ class Locale extends CommandBaseClass {
     const _ = (...x) => client.localize(userData.locale, ...x);
 
     if (!args)
-      return await context.send(_('commands.locale.none')); 
+      return await context.send(_('commands.locale.none'));
 
     if (args && args.toLowerCase() === userData.locale)
       return await context.send(_('commands.locale.same'));

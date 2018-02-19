@@ -2,7 +2,7 @@ version: '2'
 
 services:
   bot:
-    build: 
+    build:
       context: .
       dockerfile: .docker/Dockerfile
     depends_on:

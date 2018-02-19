@@ -43,7 +43,7 @@ jobs:
           command: |
             sudo apt update
             sudo apt install postgresql-client
-      
+
       - run:
           name: wait for postgres..
           command: sleep 4
@@ -62,7 +62,7 @@ jobs:
       - run:
           name: copy config file
           command: cp config.example.yml config.yml
-        
+
       # run tests!
       - run:
           name: faux start bot

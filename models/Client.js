@@ -93,11 +93,11 @@ class Client extends Discord.Client {
 
     if (!message.guild)
       return await message.channel.send('I don\'t work in DMs! Please find somewhere else to use commands.');
-    
+
     if (!message.guild.available)
       // nah
       return;
-    
+
     const context = await (new Context(this, message, match[1], match[3])).prepare();
 
     try {
@@ -110,7 +110,7 @@ class Client extends Discord.Client {
       }
     } catch (err) {
       this.logger.log('error', `an unexpected error occurred while ${message.author.id} was executing command: ${command.meta.name}\n` +
-                               `(uid ${context.uid}, guild ${message.guild.id}, channel ${message.channel.id}, user ${message.author.id}, message ${message.id})\n` + 
+                               `(uid ${context.uid}, guild ${message.guild.id}, channel ${message.channel.id}, user ${message.author.id}, message ${message.id})\n` +
                                `${util.inspect(err)}`);
     } finally {
       await context.destroy();
@@ -129,7 +129,7 @@ class Client extends Discord.Client {
     if (command.meta.aliases)
       if (command.meta.aliases.filter(x => this.lookup.has(x)).length !== 0)
         throw new Error('command registers alias that is already in use');
-    
+
     // register the command
     this.commands.set(command.meta.name, command);
     this.lookup.set(command.meta.name, command);
@@ -150,7 +150,7 @@ class Client extends Discord.Client {
   clean(text) {
     if (typeof text !== 'string')
       text = util.inspect(text, { depth: 1 });
-    
+
     const zwsp = String.fromCharCode(8203);
     text = text.replace(/@|`/gi, x => `${x}${zwsp}`);
 
