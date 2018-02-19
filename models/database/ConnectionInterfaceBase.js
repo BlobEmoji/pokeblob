@@ -11,6 +11,10 @@ class ConnectionInterfaceBase {
     return await this.connection.query(...args);
   }
 
+  on(...args) {
+    return this.connection.on(...args);
+  }
+
   async transaction() {
     if (this.activeTransaction && !this.activeTransaction.complete)
       // transaction is open, probably an accident

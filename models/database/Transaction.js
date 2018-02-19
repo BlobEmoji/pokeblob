@@ -35,7 +35,7 @@ class Transaction {
     return savepoint_name;
   }
 
-  async rollback_to(savepoint_name) {
+  async rollbackTo(savepoint_name) {
     return await this.connection.query(`ROLLBACK TO SAVEPOINT "${savepoint_name.replace(/("| )/g, '')}"`);
   }
 }

@@ -51,11 +51,13 @@ jobs:
       - run:
           name: apply schema
           command: |
-            psql -U postgres < schema.sql
-            psql -U postgres < setup.sql
+            psql < schema.sql
+            psql < setup.sql
           environment:
             PGHOST: localhost
             PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
 
       - run:
           name: copy config file
@@ -68,6 +70,10 @@ jobs:
           no_output_timeout: 20s
           environment:
             POKEBLOB_TEST_ONLY: true
+            PGHOST: localhost
+            PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
 
       - run:
           name: do mocha tests
@@ -76,6 +82,10 @@ jobs:
           no_output_timeout: 120s
           environment:
             POKEBLOB_TEST_ONLY: true
+            PGHOST: localhost
+            PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
 
   "eslint":
     docker:
