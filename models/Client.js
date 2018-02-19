@@ -94,6 +94,10 @@ class Client extends Discord.Client {
     if (!message.guild)
       return await message.channel.send('I don\'t work in DMs! Please find somewhere else to use commands.');
     
+    if (!message.guild.available)
+      // nah
+      return;
+    
     const context = await (new Context(this, message, match[1], match[3])).prepare();
 
     try {

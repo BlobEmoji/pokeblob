@@ -29,6 +29,8 @@ meta:
         Executes arbitrary JS code.
       ping: |
         Calculates the bot connection round-trip time.
+      locale: |
+        Changes the bot locale.
 
       look: |
         Look around your current location.
@@ -393,6 +395,16 @@ commands:
         `{PREFIX}confirm` to confirm
       cancel: |
         `{PREFIX}cancel` to cancel
+
+  locale:
+    none: |
+      You must supply a locale name.
+    same: |
+      You are already set to this locale.
+    notfound: |
+      That locale couldn't be found.
+    changed: |
+      The guild locale has been changed. Use `{PREFIX}locale [name]` at any time to change back.
 
 blobs:
   # how an amount of a blob should appear in screens; meta, trade, etc

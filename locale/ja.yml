@@ -1,0 +1,474 @@
+
+meta:
+  # name of the bot. appears in embed footers, etc
+  # don't translate this, or do, i don't mind
+  pokeblobs: |
+    PokéBlobs
+
+  help:
+    no_category: |
+      カテゴリなし
+    command_header: |
+      コマンドリスト
+
+    categories:
+      admin: |
+        管理
+      meta: |
+        操作によって
+      pokeblobs: |
+        PokéBlobs
+
+    commands:
+      # help strings for various commands
+      help: |
+        どのコマンドが使えらえるか表示する
+      meta: |
+        ボットの操作情報を表示する
+      eval: |
+        JavaScriptコードを評価する
+      ping: |
+        ラウンドトリップタイムを割出す
+      locale: |
+        ロケールを変更する
+
+      look: |
+        現在地を見回す
+      roam: |
+        探検を開始する
+      stay: |
+        探検を停止する
+      search: |
+        ここの辺を探す (エネルギーが足りたら)
+
+      store: |
+        店に行く (ここに店があるなら)
+
+
+commands:
+  # strings used in commands
+  look:
+    warn_moving: |
+      **場所を移動しようとしています!**
+
+    roaming:
+      on: |
+        今は探検中。
+      off: |
+        今は探検していません。
+      force_off: |
+        今は探検できない。
+      effect: |
+        探検の体験から上機嫌をもらいます。
+      strange: |
+        空気はあんまり変で気持ち悪い。
+
+    energy:
+      none: |
+        疲れた (エネルギーない)
+      # 'peril' is <=4 energy
+      peril: |
+        ヘトヘトです。 ({AMOUNT}点のエネルギーが残っている)
+      # 'warn' is <=10 energy
+      warn: |
+        グダグダです。 ({AMOUNT}点のエネルギーが残っている)
+      # 'ok' is <=20 energy
+      ok: |
+        平気です。 ({AMOUNT}点のエネルギーが残っている)
+      # 'good' is <=40 energy
+      good: |
+        気分がいい。 ({AMOUNT}点のエネルギーが残っている)
+      # 'plenty' is <=60 energy
+      plenty: |
+        元気です。 ({AMOUNT}点のエネルギーが残っている)
+      # 'lots' is >60 energy
+      lots: |
+        凄く元気です。 ({AMOUNT}点のエネルギーが残っている)
+
+    places:
+      header: "気になる所"
+
+      shop: "\U0001F6D2 店"
+      center: "\U0001F3E5 センター"
+      gym: "\U0001F3DF ジム"
+
+      none: "あんまりない"
+
+    weather:
+      header: "天気"
+
+      # represents weather, uses a lot of emoji (keep emoji where possible)
+      cold: "\u2744 寒い"
+      cold_rain: "\U0001F328 雪"
+      cool: "\U0001F325 涼しい"
+      cool_rain: "\U0001F326 涼しい、 雨"
+      moderate: "\u26C5 温和"
+      moderate_rain: "\U0001F327 温和、 雨"
+      warm: "\U0001F324 暖かい"
+      warm_rain: "\U0001F327 暖かい、 雨"
+      hot: "\u2600 熱い"
+
+      light_breeze: "\U0001F4A8 そよ風"
+      moderate_breeze: "\U0001F4A8 和風"
+      strong_breeze: "\U0001F4A8 強い風"
+      fast_winds: "\U0001F32A 疾風"
+
+    names:
+      header: 現在地
+      unknown: "？？？"
+      # names are constructed of two parts, one part is chosen randomly and is randomly inserted into the second part
+      # these are lists, you can add or remove entries, but the dashes must stay in line
+      first:
+        - 評議会
+        - 職人
+        - ウォルフィリ
+        - チコ
+        - デボン
+        - ゼボト
+        - ドロップハート
+        - ライラス
+        - 花びら
+        - シプレ
+        - オレンジ
+        - 月明り
+        - 輝き
+        - ビリジアン
+        - 小百合
+        - カンナギ
+        - クロマ
+        - 糸杉
+        - 桜
+        - フルーツ
+        - 無花果
+      # second part, 'FIRST' is first part
+      # as these contain braces and are not folded scalars, they must be in quotes
+      second:
+        - "{FIRST}道"
+        - "{FIRST}谷"
+        - "{FIRST}町"
+        - "{FIRST}町までの道"
+        - "{FIRST}城塞"
+        - "{FIRST}城塞までの道"
+        - "{FIRST}道路"
+        - "{FIRST}村"
+        - "{FIRST}村までの道"
+        - "{FIRST}島"
+        - "{FIRST}森"
+        - "{FIRST}草地"
+        - "{FIRST}砂漠"
+        - "{FIRST}湖"
+        - "{FIRST}渓谷"
+        - "{FIRST}タウン"
+        - "{FIRST}タウンまでの道"
+
+  roam:
+    start: |
+      探検を開始した。 15分のたび、エネルギーを使用して、場所を移動する。 (`{PREFIX}look`でここを見回す)
+    # 'on' displays when the user tries to roam but already is roaming
+    on: |
+      既に探検中。
+    # 'out' displays when the user has no energy but switches to roaming mode anyway
+    out: |
+      探検を開始したが、エネルギーが足りないため、今はどこへも移動しない。エネルギーが回復した時は、エネルギーを使用して、場所を移動する。 (`{PREFIX}look`でここを見回す)
+    stop: |
+      探検を停止した。 探検エフェクトは少しの間から切れる。 (`{PREFIX}look`でここを見回す)
+    stop_no_effect: |
+      探検を停止した。 (`{PREFIX}look`でここを見回す)
+    # 'off' displays when the user tries to stop roaming but already isn't
+    off: |
+      今はどこでも行ってない。
+
+  search:
+    busy: |
+      忙しすぎ。やっていることをやった後は辺を探せる。
+    no_energy: |
+      やぁ、疲れた。このままで遊びしないよ。
+
+    # message when the user has just searched, while waiting for result
+    search_wait: |
+      {USER}はこの辺りを探すと・・
+    search_lost: |
+      {USER}はこの辺りを探すと・・ ちょっと迷い込んでしまった。 一体どこだ、ここ？
+      {ENERGY}点のエネルギーが残っている
+    search_nothing: |
+      {USER}はこの辺りを探すと・・ 何も見つけなかった。
+      {ENERGY}点のエネルギーが残っている
+    search_coin: |
+      {USER}はこの辺りを探すと・・ {AMOUNT} {COINEMOJI}を見つけた！
+      これで{TOTAL} {COINEMOJI}を持っていて、{ENERGY}点のエネルギーが残っています。
+    search_coin_strange: |
+      {USER}はこの辺りを探すと・・ {AMOUNT} {COINEMOJI}を見つけた！
+      {AMOUNT, plural, =1{It appears} other{They appear}} to be many years old, but {AMOUNT, plural, =1{it's} other{they're}} still legal tender. Probably.
+      これで{TOTAL} {COINEMOJI}を持っていて、{ENERGY}点のエネルギーが残っています。
+    search_blob:
+      prompt: |
+        {USER}はこの辺りを探すと・・ {CLASS}{BLOB}を見つけた！
+        {ENERGY}点のエネルギーが残っている
+
+        {CATCHOPTS}
+      prompt_strange: |
+        {USER}はこの辺りを探すと・・ 落ち込んだみたい**{CLASS}{BLOB}**を見つけた。
+        {ENERGY}点のエネルギーが残っている
+
+        {CATCHOPTS}
+      # catch_default is used when the user only has one type of ball.
+      catch_default: |
+        `{PREFIX}catch`で{BALL}を使える
+      catch_multi: |
+        `{PREFIX}catch {BALLNAME}`で{BALL}を使える
+      # catch_remain is the last in the list of multiple choices, detailing the default.
+      catch_remain: |
+        それとも`{PREFIX}catch`で{BALL}を使える
+      catch_nope: |
+        残念だが、ボールは持ってないため、Blobを逃がすしかできない。
+      leave: |
+        `{PREFIX}ignore`でBlobを逃がす
+      continue: |
+        `{PREFIX}search`でもう一回探す
+    retry_blob:
+      prompt:
+        - |
+          {USER} だめだ！ {BLOB}がボールから出てしまった！
+
+          {CATCHOPTS}
+        - |
+          {USER} 残念！ {BLOB}が出てしまった！ もう少しで捕まえられたのに・・
+
+          {CATCHOPTS}
+        - |
+          {USER} おしい！ {BLOB}が出てしまった！ あとちょっとのところだったのに！
+
+          {CATCHOPTS}
+    after_blob:
+      run: |
+        {BLOB}は逃げてしまった。
+      disappeared: |
+        持ってたはずの{BALL}はどうか消えたみたいです。どっかで使えたかな？
+      caught: |
+        {USER} やった！{BLOB}の{NAME}さん捕まえた！
+
+  store:
+    busy: |
+      忙しすぎ。やっていることをやった後は店に行ける。
+    none_roaming: |
+      どこ？ 見えないよ。 もしかしてさっき店がある場所から移動した？ (`{PREFIX}stay`で探検を停止)
+    none: |
+      どこ？ 見えないよ。 何か買いたいなら店がある場所まで移動していい。 (`{PREFIX}roam`で探検を開始)
+
+    strange: |
+      ここには、店が間違いなくあるけど、荒廃したままで、行ってない方がいいかも。
+
+    enter: |
+      店を見回す。
+    effect: |
+      探検からもらった上機嫌は店の人まで伝える。
+    coins: |
+      {AMOUNT} {COINEMOJI}持っています。
+    
+    warn_moving: |
+      **場所を移動しようとしています**
+    warn_effect: |
+      **探検エフェクトはすぐ無くなる**
+
+    # how the item is listed in the store
+    listing: |
+      **{ITEM}**: {AMOUNT} {COINEMOJI}
+
+    buy_help: |
+      `{PREFIX}store buy [アイテム] <幾ら>` でアイテムを買えます
+    sell_help: |
+      `{PREFIX}store sell [アイテム] <幾ら>` でアイテムを売れます
+
+    unsure_buy: |
+      何を買いたいのか分からない
+    unsure_sell: |
+      何を売りたいのか分からない
+
+    no_match_buy: |
+      そう言うアイテムは聞くことなかったよ
+    no_match_sell: |
+      そう言うアイテムは聞くことなかったよ
+
+    no_stock: |
+      そのアイテムは品切れです
+
+    # if a user tries to buy 0 of something
+    no_zero_buy:
+      - |
+        テストで０点取った時みたいに、受領書にはでかい０が書かれた。
+    # if a user tries to buy less than 0 of something
+    no_negative_buy: |
+      売りたいアイテムがあるなら `{PREFIX}store sell [アイテム] <幾ら>` で売れます。
+    # ditto for sell
+    no_negative_sell: |
+      買いたいアイテムがあるなら `{PREFIX}store buy [アイテム] <幾ら>` で買えます。
+
+    no_money: |
+      お金は足りないよ。
+    # if a user can afford an item, but doesn't have enough money for the amount they're quoting
+    no_money_mass: |
+      お金は足りないよ。
+
+    confirm_buy:
+      message: |
+        本当に{ITEM}を買いますか？ ({COST} {COINEMOJI}を払う)
+      confirm: |
+        `{PREFIX}confirm`で承知
+      cancel: |
+        `{PREFIX}cancel`でキャンセル
+
+    no_complete:
+      buy: |
+        商売は成功に完了できなかったみたい。 お金足りなかったかな？
+      sell: |
+        商売は成功に完了できなかったみたい。 アイテムの分量足りなかったかな？
+
+    complete: |
+      商売は成功に完了しました。今は{CURRENCY} {COINEMOJI}を持っています。
+
+    no_have_item: |
+      そのアイテムを持ってないようです。
+
+    not_enough_item: |
+      アイテムはその分量を持ってないようです。
+
+    no_zero_sell:
+      - |
+        何も売らなければ何も受けらないでしょ
+
+    confirm_sell:
+      message: |
+        本当に{ITEM}を売りたいか？ ({GAIN} {COINEMOJI}を受ける)
+      confirm: |
+        `{PREFIX}confirm`で承知
+      cancel: |
+        `{PREFIX}cancel`でキャンセル
+
+  locale:
+    none: |
+      ロケール名は必要です。
+    same: |
+      このロケールは既に設定しています。
+    notfound: |
+      そのロケールは見つかりませんでした。
+    changed: |
+      サーバーのロケールは変更しました。 `{PREFIX}locale [ロケール名]`でいつも変更できます。
+
+blobs:
+  # how an amount of a blob should appear in screens; meta, trade, etc
+  plural: |
+    {BLOB}{AMOUNT, plural, =0{} other{の#個}}
+
+  # change these!!
+  names:
+    - |
+      サンプル第一
+    - |
+      サンプル第二
+
+
+rarity:
+  # names of the rarity levels
+  # STATE is singular if attached for a singular noun (*a legendary* blob), etc
+  legendary: |
+    伝奇的{STATE, select, singular{な} other{}}
+  rare: |
+    レア{STATE, select, singular{の} other{}}
+  uncommon: |
+    滅多ない{STATE, select, singular{} other{}}
+  common: |
+    一般的{STATE, select, singular{な} other{}}
+
+
+item:
+  # item related data
+  ball:
+    # ball items
+    basic:
+      name: |
+        {AMOUNT, select, mass{モンスターボール} singular{モンスターボール} concept{モンスターボール} other{{AMOUNT, plural, other{モンスターボールの#個}}}}
+      description: |
+        基本的なBlob捕まえるボール。基本的なので、一般的なBlobじゃないと効果弱い。
+
+    great:
+      name: |
+        {AMOUNT, select, mass{スーパーボール} singular{スーパーボール} concept{スーパーボール} other{{AMOUNT, plural, other{スーパーボールの#個}}}}
+      description: |
+        モンスターボールより高性能あるボール。
+
+    ultra:
+      name: |
+        {AMOUNT, select, mass{ハイパーボール} singular{ハイパーボール} concept{ハイパーボール} other{{AMOUNT, plural, other{ハイパーボールの#個}}}}
+      description: |
+        スーパーボールより高性能あるボール。 どのBlobでも捕捉率は高い。
+
+    master:
+      name: |
+        {AMOUNT, select, mass{マスターボール} singular{マスターボール} concept{マスターボール} other{{AMOUNT, plural, other{マスターボールの#個}}}}
+      description: |
+        ボールの凄く強い一種。 失敗する可能性は超低。
+
+    aqua:
+      name: |
+        {AMOUNT, select, mass{水ボール} singular{水ボール} concept{水ボール} other{{AMOUNT, plural, other{水ボールの#個}}}}
+      description: |
+        雨が降っている時は効果的が上がるボールです。
+
+    gale:
+      name: |
+        {AMOUNT, select, mass{ゲイルボール} singular{ゲイルボール} concept{ゲイルボール} other{{AMOUNT, plural, other{ゲイルボールの#個}}}}
+      description: |
+        風が強い時は効果的が上がるボールです。
+
+    calm:
+      name: |
+        {AMOUNT, select, mass{ヘイセイボール} singular{ヘイセイボール} concept{ヘイセイボール} other{{AMOUNT, plural, other{ヘイセイボールの#個}}}}
+      description: |
+        風が吹いていない時は効果的が上がるボールです。
+
+    desert:
+      name: |
+        {AMOUNT, select, mass{サバクボール} singular{サバクボール} concept{サバクボール} other{{AMOUNT, plural, other{サバクボールの#個}}}}
+      description: |
+        熱い時は効果的が上がるボールです。
+
+    improbability:
+      name: |
+        {AMOUNT, select, mass{不確率ボール} singular{不確率ボール} concept{不確率ボール} other{{AMOUNT, plural, other{不確率ボールの#個}}}}
+      description: |
+        失敗さえしない
+
+  regen:
+    # items that regen
+
+    # generic regen description
+    description: |
+      エネルギを{RECOVER}点回復します.
+    # generic use message
+    use_message: |
+      {USER}は{ITEM}を使って、エネルギの{RECOVER}点を回復した。
+
+    # item names
+    spikey_fruit: |
+      {AMOUNT, select, mass{ツノニガウリ} singular{ツノニガウリ} concept{ツノニガウリ} other{{AMOUNT, plural, other{ツノニガウリの#つ}}}}
+    pudding: |
+      {AMOUNT, select, mass{プリン} singular{プリン} concept{プリン} other{{AMOUNT, plural, other{プリンの#つ}}}}
+    sugar_cube: |
+      {AMOUNT, select, mass{角砂糖} singular{角砂糖} concept{角砂糖} other{{AMOUNT, plural, other{角砂糖の#つ}}}}
+
+  lure:
+    # lures
+    blob:
+      name: |
+        {AMOUNT, select, mass{Blob餌} singular{Blob餌} concept{Blob餌} other{{AMOUNT, plural, other{Blob餌の#粒}}}}
+      description: |
+        少しの間blobを見つける確率を上げる
+      use_message: |
+        {USER}は{ITEM}を使って、 少しの間はblobを見つける確率が上がった。
+
+
+effect:
+  # effect-related data
+  blob_lure:
+    name: |
+      Blob餌

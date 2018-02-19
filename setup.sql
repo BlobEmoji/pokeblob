@@ -2,7 +2,6 @@
 COPY locales (id) FROM stdin;
 en
 ja
-fr
 \.
 
 COPY blobrarity (id, name, rarity_scalar) FROM stdin;

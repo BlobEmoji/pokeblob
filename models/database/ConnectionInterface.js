@@ -299,6 +299,16 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     `, [memberData.unique_id, blobDef.id, blobDef.rarity_scalar]);
     return resp.rows[0];
   }
+
+  async changeGuildLocale(guild_id, locale) {
+    const resp = await this.query(`
+      UPDATE guilds
+      SET locale = $2
+      WHERE id = $1::BIGINT
+      RETURNING *
+    `, [guild_id, locale]);
+    return resp.rows[0];
+  }
 }
 
 module.exports = ConnectionInterface;
