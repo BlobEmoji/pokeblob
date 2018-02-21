@@ -183,7 +183,7 @@ class Search extends CommandBaseClass {
       // woo!
       context.log('silly', 'catch attempt successful');
       // generate a blob by this definition and give it to them
-      const caughtBlob = await context.connection.giveUserBlob(context.member, blob);
+      const { blob: caughtBlob, addToParty } = await context.connection.giveBlobParty(context.member, blob);
       context.log('info', `user ${context.member.id}@${context.guild.id} obtained blob ${caughtBlob.unique_id} (def ${blob.id}) by natural catch (used ball ${usedBall.id})`);
       // commit to destroy their ball and supply the blob
       await transaction.commit();
@@ -193,7 +193,10 @@ class Search extends CommandBaseClass {
       if (returnMessage)
         await returnMessage.delete();
       // tell the user about it
-      await context.send(_('commands.search.after_blob.caught', passArgs));
+      if (addToParty)
+        await context.send(_('commands.search.after_blob.caught_party', passArgs));
+      else
+        await context.send(_('commands.search.after_blob.caught_full', passArgs));
     } else {
       // they lost, commit to destroy their ball
       context.log('silly', 'catch attempt failed');

@@ -275,7 +275,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     return resp.rows;
   }
 
-  async giveUserBlob(member, blobDef) {
+  async giveUserBlob(member, blobDef, addToParty) {
     const memberData = await this.memberData(member);
     const resp = await this.query(`
       WITH stat_info AS (
@@ -288,16 +288,27 @@ class ConnectionInterface extends ConnectionInterfaceBase {
         (3 + (random() * ln($3)))::INT as spc,
         (random() * 0.33 * ln($3))::INT as spc_dev,
         5 as spd,
-        (random() * 0.25 * ln($3))::INT as spd_dev
+        (random() * 0.25 * ln($3))::INT as spd_dev,
+        CASE WHEN $4::BOOLEAN THEN now() AT TIME ZONE 'UTC'
+        ELSE NULL END AS add_party
       )
       INSERT INTO blobs (blob_id, user_id, vitality, health, attack, attack_dev,
-        defense, defense_dev, special, special_dev, speed, speed_dev)
+        defense, defense_dev, special, special_dev, speed, speed_dev, party_addition_time)
       SELECT $2::BIGINT, $1::BIGINT, health, health, atk, atk_dev,
-      def, def_dev, spc, spc_dev, spd, spd_dev
+      def, def_dev, spc, spc_dev, spd, spd_dev, add_party
       FROM stat_info
       RETURNING *
-    `, [memberData.unique_id, blobDef.id, blobDef.rarity_scalar]);
+    `, [memberData.unique_id, blobDef.id, blobDef.rarity_scalar, addToParty]);
     return resp.rows[0];
+  }
+
+  async giveBlobParty(member, blobDef) {
+    const party = await this.getParty(member);
+    const addToParty = party.length < 4;
+    const blob = await this.giveUserBlob(member, blobDef, addToParty);
+    if (addToParty)
+      party.push(blob);
+    return { blob, addToParty, party };
   }
 
   async changeGuildLocale(guild_id, locale) {

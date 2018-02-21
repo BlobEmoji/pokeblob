@@ -577,7 +577,7 @@ describe('ConnectionInterface', function() {
         for (let index = 0; index < 5; index++) {
           const blobDef = await connection.getRandomWeightedBlob(data.loc_search_potential, data.roaming_effect);
 
-          const blob = await connection.giveUserBlob(mockMember, blobDef);
+          const blob = await connection.giveUserBlob(mockMember, blobDef, false);
 
           assert.strictEqual(blobDef.id, blob.blob_id);
         }
@@ -588,7 +588,7 @@ describe('ConnectionInterface', function() {
     });
   });
 
-  describe('updateParty|getParty', function() {
+  describe('updateParty|getParty|giveBlobParty', function() {
     it('should update or get the current party of the user', async function() {
       const connection = await director.acquire();
 
@@ -603,17 +603,30 @@ describe('ConnectionInterface', function() {
 
         const blobDef = await connection.getRandomWeightedBlob(data.loc_search_potential, data.roaming_effect);
 
-        const blob = await connection.giveUserBlob(mockMember, blobDef);
-
-        await connection.updateParty(mockMember, [blob.unique_id]);
+        const { blob } = await connection.giveBlobParty(mockMember, blobDef);
 
         const partyTwo = await connection.getParty(mockMember);
         assert.strictEqual(partyTwo.length, 1);
 
-        await connection.updateParty(mockMember, []);
+        // add 5 random definitions to test the 4-blob ceiling works
+        for (let index = 0; index < 5; index++) {
+          const randomDef = await connection.getRandomWeightedBlob(data.loc_search_potential, data.roaming_effect);
+
+          await connection.giveBlobParty(mockMember, randomDef);
+        }
 
         const partyThree = await connection.getParty(mockMember);
-        assert.strictEqual(partyThree.length, 0);
+        assert.strictEqual(partyThree.length, 4);
+
+        await connection.updateParty(mockMember, []);
+
+        const partyFour = await connection.getParty(mockMember);
+        assert.strictEqual(partyFour.length, 0);
+
+        await connection.updateParty(mockMember, [blob.unique_id]);
+
+        const partyFive = await connection.getParty(mockMember);
+        assert.strictEqual(partyFive.length, 1);
 
       } finally {
         await connection.release();

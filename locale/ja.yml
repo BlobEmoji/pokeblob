@@ -244,8 +244,10 @@ commands:
         {BLOB}は逃げてしまった。
       disappeared: |
         持ってたはずの{BALL}はどうか消えたみたいです。どっかで使えたかな？
-      caught: |
-        {USER} やった！{BLOB}の{NAME}さん捕まえた！
+      caught_party: |
+        {USER} やった！{BLOB}の{NAME}さん捕まえた！ パーティーに追加しました。
+      caught_full: |
+        {USER} やった！{BLOB}の{NAME}さん捕まえた！ パーティーは満員だから、パソコンに送られた。
 
   store:
     busy: |

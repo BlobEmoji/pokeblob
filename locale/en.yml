@@ -288,8 +288,10 @@ commands:
         The {BLOB} runs away.
       disappeared: |
         The {BALL} you should have had has disappeared from you. Did it get used somewhere?
-      caught: |
-        {USER} Yes! You caught {NAME} the {BLOB}!
+      caught_party: |
+        {USER} Yes! You caught {NAME} the {BLOB}! They have been added to your party.
+      caught_full: |
+        {USER} Yes! You caught {NAME} the {BLOB}! Your party is full, so they were sent to your PC.
 
   store:
     busy: |
