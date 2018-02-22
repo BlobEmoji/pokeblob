@@ -40,6 +40,8 @@ meta:
         探検を停止する
       search: |
         ここの辺を探す (エネルギーが足りたら)
+      blobs: |
+        捕まえたBlobの情報を見る
 
       store: |
         店に行く (ここに店があるなら)
@@ -355,6 +357,24 @@ commands:
       そのロケールは見つかりませんでした。
     changed: |
       サーバーのロケールは変更しました。 `{PREFIX}locale [ロケール名]`でいつも変更できます。
+
+  blobs:
+    display_format:
+      party: |
+        {INDEX}. {EMOJI} {NAME}
+      stored: |
+        {EMOJI} {NAME}
+    extra: |
+      ・・と他{AMOUNT}個
+    none_party: |
+      今は一人で探検してるみたい。
+    none_storage: |
+      空
+    title:
+      party: |
+        パーティー (仲間)
+      storage: |
+        パソコンのストレージ
 
 blobs:
   # how an amount of a blob should appear in screens; meta, trade, etc

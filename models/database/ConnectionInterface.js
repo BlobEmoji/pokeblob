@@ -116,9 +116,12 @@ class ConnectionInterface extends ConnectionInterfaceBase {
   async getParty(member) {
     const memberData = await this.memberData(member);
     const resp = await this.query(`
-      SELECT * FROM blobs
+      SELECT *
+      FROM blobs INNER JOIN blobdefs
+      ON blobdefs.id = blobs.blob_id
       WHERE user_id = $1
       AND party_addition_time IS NOT NULL
+      ORDER BY party_addition_time ASC
     `, [memberData.unique_id]);
     return resp.rows;
   }
@@ -319,6 +322,20 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       RETURNING *
     `, [guild_id, locale]);
     return resp.rows[0];
+  }
+
+  async getUserBlobs(member) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      SELECT *, party_addition_time IS NOT NULL AS in_party
+      FROM blobs INNER JOIN blobdefs
+      ON blobdefs.id = blobs.blob_id
+      WHERE user_id = $1
+      ORDER BY party_addition_time ASC,
+      (CASE WHEN traded_time IS NOT NULL THEN traded_time
+      ELSE capture_time END) DESC
+    `, [memberData.unique_id]);
+    return resp.rows;
   }
 }
 

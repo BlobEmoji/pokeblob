@@ -40,6 +40,8 @@ meta:
         Stop roaming the world.
       search: |
         Search around your current area, if you have the energy.
+      blobs: |
+        Check what blobs you currently have.
 
       store: |
         Go to the store, if there's one in your area.
@@ -407,6 +409,25 @@ commands:
       That locale couldn't be found.
     changed: |
       The guild locale has been changed. Use `{PREFIX}locale [name]` at any time to change back.
+
+  blobs:
+    display_format:
+      party: |
+        {INDEX}. {EMOJI} {NAME}
+      stored: |
+        {EMOJI} {NAME}
+    extra: |
+      ..and {AMOUNT} other{AMOUNT, plural, one{} other{s}}.
+    none_party: |
+      Currently travelling alone.
+    none_storage: |
+      No blobs in storage.
+    title:
+      party: |
+        Party
+      storage: |
+        Stored on PC
+
 
 blobs:
   # how an amount of a blob should appear in screens; meta, trade, etc

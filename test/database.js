@@ -588,7 +588,7 @@ describe('ConnectionInterface', function() {
     });
   });
 
-  describe('updateParty|getParty|giveBlobParty', function() {
+  describe('updateParty|getParty|giveBlobParty|getUserBlobs', function() {
     it('should update or get the current party of the user', async function() {
       const connection = await director.acquire();
 
@@ -614,6 +614,10 @@ describe('ConnectionInterface', function() {
 
           await connection.giveBlobParty(mockMember, randomDef);
         }
+
+        // might as well throw this in here
+        const fullBlobs = await connection.getUserBlobs(mockMember);
+        assert.strictEqual(fullBlobs.length, 6);
 
         const partyThree = await connection.getParty(mockMember);
         assert.strictEqual(partyThree.length, 4);
