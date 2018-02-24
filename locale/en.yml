@@ -42,6 +42,8 @@ meta:
         Search around your current area, if you have the energy.
       blobs: |
         Check what blobs you currently have.
+      user: |
+        Check your current items, party and status effects.
 
       store: |
         Go to the store, if there's one in your area.
@@ -427,6 +429,31 @@ commands:
         Party
       storage: |
         Stored on PC
+
+  user:
+    party:
+      none: |
+        None.
+      listing: |
+        {INDEX}. {EMOJI} {NAME}
+      title: |
+        Party
+    items:
+      none: |
+        None.
+      listing: |
+        - {ITEM}
+      title: |
+        Items
+    effects:
+      none: |
+        None.
+      roaming: |
+        - Roaming
+      listing: |
+        - {EFFECT} ({LIFE})
+      title: |
+        Effects
 
 
 blobs:

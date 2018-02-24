@@ -42,6 +42,8 @@ meta:
         ここの辺を探す (エネルギーが足りたら)
       blobs: |
         捕まえたBlobの情報を見る
+      user: |
+        自分の様子、アイテム、パーティーとかを確認
 
       store: |
         店に行く (ここに店があるなら)
@@ -375,6 +377,32 @@ commands:
         パーティー (仲間)
       storage: |
         パソコンのストレージ
+
+  user:
+    party:
+      none: |
+        なし
+      listing: |
+        {INDEX}. {EMOJI} {NAME}
+      title: |
+        パーティー (仲間)
+    items:
+      none: |
+        なし
+      listing: |
+        - {ITEM}
+      title: |
+        アイテム
+    effects:
+      none: |
+        なし
+      roaming: |
+        - 探検中
+      listing: |
+        - {EFFECT} ({LIFE})
+      title: |
+        エフェクト
+
 
 blobs:
   # how an amount of a blob should appear in screens; meta, trade, etc

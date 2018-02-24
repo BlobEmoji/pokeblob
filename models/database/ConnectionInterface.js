@@ -341,6 +341,18 @@ class ConnectionInterface extends ConnectionInterfaceBase {
     `, [memberData.unique_id]);
     return resp.rows;
   }
+
+  async getUserEffects(member) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      SELECT *
+      FROM effects INNER JOIN effectdefs
+      ON effects.effect_id = effectdefs.id
+      WHERE user_id = $1
+      ORDER BY life DESC
+    `, [memberData.unique_id]);
+    return resp.rows;
+  }
 }
 
 module.exports = ConnectionInterface;
