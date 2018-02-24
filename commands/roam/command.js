@@ -18,7 +18,7 @@ class Roam extends CommandBaseClass {
     const userData = await connection.memberData(context.member);
     const _ = (...x) => client.localize(userData.locale, ...x);
 
-    if (userData.state[0] === '1')
+    if (userData.state_roaming)
       return await context.send(_('commands.roam.on', { PREFIX: context.prefix }));
 
     await connection.updateRoamingState(context.member, true);

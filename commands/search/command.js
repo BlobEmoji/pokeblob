@@ -25,7 +25,7 @@ class Search extends CommandBaseClass {
 
     message.delete({ timeout: 2500 }).catch(() => {});
 
-    if (userData.state[1] === '1')
+    if (userData.state_engaged)
       // user is engaged
       return await context.send(_('commands.search.busy'));
 

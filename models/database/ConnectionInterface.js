@@ -54,7 +54,7 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       SELECT *,
         quarter_remaining() AS quarter_remaining,
         last_acked_location = last_moved_location AS roaming_effect
-      FROM final_query, parse_location(final_query.location), guild_table
+      FROM final_query, parse_location(final_query.location), parse_state(final_query."state"), guild_table
     `, [
       member.guild.id,
       member.guild.name,

@@ -22,11 +22,11 @@ class Store extends CommandBaseClass {
     const _ = (...x) => client.localize(userData.locale, ...x);
     const _r = (...x) => client.localizeRandom(userData.locale, ...x);
 
-    if (userData.state[1] === '1')
+    if (userData.state_engaged)
       return await context.send(_('commands.store.busy'));
 
     if (!userData.loc_has_shop)
-      if (userData.state[0] === '1')
+      if (userData.state_roaming)
         return await context.send(_('commands.store.none_roaming', { PREFIX: context.prefix }));
       else
         return await context.send(_('commands.store.none', { PREFIX: context.prefix }));
@@ -187,7 +187,7 @@ class Store extends CommandBaseClass {
           outputListing.push(_('commands.store.effect'));
 
         if (userData.energy !== 0 && userData.quarter_remaining > 0.8)
-          if (userData.state[0] === '1')
+          if (userData.state_roaming)
             outputListing.push(_('commands.store.warn_moving'));
           else if (userData.roaming_effect)
             outputListing.push(_('commands.store.warn_effect'));

@@ -87,26 +87,48 @@ CREATE TYPE location_info AS (
 CREATE OR REPLACE FUNCTION parse_location(IN BIGINT) RETURNS location_info AS
 $$
 SELECT
-((abs($1 + 1) % 28) + 4)::INT,
-((abs($1 + 2) % 80) + 20)::INT,
-SQRT(1521 - (abs($1 + 3) % 1521))::INT,
-((abs($1 + 4) % 1414) < 565)::BOOLEAN,
-((abs($1 + 5) % 2103) < 841)::BOOLEAN,
-((abs($1 + 6) % 47181) < 4718)::BOOLEAN,
-(abs($1 + 7) % 2147483646)::INT,
-(abs($1 + 8) % 2147482642)::INT,
-(abs($1 + 9) % 2147462557)::INT,
-(abs($1 + 10) % 14175293)::INT,
-($1 < 0)::BOOLEAN
+    ((abs($1 + 1) % 28) + 4)::INT,
+    ((abs($1 + 2) % 80) + 20)::INT,
+    SQRT(1521 - (abs($1 + 3) % 1521))::INT,
+    ((abs($1 + 4) % 1414) < 565)::BOOLEAN,
+    ((abs($1 + 5) % 2103) < 841)::BOOLEAN,
+    ((abs($1 + 6) % 47181) < 4718)::BOOLEAN,
+    (abs($1 + 7) % 2147483646)::INT,
+    (abs($1 + 8) % 2147482642)::INT,
+    (abs($1 + 9) % 2147462557)::INT,
+    (abs($1 + 10) % 14175293)::INT,
+    ($1 < 0)::BOOLEAN
+$$
+LANGUAGE SQL;
+
+CREATE TYPE state_info AS (
+    -- whether the user is roaming or not
+    state_roaming BOOLEAN,
+
+    -- whether the user is engaged or not (in encounter, trade, gym, duel, etc)
+    state_engaged BOOLEAN,
+
+    -- whether the user is battling or not (gym/duel)
+    state_battling BOOLEAN
+
+    -- further bits exist but are yet reserved
+);
+
+CREATE OR REPLACE FUNCTION parse_state(IN BIT) RETURNS state_info AS
+$$
+SELECT
+    get_bit($1, 0)::BOOLEAN,
+    get_bit($1, 1)::BOOLEAN,
+    get_bit($1, 2)::BOOLEAN
 $$
 LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION generate_location() RETURNS BIGINT AS
-$$ SELECT (RANDOM()*9223372036854775806)::BIGINT $$
+    $$ SELECT (RANDOM()*9223372036854775806)::BIGINT $$
 LANGUAGE SQL;
 
 CREATE OR REPLACE FUNCTION generate_center_location() RETURNS BIGINT AS
-$$ SELECT (((RANDOM()*4381649423683979)::BIGINT * 2103) + 6)::BIGINT $$
+    $$ SELECT (((RANDOM()*4381649423683979)::BIGINT * 2103) + 6)::BIGINT $$
 LANGUAGE SQL;
 
 CREATE TABLE IF NOT EXISTS user_data (
@@ -140,10 +162,7 @@ CREATE TABLE IF NOT EXISTS user_data (
     experience BIGINT CONSTRAINT experience_check CHECK (experience >= 0) DEFAULT 0,
 
     -- user state
-    --  bit 0 is whether the user is roaming or not
-    --  bit 1 is whether the user is engaged or not (in encounter, trade, gym, duel, etc)
-    --  bit 2 is whether the user is battling or not (gym/duel)
-    --  bit 3+ are reserved
+    -- check parse_state for definitions
     "state" BIT(16) DEFAULT B'0000000000000000',
 
     -- user location

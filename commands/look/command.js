@@ -45,7 +45,7 @@ class Look extends CommandBaseClass {
     else
       descriptionAggregate.push(_('commands.look.energy.lots', { AMOUNT: userData.energy }));
 
-    if (userData.state[0] === '1')
+    if (userData.state_roaming)
       if (userData.energy > 0)
         descriptionAggregate.push(_('commands.look.roaming.on'));
       else
@@ -59,7 +59,7 @@ class Look extends CommandBaseClass {
       descriptionAggregate.push(_('commands.look.roaming.effect'));
 
     // if the user can move, and is about to, warn them
-    if (userData.energy !== 0 && userData.state[0] === '1' && userData.quarter_remaining > 0.8)
+    if (userData.energy > 0 && userData.state_roaming && userData.quarter_remaining > 0.8)
       descriptionAggregate.push(_('commands.look.warn_moving'));
 
     // prepare stuff for weather field
