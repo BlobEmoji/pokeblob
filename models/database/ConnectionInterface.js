@@ -63,7 +63,11 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       member.user.discriminator,
       member.user.bot
     ]);
-    // add supply logic here
+    
+    if (resp.rows[0] && !resp.rows[0].updated)
+      // user has just been created, supply 5 basic balls
+      await this.giveUserItem(member, 1, 5);
+
     return resp.rows[0];
   }
 
