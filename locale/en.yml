@@ -44,6 +44,8 @@ meta:
         Check what blobs you currently have.
       user: |
         Check your current items, party and status effects.
+      party: |
+        Get more detailed info on your party.
 
       store: |
         Go to the store, if there's one in your area.
@@ -454,6 +456,44 @@ commands:
         - {EFFECT} ({LIFE})
       title: |
         Effects
+
+  party:
+    description: |
+      When near a PokéBlob Center, you can heal your blobs or use a PC to reorganize your party.
+    slots:
+      empty:
+        title: |
+          Slot {INDEX}
+        description: |
+          Empty.
+      blob:
+        title: |
+          {EMOJI} {NAME}
+        description: |
+          {HEALTHBAR} {HEALTH}/{VITALITY} HP
+
+          Level: {LEVEL}
+          Best stat: {BESTSTAT}
+
+          Capture time: {CAPTURETIME}
+
+    stats:
+      attack: |
+        Attack
+      defense: |
+        Defense
+      special: |
+        Special
+      speed: |
+        Speed
+        
+    # character used as the 'filled' character in the progress bar'
+    fill_character: '\u2588'
+    # character used as the 'empty' character in the progress bar
+    empty_character: '\u2591'
+    # how the progress bar should be constructed
+    progress_bar: |
+      [{FILLPART}{EMPTYPART}]
 
 
 blobs:

@@ -325,7 +325,9 @@ CREATE TABLE IF NOT EXISTS blobs (
 
     -- time this was added to the party. parties are sorted ascending on this value,
     -- with the most recently added party member being last.
-    party_addition_time TIMESTAMP
+    party_addition_time TIMESTAMP,
+
+    experience BIGINT CONSTRAINT no_negative_experience CHECK (experience >= 0) DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS effecttypes (

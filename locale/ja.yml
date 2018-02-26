@@ -44,6 +44,8 @@ meta:
         捕まえたBlobの情報を見る
       user: |
         自分の様子、アイテム、パーティーとかを確認
+      party: |
+        パーティー(仲間)の詳細を見る
 
       store: |
         店に行く (ここに店があるなら)
@@ -402,6 +404,44 @@ commands:
         - {EFFECT} ({LIFE})
       title: |
         エフェクト
+
+  party:
+    description: |
+      センターの近くにいれば、 BlobのHPを回復するとか、 パソコンでパーティー(仲間)を切り替えられます。
+    slots:
+      empty:
+        title: |
+          スロット{INDEX}目
+        description: |
+          空
+      blob:
+        title: |
+          {EMOJI} {NAME}
+        description: |
+          {HEALTHBAR} {HEALTH}/{VITALITY} HP
+
+          レベル： {LEVEL}
+          得意： {BESTSTAT}
+
+          捕獲日時： {CAPTURETIME}
+
+    stats:
+      attack: |
+        攻撃
+      defense: |
+        防御
+      special: |
+        特能力
+      speed: |
+        素早さ
+        
+    # character used as the 'filled' character in the progress bar'
+    fill_character: '\u2588'
+    # character used as the 'empty' character in the progress bar
+    empty_character: '\u2591'
+    # how the progress bar should be constructed
+    progress_bar: |
+      [{FILLPART}{EMPTYPART}]
 
 
 blobs:

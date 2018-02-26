@@ -120,7 +120,8 @@ class ConnectionInterface extends ConnectionInterfaceBase {
   async getParty(member) {
     const memberData = await this.memberData(member);
     const resp = await this.query(`
-      SELECT *
+      SELECT *,
+        floor(ln((experience::FLOAT8 / 10) + 1) + 1)::INTEGER AS level
       FROM blobs INNER JOIN blobdefs
       ON blobdefs.id = blobs.blob_id
       WHERE user_id = $1
