@@ -576,7 +576,7 @@ item:
 
     improbability:
       name: |
-        {AMOUNT, select, mass{Improbability Balls} singular{an Improbability Ball} concept{Improbability Ball} other{{AMOUNT, plural, =0{no Improbability Balls} one{1 Desert Ball} other{# Improbability Balls}}}}
+        {AMOUNT, select, mass{Improbability Balls} singular{an Improbability Ball} concept{Improbability Ball} other{{AMOUNT, plural, =0{no Improbability Balls} one{1 Improbability Ball} other{# Improbability Balls}}}}
       description: |
         Never fails.
 

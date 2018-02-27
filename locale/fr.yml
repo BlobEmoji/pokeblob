@@ -1,0 +1,626 @@
+# courtesy of Mots Doux#1107 (249257036640944129)
+
+meta:
+  # name of the bot. appears in embed footers, etc
+  # don't translate this, or do, i don't mind
+  pokeblobs: |
+    PokéBlobs
+
+  help:
+    no_category: |
+      Pas de catégorie
+    command_header: |
+      Liste de commandes
+
+    categories:
+      # commands' categories in the help message
+      admin: |
+        Administration
+      meta: |
+        Meta
+      pokeblobs: |
+        PokéBlobs
+
+    commands:
+      # help strings for various commands
+      help: |
+        Affiche les commandes disponibles pour vous.
+      meta: |
+        Affiche des informations sur le status actuel du bot.
+      eval: |
+        Exécute du code JS.
+      ping: |
+        Calcule la latence du bot.
+      locale: |
+        Change la langue du bot.
+
+      look: |
+        Regarder aux alentours de votre position actuelle.
+      roam: |
+        Commencer à explorer le monde.
+      stay: |
+        Arrêter d'explorer le monde.
+      search: |
+        Chercher autour de votre position, si vous avez assez d'énergie.
+      blobs: |
+        Consulter les blobs que vous avez.
+      user: |
+        Consulter vos objets, équipes et effets de status.
+      party: |
+        Obtenenir des informations plus détaillées sur votre équipe.
+
+      store: |
+        Aller à la boutique, s'il y en a une dans les environs.
+
+
+commands:
+  # strings used in commands
+  look:
+    warn_moving: |
+      **Vous allez changer d'endroit !**
+
+    roaming:
+      # j'ai varié les verbes pour ne pas être monotone
+      on: |
+        Vous êtes en train de vagabonder.
+      off: |
+        Vous n'êtes pas en déplacement.
+      force_off: |
+        Vous ne pouvez pas bouger maintenant.
+      effect: |
+        Le voyage vous a mis de bonne humeur, vous donnant un effet de status.
+      strange: |
+        L'étrange nature de l'environnement autour de vous vous met légèrement mal à l'aise.
+
+    energy:
+      none: |
+        Vous êtes trop fatigué(e) pour faire quoi que ce soit. (plus d'énergie)
+      # 'peril' is <=4 energy
+      peril: |
+        Vous vous sentez épuisé(e). (énergie : {AMOUNT})
+      # 'warn' is <=10 energy
+      warn: |
+        Vous êtes fatigué(e). (énergie : {AMOUNT})
+      # 'ok' is <=20 energy
+      ok: |
+        Vous vous sentez bien. (énergie : {AMOUNT})
+      # 'good' is <=40 energy
+      good: |
+        Vous êtes en forme pour votre aventure. (énergie : {AMOUNT})
+      # 'plenty' is <=60 energy
+      plenty: |
+        Vous avez beaucoup d'énergie. (énergie : {AMOUNT})
+      # 'lots' is >60 energy
+      lots: |
+        Vous avez énormément d'énergie aujourd'hui. (énergie : {AMOUNT})
+
+    places:
+      header: "Places"
+
+      shop: "\U0001F6D2 Boutique"
+      center: "\U0001F3E5 Centre Pokéblob"
+      gym: "\U0001F3DF Arène Pokéblob"
+
+      none: "Aucun point d'intérêt."
+
+    weather:
+      header: "Météo"
+
+      # represents weather, uses a lot of emoji (keep emoji where possible)
+      cold: "\u2744 Froid"
+      cold_rain: "\U0001F328 Neige"
+      cool: "\U0001F325 Frais"
+      cool_rain: "\U0001F326 Frais, pluvieux"
+      moderate: "\u26C5 Tempéré"
+      moderate_rain: "\U0001F327 Tempéré, pluvieux"
+      warm: "\U0001F324 Bon"
+      warm_rain: "\U0001F327 Bon, pluvieux"
+      hot: "\u2600 Chaud"
+
+      light_breeze: "\U0001F4A8 Légère brise"
+      moderate_breeze: "\U0001F4A8 Moyenne brise"
+      strong_breeze: "\U0001F4A8 Forte brise"
+      fast_winds: "\U0001F32A Vents violents"
+
+    names:
+      header: Lieu
+      unknown: "???"
+      # names are constructed of two parts, one part is chosen randomly and is randomly inserted into the second part
+      # these are lists, you can add or remove entries, but the dashes must stay in line
+      first:
+        - Blob
+        - du Council
+        - de l'Artisan
+        - de Wolfiri
+        - de B1nzy
+        - de FrostLuma
+        - de Devon
+        - de Zeboto
+        - de Dropheart
+        - de Lyrus
+        - de Mots Doux
+        - de Xenthys
+        - de Sajuuk
+        - de la Devon SARL
+        - Pétale
+        - Lavande
+        - Orange
+        - Illumis
+        - Acajou
+        - Bourg Geon
+        - Carmin-sur-mer
+        - Jadielle
+        - Unionpolis
+        - Nénucrique
+        - Célestia
+        - Noisette
+        - Sucre
+        - Sel
+        - Poivre
+        - Arc-en-ciel
+        - Triangle
+        - Azur
+        - Lazuli
+        - Vestigion
+        - Orme
+        - Chêne
+        - Cèdre
+        - Érable
+        - Pin
+        - Cyprès
+        - Sapin
+        - Amaryllis
+        - Ketchum
+        - Tremble
+        - Bouleau
+        - Caryer
+        - Bois de fer
+        - Teck
+        - Saule
+        - Palmier
+        - Fraise
+        - Fruit du dragon
+        - Figue
+        - Raison
+        - Citron
+        - Mangue
+        - Pêche
+        - Æther
+      # second part, 'FIRST' is first part
+      # as these contain braces and are not folded scalars, they must be in quotes
+      second:
+        - "Route {FIRST}"
+        - "Bourg {FIRST}"
+        - "Route vers le bourg {FIRST}"
+        - "Verger {FIRST}"
+        - "Ravin {FIRST}"
+        - "Vallée {FIRST}"
+        - "Voie {FIRST}"
+        - "Ville {FIRST}"
+        - "Route vers la ville {FIRST}"
+        - "Citadelle {FIRST}"
+        - "Route vers la citadelle {FIRST}"
+        - "Grand chemin {FIRST}"
+        - "Plaines {FIRST}"
+        - "Village {FIRST}"
+        - "Route vers le village {FIRST}"
+        - "Île {FIRST}"
+        - "Forêt {FIRST}"
+        - "Rue {FIRST}"
+        - "Pré {FIRST}"
+        - "Désert {FIRST}"
+        - "Lac {FIRST}"
+        - "Péninsule {FIRST}"
+        - "Avenue {FIRST}"
+        - "Boulevard {FIRST}"
+        - "Canyon {FIRST}"
+        - "Vallée {FIRST}"
+        - "Chutes {FIRST}"
+        - "Manoir {FIRST}"
+        - "Pont {FIRST}"
+        - "Crête {FIRST}"
+        - "Paradis {FIRST}"
+
+  roam:
+    start: |
+      Vous êtes maintenant en mode errance. Vous changerez d'endroit et consommerez passivement de l'énergie toutes les 15 minutes (utilisez `{PREFIX}look` pour voir où vous êtes).
+    # 'on' displays when the user tries to roam but already is roaming
+    on: |
+      Vous êtes déjà en mode errance.
+    # 'out' displays when the user has no energy but switches to roaming mode anyway
+    out: |
+      Vous êtes maintenant en mode errance. Vous n'irez nulle part sans énergie, mais une fois que vous en aurez, vous en consommerez passivement pour changer d'endroit (utilisez `{PREFIX}look` pour voir où vous êtes).
+    stop: |
+      Vous n'errez plus, et vos effets d'errance vont disparaître dans quelques minutes (utilisez `{PREFIX}look` pour voir ce qu'il y a ici).
+    stop_no_effect: |
+      Vous ne bougez plus (utilisez `{PREFIX}look` pour voir ce qu'il y a ici).
+    # 'off' displays when the user tries to stop roaming but already isn't
+    off: |
+      Vous n'êtes pas en train de voyager.
+
+  search:
+    busy: |
+      Vous êtes occupé(e) à faire quelque chose. Terminez ça d'abord.
+    no_energy: |
+      Vous êtes trop fatigué(e) pour chercher maintenant.
+
+    # message when the user has just searched, while waiting for result
+    search_wait: |
+      {USER} cherche dans les environs et trouve…
+    search_lost: |
+      {USER} cherche dans les environs et trouve… une absence. Comment avez-vous pu vous perdre ainsi ?
+      Vous avez {ENERGY} points d'énergie restants.
+    search_nothing: |
+      {USER} cherche dans les environs et trouve… rien du tout.
+        Vous avez {ENERGY} points d'énergie restants.
+    search_coin: |
+      {USER} cherche dans les environs et trouve… {AMOUNT} {COINEMOJI} !
+      Vous avez maintenant {TOTAL} {COINEMOJI} et {ENERGY} points d'énergie restants.
+    search_coin_strange: |
+      {USER} cherche dans les environs et trouve… {AMOUNT} {COINEMOJI} !
+      {AMOUNT, plural, one{Cette pièce semble} other {Ces pièces semblent}} dater d'il y a très longtemps, mais {AMOUNT, plural, one{a} other{ont}} toujours cours. Probablement.
+      Vous avez maintenant {TOTAL} {COINEMOJI} et {ENERGY} points d'énergie restants.
+    search_blob:
+      prompt: |
+        {USER} cherche dans les environs et trouve… {CLASS} {BLOB} !
+        Vous avez {ENERGY} points d'énergie restants.
+
+        {CATCHOPTS}
+      prompt_strange: |
+        {USER} cherche dans les environs et trouve… {CLASS} {BLOB}, apparemment abandonné.
+        Vous avez {ENERGY} points d'énergie restants.
+
+        {CATCHOPTS}
+      # catch_default is used when the user only has one type of ball.
+      catch_default: |
+        Écrivez `{PREFIX}catch` pour utiliser {BALL}.
+      catch_multi: |
+        Écrivez `{PREFIX}catch {BALLNAME}` pour utiliser {BALL}.
+      # catch_remain is the last in the list of multiple choices, detailing the default.
+      catch_remain: |
+        Ou écrivez `{PREFIX}catch` pour utiliser {BALL}.
+      catch_nope: |
+        Malheureusement, comme vous n'avez pas de Pokéball, vous n'avez d'autre choix que de laisser ce blob fuir.
+      leave: |
+        `{PREFIX}ignore` pour laisser le blob fuir.
+      continue: |
+        `{PREFIX}search` pour chercher encore.
+    retry_blob:
+      prompt:
+        - |
+          {USER} Oh non ! Le {BLOB} s'est échappé !
+
+          {CATCHOPTS}
+        - |
+          {USER} Argh ! Le {BLOB} s'est libéré !
+
+          {CATCHOPTS}
+        - |
+          {USER} Zut, le {BLOB} s'est échappé ! Ça y était presque !
+
+          {CATCHOPTS}
+    after_blob:
+      run: |
+        Le {BLOB} s'est enfui.
+      disappeared: |
+        La {BALL} que vous deviez avoir a disparu. A-t-elle été utilisée quelque part ?
+      caught_party: |
+        {USER} Oui ! Vous avez attrapé {NAME} le {BLOB} ! Il a été ajouté à votre équipe.
+      caught_full: |
+        {USER} Oui ! Vous avez attrapé {NAME} le {BLOB} ! Votre équipe est pleine, il a été envoyé dans votre PC.
+
+  store:
+    busy: |
+      Vous êtes trop occupé(e) pour faire les boutiques. Terminez d'abord ce que vous faites.
+    none_roaming: |
+      Où ça ? Je n'en vois pas. Vous seriez vous éloigné(e) ? (`{PREFIX}stay` pour arrêter de voyager)
+    none: |
+      Où ça ? Je n'en vois pas. Vous devriez peut-être aller à un endroit avec une boutique avant d'essayer d'acheter des choses.(`{PREFIX}roam` pour commencer à vous déplacer)
+
+    strange: |
+      Alors qu'il y a bien une boutique ici, elle semble délabrée, et personne n'est présent pour la gérer.
+
+    enter: |
+      Vous regardez dans la boutique.
+    effect: |
+      Votre bonne humeur de ballade déteint sur le vendeur, vous donnant une réduction sur certains objets.
+    coins: |
+      Vous avez {AMOUNT} {COINEMOJI}.
+
+    warn_moving: |
+      **Vous êtes sur le point de changer d'endroit !**
+    warn_effect: |
+      **Vous êtes sur le point de perdre votre effet d'errance !**
+
+    # how the item is listed in the store
+    listing: |
+      **{ITEM}**: {AMOUNT} {COINEMOJI}
+
+    buy_help: |
+      `{PREFIX}store buy [objet] <quantité>` permet d'acheter un objet de la boutique.
+    sell_help: |
+      `{PREFIX}store sell [objet] <quantité>` permet de vendre un objet de la boutique.
+
+    unsure_buy: |
+      Je ne suis pas sûr de voir ce que vous essayez d'acheter.
+    unsure_sell: |
+      Je ne suis pas sûr de voir ce que vous essayez de vendre.
+
+    no_match_buy: |
+      Je ne pense pas connaître un tel objet.
+    no_match_sell: |
+        Je ne pense pas connaître un tel objet.
+
+    no_stock: |
+      Je ne pense pas que ce soit en stock ici.
+
+    # if a user tries to buy 0 of something
+    no_zero_buy:
+      - |
+        Vous achetez 0 fois cet objet tant désiré. Cela va très bien avec votre 0 confiance et 0 bon sens.
+      - |
+        Votre banque ne va pas être contente si elle découvre que vous avez encore eu une de ces folies d'achat de vide.
+      - |
+        Bonne idée ! Vous alliez justement manquer de néant.
+      - |
+        Pas le temps de faire du lèche-vitrines !
+    # if a user tries to buy less than 0 of something
+    no_negative_buy: |
+      Si vous voulez de l'argent en échange d'objets objets, vous devriez peut-être en vendre. (`{PREFIX}store sell [objet] <quantité>`)
+    # ditto for sell
+    no_negative_sell: |
+      Si vous voulez des objets en échange d'argent, vous devriez peut-être en acheter.(`{PREFIX}store [objet] <quantité>`)
+
+    no_money: |
+      Je ne pense pas que vous puissiez vous acheter ça.
+    # if a user can afford an item, but doesn't have enough money for the amount they're quoting
+    no_money_mass: |
+      Je ne pense pas que vous puissiez en acheter autant.
+
+    confirm_buy:
+      message: |
+        Êtes-vous sûr(e) de vouloir acheter {ITEM} pour {COST} {COINEMOJI} ?
+      confirm: |
+        `{PREFIX}confirm` pour confirmer
+      cancel: |
+        `{PREFIX}cancel` pour annuler
+
+    no_complete:
+      buy: |
+        La transaction ne peut pas être faite. Avez-vous l'argent nécessaire ?
+      sell: |
+        La transaction ne peut pas être faite. Avez-vous les objets nécessaires ?
+
+    complete: |
+      La transaction a été faite. Vous avez désormais {CURRENCY} {COINEMOJI}.
+
+    no_have_item: |
+      Il semble que vous n'ayez pas cet objet.
+
+    not_enough_item: |
+      Il semble que vous n'ayez pas autant de fois cet objet que vous ne voulez en offrir.
+
+    no_zero_sell:
+      - |
+        Vous avez magnifiquement vendu absolument rien, réalisant un profit d'absolument rien.
+      - |
+        Vous savez, le taux de change de vide contre rien est très fluctuant ces temps-ci…
+
+    confirm_sell:
+      message: |
+        Êtes-vous sûr(e) de vouloir vendre {ITEM} pour {GAIN} {COINEMOJI} ?
+      confirm: |
+        `{PREFIX}confirm` pour confirmer
+      cancel: |
+        `{PREFIX}cancel` pour annuler
+
+  locale:
+    none: |
+      Vous devez indiquer un nom de langue.
+    same: |
+      La langue définie est déjà celle choisie.
+    notfound: |
+      Cette langue n'a pas été trouvée.
+    changed: |
+      La langue pour ce serveur a été changée. Utilisez `{PREFIX}locale [langue]` n'importe quand pour changer.
+
+  blobs:
+    display_format:
+      party: |
+        {INDEX}. {EMOJI} {NAME}
+      stored: |
+        {EMOJI} {NAME}
+    extra: |
+      …and {AMOUNT} autre{AMOUNT, plural, one{} other{s}}.
+    none_party: |
+      Voyage en solitaire.
+    none_storage: |
+      Aucun blob stocké.
+    title:
+      party: |
+        Équipe
+      storage: |
+        Stocké dans le PC
+
+  user:
+    party:
+      none: |
+        Aucun.
+      listing: |
+        {INDEX}. {EMOJI} {NAME}
+      title: |
+        Équipe
+    items:
+      none: |
+        Aucun.
+      listing: |
+        - {ITEM}
+      title: |
+        Objets
+    effects:
+      none: |
+        Aucun.
+      roaming: |
+        - Errance
+      listing: |
+        - {EFFECT} ({LIFE})
+      title: |
+        Effets
+
+  party:
+    description: |
+      Lorsque vous êtres proche d'un centre Pokéblob, vous pouvez soigner vos blobs ou utiliser un PC pour réorganiser votre équipe.
+    slots:
+      empty:
+        title: |
+          Emplacement {INDEX}
+        description: |
+          Vide.
+      blob:
+        title: |
+          {EMOJI} {NAME}
+        description: |
+          {HEALTHBAR} {HEALTH}/{VITALITY} PV
+
+          Niveau : {LEVEL}
+          Meilleure stat : {BESTSTAT}
+
+          Capture time: {CAPTURETIME}
+
+    stats:
+      attack: |
+        Attaque
+      defense: |
+        Défense
+      special: |
+        Spécial
+      speed: |
+        Vitesse
+
+    # character used as the 'filled' character in the progress bar'
+    fill_character: '\u2588'
+    # character used as the 'empty' character in the progress bar
+    empty_character: '\u2591'
+    # how the progress bar should be constructed
+    progress_bar: |
+      [{FILLPART}{EMPTYPART}]
+
+
+blobs:
+  # how an amount of a blob should appear in screens; meta, trade, etc
+  plural: |
+    {AMOUNT, plural, =0{} other{#x }}{BLOB}
+
+  # change these!!
+  names:
+    - |
+      Placeholder 1
+    - |
+      Placeholder 2
+
+
+rarity:
+  # names of the rarity levels
+  # STATE is singular if attached for a singular noun (*a legendary* blob), etc
+  legendary: |
+    {STATE, select, singular{un } other{}}légendaire
+  rare: |
+    {STATE, select, singular{un } other{}}rare
+  uncommon: |
+    {STATE, select, singular{un } other{}}peu commun
+  common: |
+    {STATE, select, singular{un } other{}}commun
+
+
+item:
+  # item related data
+  ball:
+    # ball items
+    basic:
+      name: |
+        {AMOUNT, select, mass{Blob Balls} singular{une Blob Ball} concept{Blob Ball} other{{AMOUNT, plural, =0{aucune Blob Ball} one{1 Blob Ball} other{# Blob Balls}}}}
+      description: |
+        Un objet semblable à une capsule, qui capture les Blobs sauvages. Il suffit pour cela de le jeter comme une balle.
+
+    great:
+      name: |
+        {AMOUNT, select, mass{Super Balls} singular{une Super Ball} concept{Super Ball} other{{AMOUNT, plural, =0{aucune Super Ball} one{1 Super Ball} other{# Super Balls}}}}
+      description: |
+        Une Ball très performante dont le taux de réussite est supérieur à celui de la Blob Ball.
+
+    ultra:
+      name: |
+        {AMOUNT, select, mass{Hyper Balls} singular{une Hyper Ball} concept{Hyper Ball} other{{AMOUNT, plural, =0{aucune Hyper Ball} one{1 hyper Ball} other{# Hyper Balls}}}}
+      description: |
+        Une balle ultra-performante dont le taux de réussite est supérieur à celui de la Super Ball.
+
+    master:
+      name: |
+        {AMOUNT, select, mass{Master Balls} singular{une Master Ball} concept{Master Ball} other{{AMOUNT, plural, =0{aucune Master Ball} one{1 Master Ball} other{# Master Balls}}}}
+      description: |
+        Assurément la Ball la plus performante, elle attrape les blobs presque à chaque fois.
+
+    aqua:
+      name: |
+        {AMOUNT, select, mass{Aqua Balls} singular{une Aqua Ball} concept{Aqua Ball} other{{AMOUNT, plural, =0{aucune Aqua Ball} one{1 Aqua Ball} other{# Aqua Balls}}}}
+      description: |
+        Une balle deux fois plus efficace lorsqu'il pleut.
+
+    gale:
+      name: |
+        {AMOUNT, select, mass{Zéphyr Balls} singular{une Zéphyr Ball} concept{Zéphyr Ball} other{{AMOUNT, plural, =0{aucune Zéphyr Ball} one{1 Zéphyr Ball} other{# Zéphyr Balls}}}}
+      description: |
+        Une balle deux fois plus efficace lorsque le vent est fort.
+
+    calm:
+      name: |
+        {AMOUNT, select, mass{Calme Balls} singular{une Calme Ball} concept{Calme Ball} other{{AMOUNT, plural, =0{aucune Calme Ball} one{1 Calme Ball} other{# Calme Balls}}}}
+      description: |
+        Une balle deux fois plus efficace lorsque l'air est calme.
+
+    desert:
+      name: |
+        {AMOUNT, select, mass{Désert Balls} singular{Une Désert Ball} concept{Désert Ball} other{{AMOUNT, plural, =0{aucune Désert Ball} one{1 Désert Ball} other{# Désert Balls}}}}
+      description: |
+        Une balle deux fois plus efficace lorsqu'il fait chaud.
+
+    improbability:
+      name: |
+        {AMOUNT, select, mass{Calu Balls} singular{une Calu Ball} concept{Calu Ball} other{{AMOUNT, plural, =0{aucune Calu Balls} one{1 Calu Ball} other{# Calu Balls}}}}
+      description: |
+        Capture le blob à tous les coups, n'échoue jamais. On raconte que cette ball tire sa force du feu d'un démon…
+
+  regen:
+    # items that regen
+
+    # generic regen description
+    description: |
+      Régénère {RECOVER} énergie.
+    # generic use message
+    use_message: |
+      {USER} mange un {ITEM}, et regagne {RECOVER} énergie.
+
+    # item names
+    spikey_fruit: |
+      {AMOUNT, select, mass{Fruits Épineux} singular{un Fruit Épineux} concept{Fruit Épineux} other{{AMOUNT, plural, =0{aucun Fruit Épineux} one{1 Fruit Épineux} other{# Fruits Épineux}}}}
+    pudding: |
+      {AMOUNT, select, mass{Puddings} singular{un Pudding} concept{Pudding} other{{AMOUNT, plural, =0{aucun Puddings} one{1 Pudding} other{# Puddings}}}}
+    sugar_cube: |
+      {AMOUNT, select, mass{Morceaux de sucre} singular{un Morceau de Sucre} concept{Morceau de Sucre} other{{AMOUNT, plural, =0{aucun Morceau de Sucre} one{1 Morceau de Sucre} other{# Morceaux de Sucre}}}}
+
+  lure:
+    # lures
+    blob:
+      name: |
+        {AMOUNT, select, mass{Modules Leurre} singular{un Module Leurre} concept{Module Leurre} other{{AMOUNT, plural, =0{aucun Module Leurre} one{1 Module Leurre} other{# Modules Leurre}}}}
+      description: |
+        Augmente les chances de trouver un blob durant les 10 prochaines recherches.
+      use_message: |
+        {USER} a utilisé {ITEM}, ses 10 prochaines tentatives de recherche auront plus de chances de voir apparaître un blob.
+
+
+effect:
+  # effect-related data
+  blob_lure:
+    name: |
+      Module Leurre
