@@ -485,7 +485,7 @@ commands:
           Niveau : {LEVEL}
           Meilleure stat : {BESTSTAT}
 
-          Capture time: {CAPTURETIME}
+          Date de capture: {CAPTURETIME}
 
     stats:
       attack: |
