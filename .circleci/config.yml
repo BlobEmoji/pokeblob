@@ -4,9 +4,9 @@
 #
 version: 2
 jobs:
-  "build and run 9.4":
+  "ci-stretch":
     docker:
-      - image: circleci/node:9.4-stretch
+      - image: circleci/node:9.6.1-stretch
 
       - image: circleci/postgres:latest
         environment:
@@ -21,7 +21,7 @@ jobs:
 
       - restore_cache:
           keys:
-          - v1-dependencies-9-{{ checksum "package.json" }}-mocha
+          - v1-dependencies-{{ checksum "package.json" }}-stretch
 
       - run:
           name: install dependencies
@@ -36,7 +36,7 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-9-{{ checksum "package.json" }}-mocha
+          key: v1-dependencies-{{ checksum "package.json" }}-stretch
 
       - run:
           name: install psql
@@ -45,8 +45,90 @@ jobs:
             sudo apt install postgresql-client
 
       - run:
-          name: wait for postgres..
-          command: sleep 4
+          name: apply schema
+          command: |
+            psql < schema.sql
+            psql < setup.sql
+          environment:
+            PGHOST: localhost
+            PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
+
+      - run:
+          name: copy config file
+          command: cp config.example.yml config.yml
+
+      # run tests!
+      - run:
+          name: faux start bot
+          command: bash .docker/startloop.sh
+          no_output_timeout: 20s
+          environment:
+            POKEBLOB_TEST_ONLY: true
+            PGHOST: localhost
+            PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
+
+      - run:
+          name: do mocha tests
+          command: |
+            ./node_modules/.bin/nyc ./node_modules/.bin/mocha --delay
+          no_output_timeout: 120s
+          environment:
+            POKEBLOB_TEST_ONLY: true
+            PGHOST: localhost
+            PGPORT: 5432
+            PGUSER: postgres
+            PGDATABASE: postgres
+
+  "alpine":
+    docker:
+      - image: node:9-alpine
+
+      - image: postgres:10-alpine
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_DB: postgres
+          POSTGRES_PASSWORD: ""
+
+    working_directory: ~/repo
+
+    steps:
+      - run:
+          name: circleci compatibility
+          command: |
+            apk update
+            apk add bash gettext git
+            apk add openssh-client gzip tar
+            apk add ca-certificates && update-ca-certificates
+
+      - checkout
+
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}-alpine
+
+      - run:
+          name: install dependencies
+          command: |
+            npm install mocha
+            npm install nyc
+            npm install
+          no_output_timeout: 60s
+          environment:
+            POKEBLOB_TEST_ONLY: true
+
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}-alpine
+
+      - run:
+          name: install psql
+          command: |
+            apk add postgresql-client
 
       - run:
           name: apply schema
@@ -89,16 +171,24 @@ jobs:
 
   "eslint":
     docker:
-      - image: circleci/node:9.4-stretch
+      - image: node:9-alpine
 
     working_directory: ~/repo
 
     steps:
+      - run:
+          name: circleci compatibility
+          command: |
+            apk update
+            apk add bash gettext git
+            apk add openssh-client gzip tar
+            apk add ca-certificates && update-ca-certificates
+
       - checkout
 
       - restore_cache:
           keys:
-          - v1-dependencies-eslint-{{ checksum "package.json" }}
+          - v1-dependencies-{{ checksum "package.json" }}-eslint
 
       - run:
           name: install eslint
@@ -112,11 +202,12 @@ jobs:
       - save_cache:
           paths:
             - node_modules
-          key: v1-dependencies-eslint-{{ checksum "package.json" }}
+          key: v1-dependencies-{{ checksum "package.json" }}-eslint
 
 workflows:
   version: 2
   build:
     jobs:
-      - "build and run 9.4"
+      - "ci-stretch"
+      - "alpine"
       - "eslint"
