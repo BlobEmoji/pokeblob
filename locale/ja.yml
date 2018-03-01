@@ -283,9 +283,9 @@ commands:
       **{ITEM}**: {AMOUNT} {COINEMOJI}
 
     buy_help: |
-      `{PREFIX}store buy [アイテム] <幾ら>` でアイテムを買えます
+      `{PREFIX}store buy <アイテム> [幾ら]` でアイテムを買えます
     sell_help: |
-      `{PREFIX}store sell [アイテム] <幾ら>` でアイテムを売れます
+      `{PREFIX}store sell <アイテム> [幾ら]` でアイテムを売れます
 
     unsure_buy: |
       何を買いたいのか分からない
@@ -306,10 +306,10 @@ commands:
         テストで０点取った時みたいに、受領書にはでかい０が書かれた。
     # if a user tries to buy less than 0 of something
     no_negative_buy: |
-      売りたいアイテムがあるなら `{PREFIX}store sell [アイテム] <幾ら>` で売れます。
+      売りたいアイテムがあるなら `{PREFIX}store sell <アイテム> [幾ら]` で売れます。
     # ditto for sell
     no_negative_sell: |
-      買いたいアイテムがあるなら `{PREFIX}store buy [アイテム] <幾ら>` で買えます。
+      買いたいアイテムがあるなら `{PREFIX}store buy <アイテム> [幾ら]` で買えます。
 
     no_money: |
       お金は足りないよ。
@@ -360,7 +360,7 @@ commands:
     notfound: |
       そのロケールは見つかりませんでした。
     changed: |
-      サーバーのロケールは変更しました。 `{PREFIX}locale [ロケール名]`でいつも変更できます。
+      サーバーのロケールは変更しました。 `{PREFIX}locale <ロケール名>`でいつも変更できます。
 
   blobs:
     display_format:

@@ -327,9 +327,9 @@ commands:
       **{ITEM}**: {AMOUNT} {COINEMOJI}
 
     buy_help: |
-      `{PREFIX}store buy [item] <amount>` lets you buy an item from the store.
+      `{PREFIX}store buy <item> [amount]` lets you buy an item from the store.
     sell_help: |
-      `{PREFIX}store sell [item] <amount>` lets you sell items you have.
+      `{PREFIX}store sell <item> [amount]` lets you sell items you have.
 
     unsure_buy: |
       I'm not sure what you're trying to buy.
@@ -356,10 +356,10 @@ commands:
         No time for window shopping!
     # if a user tries to buy less than 0 of something
     no_negative_buy: |
-      If you want coins for your items, you should probably sell them (`{PREFIX}store sell [item] <amount>`)
+      If you want coins for your items, you should probably sell them (`{PREFIX}store sell <item> [amount]`)
     # ditto for sell
     no_negative_sell: |
-      If you want items for your coins, you should probably buy things (`{PREFIX}store buy [item] <amount>`)
+      If you want items for your coins, you should probably buy things (`{PREFIX}store buy <item> [amount]`)
 
     no_money: |
       I don't think you can afford that.
@@ -412,7 +412,7 @@ commands:
     notfound: |
       That locale couldn't be found.
     changed: |
-      The guild locale has been changed. Use `{PREFIX}locale [name]` at any time to change back.
+      The guild locale has been changed. Use `{PREFIX}locale <name>` at any time to change back.
 
   blobs:
     display_format:

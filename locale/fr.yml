@@ -337,9 +337,9 @@ commands:
       **{ITEM}**: {AMOUNT} {COINEMOJI}
 
     buy_help: |
-      `{PREFIX}store buy [objet] <quantité>` permet d'acheter un objet de la boutique.
+      `{PREFIX}store buy <objet> [quantité]` permet d'acheter un objet de la boutique.
     sell_help: |
-      `{PREFIX}store sell [objet] <quantité>` permet de vendre un objet de la boutique.
+      `{PREFIX}store sell <objet> [quantité]` permet de vendre un objet de la boutique.
 
     unsure_buy: |
       Je ne suis pas sûr de voir ce que vous essayez d'acheter.
@@ -366,10 +366,10 @@ commands:
         Pas le temps de faire du lèche-vitrines !
     # if a user tries to buy less than 0 of something
     no_negative_buy: |
-      Si vous voulez de l'argent en échange d'objets objets, vous devriez peut-être en vendre. (`{PREFIX}store sell [objet] <quantité>`)
+      Si vous voulez de l'argent en échange d'objets objets, vous devriez peut-être en vendre. (`{PREFIX}store sell <objet> [quantité]`)
     # ditto for sell
     no_negative_sell: |
-      Si vous voulez des objets en échange d'argent, vous devriez peut-être en acheter.(`{PREFIX}store [objet] <quantité>`)
+      Si vous voulez des objets en échange d'argent, vous devriez peut-être en acheter.(`{PREFIX}store <objet> [quantité]`)
 
     no_money: |
       Je ne pense pas que vous puissiez vous acheter ça.
@@ -422,7 +422,7 @@ commands:
     notfound: |
       Cette langue n'a pas été trouvée.
     changed: |
-      La langue pour ce serveur a été changée. Utilisez `{PREFIX}locale [langue]` n'importe quand pour changer.
+      La langue pour ce serveur a été changée. Utilisez `{PREFIX}locale <langue>` n'importe quand pour changer.
 
   blobs:
     display_format:
