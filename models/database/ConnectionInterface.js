@@ -349,9 +349,36 @@ class ConnectionInterface extends ConnectionInterfaceBase {
       SELECT *
       FROM effects INNER JOIN effectdefs
       ON effects.effect_id = effectdefs.id
-      WHERE user_id = $1
+      WHERE user_id = $1 AND life > 0
       ORDER BY life DESC
     `, [memberData.unique_id]);
+    return resp.rows;
+  }
+
+  async giveUserEffect(member, effectID, life) {
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      INSERT INTO effects (user_id, effect_id, life)
+      VALUES ($1::BIGINT, $2::BIGINT, $3)
+      ON CONFLICT (effect_id, user_id)
+      DO UPDATE SET
+      life = effects.life + $3
+      RETURNING *
+    `, [memberData.unique_id, effectID, life]);
+    return resp.rows[0];
+  }
+
+  async consumeUserEffects(member, effectType, strength) {
+    strength = strength ? strength : 1;
+    const memberData = await this.memberData(member);
+    const resp = await this.query(`
+      UPDATE effects SET
+      life = effects.life - $3
+      FROM effectdefs
+      WHERE user_id = $1::BIGINT AND life >= $3
+      AND effects.effect_id = effectdefs.id AND effectdefs.type = $2
+      RETURNING *
+    `, [memberData.unique_id, effectType, strength]);
     return resp.rows;
   }
 }

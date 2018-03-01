@@ -637,6 +637,55 @@ describe('ConnectionInterface', function() {
       }
     });
   });
+
+  describe('getUserEffects|giveUserEffect|consumeUserEffects', function() {
+    it('should retrieve, give and consume effects on a user', async function() {
+      const connection = await director.acquire();
+
+      try {
+        // ditto
+        await connection.transaction();
+
+        const effects1 = await connection.getUserEffects(mockMember);
+
+        assert.strictEqual(effects1.length, 0);
+
+        await connection.giveUserEffect(mockMember, 1, 3);
+
+        // user now has effect
+        const effects2 = await connection.getUserEffects(mockMember);
+
+        assert.strictEqual(effects2.length, 1);
+        assert.strictEqual(effects2[0].life, 3);
+
+        // user's consumed effects
+        const effects3 = await connection.consumeUserEffects(mockMember, 1, 2);
+
+        assert.strictEqual(effects3.length, 1);
+        assert.strictEqual(effects3[0].life, 1);
+
+        // user should still have effect
+        const effects4 = await connection.getUserEffects(mockMember);
+
+        assert.strictEqual(effects4.length, 1);
+        assert.strictEqual(effects4[0].life, 1);
+
+        // consume last of effect
+        const effects5 = await connection.consumeUserEffects(mockMember, 1);
+
+        assert.strictEqual(effects5.length, 1);
+        assert.strictEqual(effects5[0].life, 0);
+
+        // user should no longer have effect
+        const effects6 = await connection.getUserEffects(mockMember);
+
+        assert.strictEqual(effects6.length, 0);
+
+      } finally {
+        await connection.release();
+      }
+    });
+  });
 });
 
 describe('Director', function() {
