@@ -10,7 +10,7 @@ module.exports = class {
     if (!guild.id === '408709336861507584') return;
 
     const checkGuild = this.client.guilds.get('272885620769161216');
-    const checkMember = this.client.guilds.get('272885620769161216').members.get(member.id);
+    const checkMember = checkGuild.members.get(member.id);
     const role = checkGuild.roles.find('name', 'PokéBlob Master');
     if (!checkMember.has(role.id)) {
       return;
