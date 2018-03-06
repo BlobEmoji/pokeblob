@@ -1,6 +1,3 @@
-const version = '8.5.0';
-if (process.version > version) throw new Error('Node 8.5.0 or higher is required. Update Node on your system.');
-
 require('./extenders/Guild.js');
 // Load up the discord.js library
 const Discord = require('discord.js');
