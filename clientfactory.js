@@ -9,6 +9,7 @@ const EnmapLevel = require('enmap-level');
 const klaw = require('klaw');
 const path = require('path');
 const dbBackend = require('./util/db.js');
+require('./modules/Prototypes.js');
 
 
 class PokeBlob extends Discord.Client {
